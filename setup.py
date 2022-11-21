@@ -1,5 +1,14 @@
 #!/usr/bin/env python
+import pathlib
+
+import pkg_resources
 from setuptools import find_packages, setup
+
+with pathlib.Path("requirements.txt").open() as requirements_txt:
+    REQUIREMENTS = [
+        str(requirement)
+        for requirement in pkg_resources.parse_requirements(requirements_txt)
+    ]
 
 # Parse version number from pyglet/__init__.py:
 with open("msaBase/__init__.py") as f:
@@ -47,7 +56,7 @@ setup_info = dict(
     ],
     # Package info
     packages=find_packages(),
-    install_requires=["markdown"],
+    install_requires=REQUIREMENTS,
     # Add _ prefix to the names of temporary build dirs
     options={
         "build": {"build_base": "_build"},
