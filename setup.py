@@ -46,7 +46,7 @@ setup_info = dict(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     # Package info
-    packages=["msaBase"] + ["msaBase." + pkg for pkg in find_packages("msaBase")],
+    packages=find_packages(),
     install_requires=["markdown"],
     # Add _ prefix to the names of temporary build dirs
     options={
