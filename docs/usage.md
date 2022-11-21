@@ -4,7 +4,7 @@ Main package based on FastAPI like Profiler, Scheduler, Sysinfo, Healtcheck, Err
 
 ## Usage
 
-msaCore contains various TODO ... 
+msaBase contains various TODO ... 
 
 
 Once you have an instance of msaCore just use it the following way:
