@@ -127,7 +127,6 @@ class MSAApp(FastAPI):
         super().__init__(*args, **settings.fastapi_kwargs)
 
         self.logger = logger_gruru
-        init_logging()
 
         self.auto_mount_site: bool = auto_mount_site
         self.settings = settings
@@ -209,7 +208,7 @@ class MSAApp(FastAPI):
                     ex, "Error: Closing Abstract Filesystem failed:"
                 )
 
-        if self.settings.json_db:
+        if self.settings.tiny_json_db:
             self.logger.info("JSON DB - Close: " + self.settings.sqlite_db_url)
             self.json_db_engine.close()
 
@@ -569,11 +568,11 @@ class MSAApp(FastAPI):
 
         if self.settings.json_db_memory_only:
             self.json_db_engine = TinyDB(
-                self.settings.json_db_url, storage=MemoryStorage
+                self.settings.tiny_json_db_url, storage=MemoryStorage
             )
         else:
             self.json_db_engine = TinyDB(
-                self.settings.json_db_url, storage=TinyDB.default_storage_class
+                self.settings.tiny_json_db_url, storage=TinyDB.default_storage_class
             )
 
     def configure_graphql(self) -> None:
