@@ -22,8 +22,7 @@ from msaDocModels.scheduler import (
     MSASchedulerTaskStatus,
 )
 from msaDocModels.sdu import SDUVersion
-from msaSDK.models.openapi import MSAOpenAPIInfo
-from msaSDK.models.service import MSAServiceStatus
+from msaDocModels.openapi import MSAOpenAPIInfo
 from sqlmodel import SQLModel
 from starlette import status
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -31,7 +30,7 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse, Response
 from starlette_context import plugins
 
-from msaBase.config import MSAServiceDefinition
+from msaBase.config import MSAServiceDefinition, MSAServiceStatus
 from msaBase.errorhandling import getMSABaseExceptionHandler
 from msaBase.logger import init_logging
 from msaBase.models.functionality import FunctionalityTypes
@@ -86,7 +85,7 @@ def getSecretKeyCSRF() -> str:
 
 
 class MSAApp(FastAPI):
-    """Creates an application msaSDK instance.
+    """Creates an application msaBase instance.
 
     Note:
         As with FastApi the MSAApp provides two events:
@@ -163,7 +162,7 @@ class MSAApp(FastAPI):
 
     async def startup_event(self) -> None:
         """Internal Startup Event Handler"""
-        self.logger.info("msaSDK Internal Startup MSAUIEvent")
+        self.logger.info("msaBase Internal Startup MSAUIEvent")
         await self.extend_startup_event()
 
         if self.settings.sqlite_db:
@@ -185,7 +184,7 @@ class MSAApp(FastAPI):
 
     async def shutdown_event(self) -> None:
         """Internal Shutdown event handler"""
-        self.logger.info("msaSDK Internal Shutdown MSAUIEvent")
+        self.logger.info("msaBase Internal Shutdown MSAUIEvent")
         await self.extend_shutdown_event()
 
         if self.settings.background_scheduler:
@@ -725,7 +724,7 @@ class MSAApp(FastAPI):
     def configure_sysrouter(self) -> None:
         """Enable Sysrouter"""
         self.logger.info("Include Sysrouter")
-        from msaSDK.router.system import sys_router
+        from msaBase.router import sys_router
 
         self.include_router(sys_router)
 
