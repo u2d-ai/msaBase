@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+import json
+import os
 from functools import lru_cache
 from typing import List, Optional
 
 from msaDocModels.health import MSAHealthDefinition
 from pydantic import BaseModel
 
+from msaBase.logger import logger
 from msaBase.models.settings import MSAAppSettings
 
 
@@ -115,12 +118,14 @@ class MSAServiceDefinition(MSAAppSettings):
     """Enables internal Abstract Filesystem."""
     abstract_fs_url: str = "."
     """Set's Filesystem URL"""
-    json_db: bool = False
+    tiny_json_db: bool = False
     """Enables internal NoSQl/TinyDB DB."""
     json_db_memory_only: bool = False
     """JSON DB only in memory, don't store to file/db url"""
-    json_db_url: str = "./msa_base.json"
+    tiny_json_db_url: str = "./msa_base.json"
     """Set's DB URL, compatibility with async and BaseModel/SQLAlchemy is required."""
+    json_db_url: str = ""
+    """Set's DB URL, for nonlocal JSON DB"""
     sqlite_db: bool = False
     """Enables internal Asynchron SQLite DB."""
     sqlite_db_debug: bool = False
@@ -134,6 +139,26 @@ class MSAServiceDefinition(MSAAppSettings):
     sqlite_db_url: str = "sqlite+aiosqlite:///msa_base.sqlite_db?check_same_thread=True"
     """Set's DB URL, compatibility with async and BaseModel/SQLAlchemy is required."""
 
+    def saveConfig(self):
+        sa = self.copy(deep=True)
+        with open("config.json", "w") as fp:
+            json.dump(sa.dict(), fp, sort_keys=True, indent=4)
+
+    @staticmethod
+    def loadConfig():
+        ret: MSAServiceDefinition = MSAServiceDefinition()
+        if os.path.exists("config.json"):
+            with open("config.json", "rb") as fp:
+                intext = json.load(fp)
+                ret = MSAServiceDefinition.parse_obj(intext)
+            logger.info("Loaded config file")
+        else:
+            ret.saveConfig()
+        return ret
+
+
+_msa_config: MSAServiceDefinition = MSAServiceDefinition.loadConfig()
+
 
 @lru_cache()
 def get_msa_app_settings() -> MSAServiceDefinition:
@@ -142,4 +167,4 @@ def get_msa_app_settings() -> MSAServiceDefinition:
     Note:
         Caching is used to prevent re-reading the environment every time the API settings are used in an endpoint.
     """
-    return MSAServiceDefinition()
+    return _msa_config
