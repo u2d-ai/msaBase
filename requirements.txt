@@ -70,3 +70,6 @@ psutil>=5.9.2 # Cross-platform lib for process and system monitoring in Python.
 
 # Scheduler
 apscheduler>=3.9.1 # APScheduler is a Python library that lets you schedule your Python code to be executed later, either just once or periodically
+
+# Testing
+pytest>=7.2.0 # Framework makes it easy to write small tests, yet scales to support complex functional testing for applications and libraries.
