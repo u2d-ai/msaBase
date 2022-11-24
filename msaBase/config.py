@@ -46,8 +46,9 @@ class MSAServiceDefinition(MSAAppSettings):
     """Version of the Service."""
     host: str = "127.0.0.1"
     """Host/IP which the service runs on."""
-    port: int = 8090
+    port: int = 8000
     """Port which the service binds to."""
+    dapr_http_port: int = 6000
     tags: List[str] = []
     """Optional Metadata: Use this to carry some variables through the service instance."""
     allow_origins: List[str] = ["*"]
