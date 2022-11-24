@@ -7,7 +7,8 @@ Initialize with a MSAServiceDefintion Instance to control the features and funct
 import os
 from asyncio import Task
 from datetime import datetime
-from typing import List, Type, Union
+from typing import List, Optional, Type, Union
+from dapr.clients import DaprClient
 
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -120,6 +121,10 @@ class MSAApp(FastAPI):
         settings: MSAServiceDefinition,
         sql_models: List[SQLModel] = None,
         auto_mount_site: bool = True,
+        title: str = "FastAPI",
+        description: str = "",
+        version: str = "0.1.0",
+        openapi_url: Optional[str] = "/openapi.json",
         *args,
         **kwargs,
     ) -> None:
@@ -127,7 +132,11 @@ class MSAApp(FastAPI):
         super().__init__(*args, **settings.fastapi_kwargs)
 
         self.logger = logger_gruru
-
+        self.fastApi = FastAPI
+        self.title = title
+        self.description = description
+        self.version = version
+        self.openapi_url = openapi_url
         self.auto_mount_site: bool = auto_mount_site
         self.settings = settings
         self.SDUVersion = SDUVersion(
@@ -147,14 +156,25 @@ class MSAApp(FastAPI):
         self.abstract_fs: "MSAFilesystem" = None
         self.fs: "FS" = None
         self.healthcheck: "health.MSAHealthCheck" = None
+        self.logger.info_pub = self.logger_info
 
         init_logging()
         self.add_middlewares()
         self.add_functionality()
-
         self.logger.info("Events - Add Internal Handlers")
         self.add_event_handler("shutdown", self.shutdown_event)
         self.add_event_handler("startup", self.startup_event)
+
+    def logger_info(self, message: str, topic_name: str = ""):
+        if topic_name:
+            with DaprClient() as client:
+                client.publish_event(
+                    pubsub_name="spk_pub_sub",
+                    topic_name=topic_name,
+                    data=message,
+                    data_content_type="application/json",
+                )
+        self.logger.info(message)
 
     async def extend_startup_event(self) -> None:
         """You can extend the main shutdown"""

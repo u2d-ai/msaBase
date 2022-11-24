@@ -1,7 +1,7 @@
 # MSA Dependencies
 msaCRUD>=0.0.1 # SQLModel/SQLAlchemy/FastAPI - DB Object CRUD/API Automation
 msaFileSystem>=0.0.1 # Agnostic Abstract Filesystem API which allows to use S3, GCS, Azure Datalake, your local FS, Youtube etc Optimized for use with FastAPI/Pydantic.
-msaDocModels>=0.0.7 # MSA Document Pydantic Models and Schemas, used to store Parser, NLP, NLU and AI results for processed documents
+msaDocModels>=0.0.8 # MSA Document Pydantic Models and Schemas, used to store Parser, NLP, NLU and AI results for processed documents
 
 # FastAPI related Dependencies
 fastapi[all]>=0.85.0 # FastAPI framework, high performance, easy to learn, fast to code, ready for production
