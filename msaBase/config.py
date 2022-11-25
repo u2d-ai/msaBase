@@ -49,6 +49,9 @@ class MSAServiceDefinition(MSAAppSettings):
     port: int = 8000
     """Port which the service binds to."""
     dapr_http_port: int = 6000
+    """Port http which  used dapr app."""
+    dapr_grpc_port: int = 50001
+    """Port grpc which used dapr app."""
     tags: List[str] = []
     """Optional Metadata: Use this to carry some variables through the service instance."""
     allow_origins: List[str] = ["*"]
