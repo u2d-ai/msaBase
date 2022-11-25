@@ -1,7 +1,7 @@
 # MSA Dependencies
 msaCRUD>=0.0.1 # SQLModel/SQLAlchemy/FastAPI - DB Object CRUD/API Automation
 msaFileSystem>=0.0.1 # Agnostic Abstract Filesystem API which allows to use S3, GCS, Azure Datalake, your local FS, Youtube etc Optimized for use with FastAPI/Pydantic.
-msaDocModels>=0.0.8 # MSA Document Pydantic Models and Schemas, used to store Parser, NLP, NLU and AI results for processed documents
+msaDocModels>=0.0.9 # MSA Document Pydantic Models and Schemas, used to store Parser, NLP, NLU and AI results for processed documents
 
 # FastAPI related Dependencies
 fastapi[all]>=0.85.0 # FastAPI framework, high performance, easy to learn, fast to code, ready for production
@@ -73,3 +73,5 @@ apscheduler>=3.9.1 # APScheduler is a Python library that lets you schedule your
 
 # Testing
 pytest>=7.2.0 # Framework makes it easy to write small tests, yet scales to support complex functional testing for applications and libraries.
+pytest-asyncio>=0.20.2 # Library for testing asyncio code with pytest.
+pytest-mock>=3.10.0 # Library for mock data with pytest.
