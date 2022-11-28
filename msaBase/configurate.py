@@ -206,11 +206,11 @@ class MSAApp(FastAPI):
         self.logger.info("msaBase Internal Shutdown MSAUIEvent")
         await self.extend_shutdown_event()
 
-        if self.settings.background_scheduler:
+        if self.settings.background_scheduler and self.background_scheduler.get_jobs():
             self.logger.info("Stop Background Scheduler")
             self.background_scheduler.shutdown()
 
-        if self.settings.asyncio_scheduler:
+        if self.settings.asyncio_scheduler and self.asyncio_scheduler.get_jobs():
             self.logger.info("Stop Asyncio Scheduler")
             self.asyncio_scheduler.shutdown()
 

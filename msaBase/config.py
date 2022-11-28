@@ -114,9 +114,9 @@ class MSAServiceDefinition(MSAAppSettings):
     """Enables Timing Middleware, reports timing data at the granularity of individual endpoint calls."""
     limiter: bool = False
     """Enables Rate Limiter (slowapi)."""
-    background_scheduler: bool = True
+    background_scheduler: bool = False
     "Enables Background Scheduler."
-    asyncio_scheduler: bool = True
+    asyncio_scheduler: bool = False
     "Enables Asyncio Scheduler."
     abstract_fs: bool = False
     """Enables internal Abstract Filesystem."""
