@@ -4,12 +4,6 @@ import enum
 class FunctionalityTypes(enum.Enum):
     uvloop = ("UVLoop", True)
     """UVLoop."""
-    json_db = ("JSON DB", False)
-    """JSON DB."""
-    sqlite_db = ("SQLiteDB", False)
-    """SQLiteDB"""
-    graphql = ("Graphql", True)
-    """Graphql."""
     sysrouter = ("Sysrouter", True)
     """Sysrouter."""
     servicerouter = ("Servicerouter", True)

@@ -8,8 +8,8 @@ import os
 from asyncio import Task
 from datetime import datetime
 from typing import List, Optional, Type, Union
-from dapr.clients import DaprClient
 
+from dapr.clients import DaprClient
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.exception_handlers import http_exception_handler
@@ -17,13 +17,13 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
 from loguru import logger as logger_gruru
 from msaDocModels.health import MSAHealthDefinition, MSAHealthMessage
+from msaDocModels.openapi import MSAOpenAPIInfo
 from msaDocModels.scheduler import (
     MSASchedulerStatus,
     MSASchedulerTaskDetail,
     MSASchedulerTaskStatus,
 )
 from msaDocModels.sdu import SDUVersion
-from msaDocModels.openapi import MSAOpenAPIInfo
 from sqlmodel import SQLModel
 from starlette import status
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -184,20 +184,6 @@ class MSAApp(FastAPI):
         self.logger.info("msaBase Internal Startup MSAUIEvent")
         await self.extend_startup_event()
 
-        if self.settings.sqlite_db:
-            async with self.sqlite_db_engine.begin() as conn:
-                if self.settings.sqlite_db_meta_drop:
-                    self.logger.info(
-                        "SQLite DB - Drop Meta All: " + self.settings.sqlite_db_url
-                    )
-                    await conn.run_sync(SQLModel.metadata.drop_all)
-                if self.settings.sqlite_db_meta_create:
-                    self.logger.info(
-                        "SQLite DB - Create Meta All: " + self.settings.sqlite_db_url
-                    )
-                    await conn.run_sync(SQLModel.metadata.create_all)
-            await self.sqlite_db_engine.dispose()
-
     async def extend_shutdown_event(self) -> None:
         """You can extend the main shutdown"""
 
@@ -227,27 +213,6 @@ class MSAApp(FastAPI):
                 getMSABaseExceptionHandler().handle(
                     ex, "Error: Closing Abstract Filesystem failed:"
                 )
-
-        if self.settings.tiny_json_db:
-            self.logger.info("JSON DB - Close: " + self.settings.sqlite_db_url)
-            self.json_db_engine.close()
-
-        if self.settings.sqlite_db:
-            self.logger.info(
-                "SQLite DB - Dispose Connections: " + self.settings.sqlite_db_url
-            )
-            await self.sqlite_db_engine.dispose()
-
-    async def init_graphql(self, strawberry_schema) -> None:
-        """
-        Internal helper function to initialize the graphql router
-        """
-        if self.settings.graphql:
-            from strawberry.fastapi import GraphQLRouter
-
-            self.graphql_schema = strawberry_schema
-            self.graphql_app = GraphQLRouter(self.graphql_schema, graphiql=True)
-            self.include_router(self.graphql_app, prefix="/graphql", tags=["graphql"])
 
     async def get_healthcheck(self, request: Request) -> ORJSONResponse:
         """
@@ -567,9 +532,6 @@ class MSAApp(FastAPI):
         """
         configurator_mappings = {
             FunctionalityTypes.uvloop: self.configure_event_loop,
-            FunctionalityTypes.json_db: self.configure_json_db,
-            FunctionalityTypes.sqlite_db: self.configure_sqlite_db,
-            FunctionalityTypes.graphql: self.configure_graphql,
             FunctionalityTypes.healthdefinition: self.configure_healthdefinition,
             FunctionalityTypes.sysrouter: self.configure_sysrouter,
             FunctionalityTypes.servicerouter: self.configure_servicerouter,
@@ -579,30 +541,6 @@ class MSAApp(FastAPI):
             FunctionalityTypes.abstract_fs: self.configure_abstract_fs,
         }
         return configurator_mappings.get(middleware, self.unknown_middleware)
-
-    def configure_json_db(self) -> None:
-        """Create JSON DB"""
-        self.logger.info("JSON DB - Init: " + self.settings.sqlite_db_url)
-        from tinydb import TinyDB
-        from tinydb.storages import MemoryStorage
-
-        if self.settings.json_db_memory_only:
-            self.json_db_engine = TinyDB(
-                self.settings.tiny_json_db_url, storage=MemoryStorage
-            )
-        else:
-            self.json_db_engine = TinyDB(
-                self.settings.tiny_json_db_url, storage=TinyDB.default_storage_class
-            )
-
-    def configure_graphql(self) -> None:
-        """Init Graphql"""
-        self.logger.info("Init Graphql")
-        from strawberry import schema
-        from strawberry.fastapi import GraphQLRouter
-
-        self.graphql_app: GraphQLRouter = None
-        self.graphql_schema: schema = None
 
     def configure_starception_middleware(self) -> None:
         """Add Middleware Starception"""
@@ -689,38 +627,6 @@ class MSAApp(FastAPI):
         self.add_exception_handler(
             RequestValidationError, self.validation_exception_handler
         )
-
-    def configure_sqlite_db(self) -> None:
-        """Create sqlite db connection and create crud in db by sql_model in Settings"""
-        from sqlalchemy.ext.asyncio import create_async_engine
-        from sqlalchemy.ext.declarative import declarative_base
-        from sqlalchemy.orm import DeclarativeMeta
-
-        self.logger.info("SQLite DB - Init: " + self.settings.sqlite_db_url)
-        self.Base: DeclarativeMeta = declarative_base()
-        self.sqlite_db_engine = create_async_engine(
-            self.settings.sqlite_db_url,
-            echo=self.settings.sqlite_db_debug,
-            future=True,
-        )
-        if self.settings.sqlite_db_crud and self.sql_models:
-            self.configure_db_crud()
-
-    def configure_db_crud(self) -> None:
-        """Register all Models and the crud for them"""
-        if self.settings.sqlite_db_crud and self.sql_models:
-            self.logger.info(
-                "SQLite DB - Register/CRUD SQL Models: " + str(self.sql_models)
-            )
-            from msaCRUD import MSASQLModelCrud
-
-            for model in self.sql_models:
-                new_crud: MSASQLModelCrud = MSASQLModelCrud(
-                    model=model, engine=self.sqlite_db_engine
-                ).register_crud()
-                if self.settings.sqlite_db_crud:
-                    self.include_router(new_crud.router)
-                self.sql_cruds.append(new_crud)
 
     def configure_healthdefinition(self) -> None:
         self.logger.info("Init Healthcheck")

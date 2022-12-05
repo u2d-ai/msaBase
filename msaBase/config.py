@@ -98,8 +98,6 @@ class MSAServiceDefinition(MSAAppSettings):
     """Enable MSASignal Middleware."""
     task_middleware: bool = False
     """Enable MSATask Middleware."""
-    graphql: bool = False
-    """Enable initiation of Strawberry GraphQLRouter (/graphql)."""
     context: bool = False
     """Enable Context Middleware."""
     profiler: bool = False
@@ -122,26 +120,8 @@ class MSAServiceDefinition(MSAAppSettings):
     """Enables internal Abstract Filesystem."""
     abstract_fs_url: str = "."
     """Set's Filesystem URL"""
-    tiny_json_db: bool = False
-    """Enables internal NoSQl/TinyDB DB."""
-    json_db_memory_only: bool = False
-    """JSON DB only in memory, don't store to file/db url"""
-    tiny_json_db_url: str = "./msa_base.json"
-    """Set's DB URL, compatibility with async and BaseModel/SQLAlchemy is required."""
     json_db_url: str = ""
     """Set's DB URL, for nonlocal JSON DB"""
-    sqlite_db: bool = False
-    """Enables internal Asynchron SQLite DB."""
-    sqlite_db_debug: bool = False
-    """Enables internal DB Debug output."""
-    sqlite_db_crud: bool = False
-    """Enables CRUD API creation of the provided BaseModels."""
-    sqlite_db_meta_drop: bool = False
-    """If True, all existing Data and Schemas in internal DB get's deleted at Startup."""
-    sqlite_db_meta_create: bool = False
-    """Enables internal DB Metadata creation from defined BaseModels at Startup."""
-    sqlite_db_url: str = "sqlite+aiosqlite:///msa_base.sqlite_db?check_same_thread=True"
-    """Set's DB URL, compatibility with async and BaseModel/SQLAlchemy is required."""
 
     def saveConfig(self):
         sa = self.copy(deep=True)
