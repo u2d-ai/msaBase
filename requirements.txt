@@ -1,7 +1,6 @@
 # MSA Dependencies
-msaCRUD>=0.0.1 # SQLModel/SQLAlchemy/FastAPI - DB Object CRUD/API Automation
 msaFileSystem>=0.0.1 # Agnostic Abstract Filesystem API which allows to use S3, GCS, Azure Datalake, your local FS, Youtube etc Optimized for use with FastAPI/Pydantic.
-msaDocModels>=0.0.13 # MSA Document Pydantic Models and Schemas, used to store Parser, NLP, NLU and AI results for processed documents
+msaDocModels>=0.0.14 # MSA Document Pydantic Models and Schemas, used to store Parser, NLP, NLU and AI results for processed documents
 
 # FastAPI related Dependencies
 fastapi[all]>=0.85.0 # FastAPI framework, high performance, easy to learn, fast to code, ready for production
@@ -9,10 +8,6 @@ fastapi_utils>=0.2.1 # Reusable utilities for FastAPI, Repeated Tasks, APIModel,
 pydantic[email,dotenv]~=1.9.2 # Data validation and settings management using python type hints
 pyinstrument>=4.3.0 # pyinstrument to check service performance.
 
-
-# GraphQL related Dependencies
-strawberry-graphql>=0.130.4 #A library for creating GraphQL APIs
-strawberry-graphql[fastapi]>=0.130.4 # Strawberry provides support for FastAPI with a custom APIRouter called GraphQLRouter.
 
 # General Dependencies
 autoflake>=1.6.1 # Removes unused imports and unused variables
@@ -46,14 +41,6 @@ starlette~=0.20.4 # Starlette is a lightweight ASGI framework/toolkit, which is 
 starlette-context~=0.3.4 # Access context in Starlette
 starception~=0.4.0 # Beautiful debugging page for Starlette apps.
 Starlette-WTF~=0.4.3 # Simple integration of Starlette and WTForms.
-
-# SQL/No-SQL/DB related Dependencies
-aiosqlite>=0.17.0 # asyncio bridge to the standard sqlite3 module
-aioredis>=2.0.1 # asyncio (PEP 3156) Redis support
-sqlmodel>=0.0.8 # SQLModel, SQL databases in Python, designed for simplicity, compatibility, and robustness.
-sqlalchemy[asyncio]>=1.4.41 # Database Abstraction Library
-sqlalchemy_database>=0.0.7 # SQLAlchemy-Database provides shortcut functions to common database operations for SQLAlchemy ORM
-tinydb>=4.7.0 # TinyDB is a tiny, document oriented database
 
 # Other Dependencies
 httpx~=0.23.0 # The next generation HTTP client.
