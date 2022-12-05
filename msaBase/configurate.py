@@ -7,7 +7,7 @@ Initialize with a MSAServiceDefintion Instance to control the features and funct
 import os
 from asyncio import Task
 from datetime import datetime
-from typing import List, Optional, Type, Union
+from typing import Optional, Type, Union
 
 from dapr.clients import DaprClient
 from fastapi import FastAPI, HTTPException
@@ -24,7 +24,6 @@ from msaDocModels.scheduler import (
     MSASchedulerTaskStatus,
 )
 from msaDocModels.sdu import SDUVersion
-from sqlmodel import SQLModel
 from starlette import status
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.requests import Request
@@ -107,9 +106,6 @@ class MSAApp(FastAPI):
         settings: MSAServiceDefinition settings instance.
         healthdefinition: MSAHealthDefinition settings.healthdefinition
         limiter: Limiter = None
-        db_engine: AsyncEngine = Db Engine instance
-        sql_models: List[SQLModel] = sql_models
-        sql_cruds: List[MSASQLModelCrud] = []
         scheduler: MSAScheduler = None
         scheduler_task: The Task instance that runs the Scheduler in the Background
         ROOTPATH: str os.path.join(os.path.dirname(__file__))
@@ -119,7 +115,6 @@ class MSAApp(FastAPI):
     def __init__(
         self,
         settings: MSAServiceDefinition,
-        sql_models: List[SQLModel] = None,
         auto_mount_site: bool = True,
         title: str = "FastAPI",
         description: str = "",
@@ -144,10 +139,6 @@ class MSAApp(FastAPI):
         )
         self.healthdefinition: MSAHealthDefinition = self.settings.healthdefinition
         self.limiter: "Limiter" = None
-        self.sqlite_db_engine: "AsyncEngine" = None
-        self.json_db_engine: "TinyDB" = None
-        self.sql_models: List[SQLModel] = sql_models
-        self.sql_cruds: List["MSASQLModelCrud"] = []
         self.background_scheduler: "BackgroundScheduler" = None
         self.asyncio_scheduler: "AsyncIOScheduler" = None
         self.site = None
