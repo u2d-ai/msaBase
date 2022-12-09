@@ -7,7 +7,7 @@ Initialize with a MSAServiceDefintion Instance to control the features and funct
 import os
 from asyncio import Task
 from datetime import datetime
-from typing import Optional, Type, Union
+from typing import Any, Dict, List, Optional, Type, Union
 
 from dapr.clients import DaprClient
 from fastapi import FastAPI, HTTPException
@@ -120,6 +120,10 @@ class MSAApp(FastAPI):
         description: str = "",
         version: str = "0.1.0",
         openapi_url: Optional[str] = "/openapi.json",
+        openapi_tags: Optional[List[Dict[str, Any]]] = None,
+        terms_of_service: Optional[str] = None,
+        contact: Optional[Dict[str, Union[str, Any]]] = None,
+        license_info: Optional[Dict[str, Union[str, Any]]] = None,
         *args,
         **kwargs,
     ) -> None:
@@ -137,6 +141,10 @@ class MSAApp(FastAPI):
         self.SDUVersion = SDUVersion(
             version=self.settings.version, creation_date=datetime.utcnow().isoformat()
         )
+        self.license_info = license_info
+        self.contact = contact
+        self.terms_of_service = terms_of_service
+        self.openapi_tags = openapi_tags
         self.healthdefinition: MSAHealthDefinition = self.settings.healthdefinition
         self.limiter: "Limiter" = None
         self.background_scheduler: "BackgroundScheduler" = None

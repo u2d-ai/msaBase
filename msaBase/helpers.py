@@ -17,4 +17,4 @@ def get_one_string_text(input_text):
         input_text = convert_list_to_str(input_list=input_text)
     elif type_input_text == dict:
         input_text = convert_dict_to_str(input_dict=input_text)
-    return input_text
+    return input_text.replace("/n", " ").replace('"', "'")
