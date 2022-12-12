@@ -4,8 +4,6 @@ import enum
 class FunctionalityTypes(enum.Enum):
     uvloop = ("UVLoop", True)
     """UVLoop."""
-    sysrouter = ("Sysrouter", True)
-    """Sysrouter."""
     servicerouter = ("Servicerouter", True)
     """Servicerouter."""
     healthdefinition = ("Healthcheck", True)

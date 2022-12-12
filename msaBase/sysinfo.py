@@ -12,7 +12,6 @@ from typing import Dict, List
 
 import GPUtil
 import psutil
-
 from msaBase.errorhandling import getMSABaseExceptionHandler
 from msaBase.models.sysinfo import (
     MSACPUFrequency,
@@ -411,18 +410,12 @@ def get_sysinfo() -> MSASystemInfo:
         system_info.HW_Identifier = os.uname().machine
         system_info.CPU_Physical = psutil.cpu_count(logical=False)
         system_info.CPU_Logical = os.cpu_count()
-        system_info.Memory_Physical = (
-            str(round(psutil.virtual_memory().total / 1024000000.0, 2)) + " GB"
+        system_info.Memory_Physical = str(round(psutil.virtual_memory().total / 1024000000.0, 2)) + " GB"
+        system_info.Memory_Available = str(round(psutil.virtual_memory().available / 1024000000.0, 2)) + " GB"
+        system_info.System_Boot = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
+        system_info.Service_Start = datetime.datetime.fromtimestamp(psutil.Process().create_time()).strftime(
+            "%Y-%m-%d %H:%M:%S"
         )
-        system_info.Memory_Available = (
-            str(round(psutil.virtual_memory().available / 1024000000.0, 2)) + " GB"
-        )
-        system_info.System_Boot = datetime.datetime.fromtimestamp(
-            psutil.boot_time()
-        ).strftime("%Y-%m-%d %H:%M:%S")
-        system_info.Service_Start = datetime.datetime.fromtimestamp(
-            psutil.Process().create_time()
-        ).strftime("%Y-%m-%d %H:%M:%S")
         system_info.Runtime_Exe = psutil.Process().exe()
         system_info.Runtime_Cmd = psutil.Process().cmdline()
         system_info.PID = psutil.Process().pid
@@ -470,27 +463,19 @@ def get_sysgpuinfo() -> MSASystemGPUInfo:
         system_gpu_info.HW_Identifier = os.uname().machine
         system_gpu_info.CPU_Physical = psutil.cpu_count(logical=False)
         system_gpu_info.CPU_Logical = os.cpu_count()
-        system_gpu_info.Memory_Physical = (
-            str(round(psutil.virtual_memory().total / 1024000000.0, 2)) + " GB"
+        system_gpu_info.Memory_Physical = str(round(psutil.virtual_memory().total / 1024000000.0, 2)) + " GB"
+        system_gpu_info.Memory_Available = str(round(psutil.virtual_memory().available / 1024000000.0, 2)) + " GB"
+        system_gpu_info.System_Boot = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
+        system_gpu_info.Service_Start = datetime.datetime.fromtimestamp(psutil.Process().create_time()).strftime(
+            "%Y-%m-%d %H:%M:%S"
         )
-        system_gpu_info.Memory_Available = (
-            str(round(psutil.virtual_memory().available / 1024000000.0, 2)) + " GB"
-        )
-        system_gpu_info.System_Boot = datetime.datetime.fromtimestamp(
-            psutil.boot_time()
-        ).strftime("%Y-%m-%d %H:%M:%S")
-        system_gpu_info.Service_Start = datetime.datetime.fromtimestamp(
-            psutil.Process().create_time()
-        ).strftime("%Y-%m-%d %H:%M:%S")
         system_gpu_info.Runtime_Exe = psutil.Process().exe()
         system_gpu_info.Runtime_Cmd = psutil.Process().cmdline()
         system_gpu_info.Runtime_Status = psutil.Process().status()
         system_gpu_info.PID = psutil.Process().pid
         system_gpu_info.GPUs = get_gpus()
         system_gpu_info.IP_Address = socket.gethostbyname(socket.gethostname())
-        system_gpu_info.MAC_Address = ":".join(
-            re.findall("..", "%012x" % uuid.getnode())
-        )
+        system_gpu_info.MAC_Address = ":".join(re.findall("..", "%012x" % uuid.getnode()))
 
     except Exception as e:
         getMSABaseExceptionHandler().handle(e, "Error: Get System GPU Information:")

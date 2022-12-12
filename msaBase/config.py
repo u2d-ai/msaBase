@@ -4,11 +4,10 @@ import os
 from functools import lru_cache
 from typing import List, Optional
 
-from msaDocModels.health import MSAHealthDefinition
-from pydantic import BaseModel
-
 from msaBase.logger import logger
 from msaBase.models.settings import MSAAppSettings
+from msaDocModels.health import MSAHealthDefinition
+from pydantic import BaseModel
 
 
 class MSAServiceStatus(BaseModel):
