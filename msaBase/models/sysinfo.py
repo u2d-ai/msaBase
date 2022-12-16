@@ -4,7 +4,9 @@ from pydantic import BaseModel
 
 
 class MSAGPUInfo(BaseModel):
-    """Pydantic GPU Info Model."""
+    """
+    Pydantic GPU Info Model.
+    """
 
     id: Optional[int]
     name: Optional[str]
@@ -17,7 +19,8 @@ class MSAGPUInfo(BaseModel):
 
 
 class MSADiskIO(BaseModel):
-    """Pydantic Disk IO Info Model.
+    """
+    Pydantic Disk IO Info Model.
 
     Attributes:
         read_count: number of reads
@@ -44,7 +47,8 @@ class MSADiskIO(BaseModel):
 
 
 class MSANetworkIO(BaseModel):
-    """Pydantic Network IO Info Model.
+    """
+    Pydantic Network IO Info Model.
 
     Attributes:
         bytes_sent: number of bytes sent
@@ -68,7 +72,9 @@ class MSANetworkIO(BaseModel):
 
 
 class MSANetworkConnection(BaseModel):
-    """Pydantic Network Connection Info Model."""
+    """
+    Pydantic Network Connection Info Model.
+    """
 
     index: Optional[int]
     file_descriptor: Optional[int]
@@ -88,7 +94,9 @@ class MSANetworkConnection(BaseModel):
 
 
 class MSANetworkAdapter(BaseModel):
-    """Pydantic Network Adapter Info Model."""
+    """
+    Pydantic Network Adapter Info Model.
+    """
 
     family: Optional[int]
     """the address family, either AF_INET or AF_INET6 or psutil.AF_LINK, which refers to a MAC address."""
@@ -103,14 +111,18 @@ class MSANetworkAdapter(BaseModel):
 
 
 class MSANetworkAdapters(BaseModel):
-    """Pydantic Network Adapters List Model."""
+    """
+    Pydantic Network Adapters List Model.
+    """
 
     name: str = ""
     adapters: List[MSANetworkAdapter] = []
 
 
 class MSANetworkStat(BaseModel):
-    """Pydantic Network Stats Info Model."""
+    """
+    Pydantic Network Stats Info Model.
+    """
 
     isup: Optional[bool]
     """a bool indicating whether the NIC is up and running (meaning ethernet cable or Wi-Fi is connected)."""
@@ -123,14 +135,18 @@ class MSANetworkStat(BaseModel):
 
 
 class MSANetworkStats(BaseModel):
-    """Pydantic Network Stats List Info Model."""
+    """
+    Pydantic Network Stats List Info Model.
+    """
 
     name: str = ""
     adapters: List[MSANetworkStat] = []
 
 
 class MSATemperature(BaseModel):
-    """Pydantic Temperature Info Model."""
+    """
+    Pydantic Temperature Info Model.
+    """
 
     label: Optional[str]
     current: Optional[float]
@@ -139,14 +155,18 @@ class MSATemperature(BaseModel):
 
 
 class MSATemperatures(BaseModel):
-    """Pydantic Temperatures List Model."""
+    """
+    Pydantic Temperatures List Model.
+    """
 
     device: str = ""
     temps: List[MSATemperature] = []
 
 
 class MSACPUFrequency(BaseModel):
-    """Pydantic CPU Frequency Info Model."""
+    """
+    Pydantic CPU Frequency Info Model.
+    """
 
     current: Optional[float]
     min: Optional[int]
@@ -154,7 +174,9 @@ class MSACPUFrequency(BaseModel):
 
 
 class MSACPUTimes(BaseModel):
-    """Pydantic CPU Timings Info Model."""
+    """
+    Pydantic CPU Timings Info Model.
+    """
 
     user: Optional[float]
     """time spent by normal processes executing in user mode; on Linux this also includes guest time"""
@@ -179,7 +201,9 @@ class MSACPUTimes(BaseModel):
 
 
 class MSACPUStats(BaseModel):
-    """Pydantic CPU Stats Info Model."""
+    """
+    Pydantic CPU Stats Info Model.
+    """
 
     ctx_switches: Optional[int]
     """number of context switches (voluntary + involuntary) since boot."""
@@ -192,7 +216,9 @@ class MSACPUStats(BaseModel):
 
 
 class MSAMemoryUsage(BaseModel):
-    """Pydantic Memory Usage Info Model."""
+    """
+    Pydantic Memory Usage Info Model.
+    """
 
     total: Optional[float]
     """total physical memory (exclusive swap)."""
@@ -215,7 +241,9 @@ class MSAMemoryUsage(BaseModel):
 
 
 class MSASwap(BaseModel):
-    """Pydantic Swapfile Info Model."""
+    """
+    Pydantic Swapfile Info Model.
+    """
 
     total: Optional[float]
     used: Optional[float]
@@ -225,7 +253,9 @@ class MSASwap(BaseModel):
 
 
 class MSASystemInfo(BaseModel):
-    """Pydantic System Info Model."""
+    """
+    Pydantic System Info Model.
+    """
 
     OS_Name: str = ""
     Node_Name: str = ""
@@ -268,7 +298,9 @@ class MSASystemInfo(BaseModel):
 
 
 class MSASystemGPUInfo(BaseModel):
-    """Pydantic System GPU Info Model."""
+    """
+    Pydantic System GPU Info Model.
+    """
 
     OS_Name: str = ""
     Node_Name: str = ""

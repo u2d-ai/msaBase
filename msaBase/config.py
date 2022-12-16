@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-from functools import lru_cache
-from typing import List, Optional
+from typing import List, Optional, Dict, Union, Any
 
+# from msaBase.configurate import MSAApp
 from msaBase.logger import logger
 from msaBase.models.settings import MSAAppSettings
 from msaDocModels.health import MSAHealthDefinition
@@ -41,9 +41,11 @@ class MSAServiceDefinition(MSAAppSettings):
 
     name: str = "msaBase Service"
     """Service Name, also used as Title."""
+    description: str = ""
+    """Description of the Service."""
     version: str = "0.0.0"
     """Version of the Service."""
-    host: str = "127.0.0.1"
+    host: str = "0.0.0.0"
     """Host/IP which the service runs on."""
     port: int = 8000
     """Port which the service binds to."""
@@ -118,17 +120,31 @@ class MSAServiceDefinition(MSAAppSettings):
     abstract_fs: bool = False
     """Enables internal Abstract Filesystem."""
     abstract_fs_url: str = "."
-    """Set's Filesystem URL"""
+    """Set's Filesystem URL."""
     json_db_url: str = ""
-    """Set's DB URL, for nonlocal JSON DB"""
+    """Set's DB URL, for nonlocal JSON DB."""
+    contact: Dict[str, Union[str, Any]] = {
+        "name": "Marcus Rostalski",
+        "url": "https://www.sparkasse-bremen.de/",
+        "email": "marcus.rostalski@sparkasse-bremen.de",
+    }
+    """Contacts of the service owner."""
 
-    def saveConfig(self):
+    def save_config(self) -> None:
+        """
+        Saves config to a JSON file
+        """
         sa = self.copy(deep=True)
         with open("config.json", "w") as fp:
             json.dump(sa.dict(), fp, sort_keys=True, indent=4)
 
     @staticmethod
-    def loadConfig():
+    def load_config():
+        """
+        Loads config from JSON file
+        Returns:
+
+        """
         ret: MSAServiceDefinition = MSAServiceDefinition()
         if os.path.exists("config.json"):
             with open("config.json", "rb") as fp:
@@ -136,18 +152,17 @@ class MSAServiceDefinition(MSAAppSettings):
                 ret = MSAServiceDefinition.parse_obj(intext)
             logger.info("Loaded config file")
         else:
-            ret.saveConfig()
+            ret.save_config()
         return ret
 
 
-_msa_config: MSAServiceDefinition = MSAServiceDefinition.loadConfig()
-
-
-@lru_cache()
 def get_msa_app_settings() -> MSAServiceDefinition:
     """
-    This function returns a cached instance of the MSAServiceDefinition object.
+    Returns a cached instance of the MSAServiceDefinition object.
     Note:
         Caching is used to prevent re-reading the environment every time the API settings are used in an endpoint.
     """
     return _msa_config
+
+
+_msa_config: MSAServiceDefinition = MSAServiceDefinition.load_config()

@@ -35,7 +35,8 @@ from msaBase.models.sysinfo import (
 
 
 def get_hostname() -> str:
-    """Get socket.gethostname()
+    """
+    Get current host name.
 
     Returns:
         hostname: str
@@ -45,7 +46,8 @@ def get_hostname() -> str:
 
 
 def get_list_partitions() -> List:
-    """Get psutil.disk_partitions()
+    """
+    Get mounted partitions as a list.
 
     Returns:
         partitions_list: List = []
@@ -58,7 +60,8 @@ def get_list_partitions() -> List:
 
 
 def get_gpus() -> List[MSAGPUInfo]:
-    """Get GPUtil.getGPUs()
+    """
+    Get GPU information.
 
     Returns:
         list_gpus: List[MSAGPUInfo] = []
@@ -87,7 +90,8 @@ def get_gpus() -> List[MSAGPUInfo]:
 
 
 def get_partition_usage(partitions) -> Dict:
-    """Get psutil.disk_usage(partition)
+    """
+    Get disc usage statistics for given partitions.
 
     Returns:
         ret: Dict = {"partition": list, "total": list, "used": list, "free": list, "percent": list}
@@ -118,7 +122,8 @@ def get_partition_usage(partitions) -> Dict:
 
 
 def get_map_disk_usage() -> Dict:
-    """Get get_partition_usage(get_list_partitions())
+    """
+    Get get_partition_usage(get_list_partitions())
 
     Returns:
         rdict: Dict
@@ -134,7 +139,8 @@ def get_map_disk_usage() -> Dict:
 
 
 def get_memory_usage() -> MSAMemoryUsage:
-    """Get psutil.virtual_memory()
+    """
+    Get psutil.virtual_memory()
 
     Returns:
         mu: MSAMemoryUsage
@@ -155,7 +161,8 @@ def get_memory_usage() -> MSAMemoryUsage:
 
 
 def get_cpu_freq() -> MSACPUFrequency:
-    """Get psutil.cpu_freq()
+    """
+    Get psutil.cpu_freq()
 
     Returns:
         cpf: MSACPUFrequency
@@ -166,7 +173,8 @@ def get_cpu_freq() -> MSACPUFrequency:
 
 
 def get_cpu_times() -> MSACPUTimes:
-    """Get psutil.cpu_times()
+    """
+    Get psutil.cpu_times()
 
     Returns:
         cti: MSACPUTimes
@@ -188,7 +196,8 @@ def get_cpu_times() -> MSACPUTimes:
 
 
 def get_cpu_stats() -> MSACPUStats:
-    """Get psutil.cpu_times()
+    """
+    Get CPU statistics
 
     Returns:
         cst: MSACPUStats
@@ -204,7 +213,8 @@ def get_cpu_stats() -> MSACPUStats:
 
 
 def get_disk_io() -> MSADiskIO:
-    """Get psutil.disk_io_counters()
+    """
+    Get psutil.disk_io_counters()
 
     Returns:
         dio: MSADiskIO
@@ -225,7 +235,8 @@ def get_disk_io() -> MSADiskIO:
 
 
 def get_network_io() -> MSANetworkIO:
-    """Get psutil.net_io_counters()
+    """
+    Get psutil.net_io_counters()
 
     Returns:
         nio: MSANetworkIO
@@ -245,7 +256,8 @@ def get_network_io() -> MSANetworkIO:
 
 
 def get_network_adapters() -> List[MSANetworkAdapters]:
-    """Get psutil.net_if_addrs()
+    """
+    Get psutil.net_if_addrs()
 
     Returns:
         ret: List[MSANetworkAdapters] = []
@@ -269,7 +281,8 @@ def get_network_adapters() -> List[MSANetworkAdapters]:
 
 
 def get_temperatures() -> List[MSATemperatures]:
-    """Get psutil.sensors_temperatures()
+    """
+    Get psutil.sensors_temperatures()
 
     Returns:
         ret: List[MSATemperatures] = []
@@ -291,7 +304,8 @@ def get_temperatures() -> List[MSATemperatures]:
 
 
 def get_network_stats() -> List[MSANetworkStats]:
-    """Get psutil.net_if_stats()
+    """
+    Get psutil.net_if_stats()
 
     Returns:
         ret: List[MSANetworkStats] = []
@@ -312,7 +326,8 @@ def get_network_stats() -> List[MSANetworkStats]:
 
 
 def get_network_connections() -> List[MSANetworkConnection]:
-    """Get psutil.net_connections()
+    """
+    Get psutil.net_connections()
 
     Returns:
         rlist: List[MSANetworkConnection] = []
@@ -336,7 +351,8 @@ def get_network_connections() -> List[MSANetworkConnection]:
 
 
 def get_swap() -> MSASwap:
-    """Get psutil.swap_memory()
+    """
+    Get psutil.swap_memory()
 
     Returns:
         sw: MSASwap
@@ -351,7 +367,8 @@ def get_swap() -> MSASwap:
 
 
 def get_load_average() -> List[float]:
-    """Returns the CPU load average in tuple[1min, 5min, 15min].
+    """
+    Returns the CPU load average in tuple[1min, 5min, 15min].
 
     Returns:
         1min: total usage
@@ -363,9 +380,10 @@ def get_load_average() -> List[float]:
 
 
 def get_cpu_usage(user: str = None, ignore_self: bool = False) -> tuple[int, int, str]:
-    """Returns the total CPU usage for all available cores.
+    """
+    Returns the total CPU usage for all available cores.
 
-    Args:
+    Parameters:
         user: If given, returns only the total CPU usage of all processes for the given user.
         ignore_self: If ``True`` the process that runs this script will be ignored.
 
@@ -395,7 +413,9 @@ def get_cpu_usage(user: str = None, ignore_self: bool = False) -> tuple[int, int
 
 
 def get_sysinfo() -> MSASystemInfo:
-    """Get MSASystemInfo
+    """
+    Get MSASystemInfo
+
     Returns:
         system_info: Pydantic System Info Model.
 
@@ -410,12 +430,18 @@ def get_sysinfo() -> MSASystemInfo:
         system_info.HW_Identifier = os.uname().machine
         system_info.CPU_Physical = psutil.cpu_count(logical=False)
         system_info.CPU_Logical = os.cpu_count()
-        system_info.Memory_Physical = str(round(psutil.virtual_memory().total / 1024000000.0, 2)) + " GB"
-        system_info.Memory_Available = str(round(psutil.virtual_memory().available / 1024000000.0, 2)) + " GB"
-        system_info.System_Boot = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
-        system_info.Service_Start = datetime.datetime.fromtimestamp(psutil.Process().create_time()).strftime(
-            "%Y-%m-%d %H:%M:%S"
+        system_info.Memory_Physical = (
+            str(round(psutil.virtual_memory().total / 1024000000.0, 2)) + " GB"
         )
+        system_info.Memory_Available = (
+            str(round(psutil.virtual_memory().available / 1024000000.0, 2)) + " GB"
+        )
+        system_info.System_Boot = datetime.datetime.fromtimestamp(
+            psutil.boot_time()
+        ).strftime("%Y-%m-%d %H:%M:%S")
+        system_info.Service_Start = datetime.datetime.fromtimestamp(
+            psutil.Process().create_time()
+        ).strftime("%Y-%m-%d %H:%M:%S")
         system_info.Runtime_Exe = psutil.Process().exe()
         system_info.Runtime_Cmd = psutil.Process().cmdline()
         system_info.PID = psutil.Process().pid
@@ -449,7 +475,9 @@ def get_sysinfo() -> MSASystemInfo:
 
 
 def get_sysgpuinfo() -> MSASystemGPUInfo:
-    """Get MSASystemGPUInfo
+    """
+    Get MSASystemGPUInfo
+
     Returns:
         system_gpu_info: Pydantic System GPU Info Model.
     """
@@ -463,19 +491,27 @@ def get_sysgpuinfo() -> MSASystemGPUInfo:
         system_gpu_info.HW_Identifier = os.uname().machine
         system_gpu_info.CPU_Physical = psutil.cpu_count(logical=False)
         system_gpu_info.CPU_Logical = os.cpu_count()
-        system_gpu_info.Memory_Physical = str(round(psutil.virtual_memory().total / 1024000000.0, 2)) + " GB"
-        system_gpu_info.Memory_Available = str(round(psutil.virtual_memory().available / 1024000000.0, 2)) + " GB"
-        system_gpu_info.System_Boot = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
-        system_gpu_info.Service_Start = datetime.datetime.fromtimestamp(psutil.Process().create_time()).strftime(
-            "%Y-%m-%d %H:%M:%S"
+        system_gpu_info.Memory_Physical = (
+            str(round(psutil.virtual_memory().total / 1024000000.0, 2)) + " GB"
         )
+        system_gpu_info.Memory_Available = (
+            str(round(psutil.virtual_memory().available / 1024000000.0, 2)) + " GB"
+        )
+        system_gpu_info.System_Boot = datetime.datetime.fromtimestamp(
+            psutil.boot_time()
+        ).strftime("%Y-%m-%d %H:%M:%S")
+        system_gpu_info.Service_Start = datetime.datetime.fromtimestamp(
+            psutil.Process().create_time()
+        ).strftime("%Y-%m-%d %H:%M:%S")
         system_gpu_info.Runtime_Exe = psutil.Process().exe()
         system_gpu_info.Runtime_Cmd = psutil.Process().cmdline()
         system_gpu_info.Runtime_Status = psutil.Process().status()
         system_gpu_info.PID = psutil.Process().pid
         system_gpu_info.GPUs = get_gpus()
         system_gpu_info.IP_Address = socket.gethostbyname(socket.gethostname())
-        system_gpu_info.MAC_Address = ":".join(re.findall("..", "%012x" % uuid.getnode()))
+        system_gpu_info.MAC_Address = ":".join(
+            re.findall("..", "%012x" % uuid.getnode())
+        )
 
     except Exception as e:
         getMSABaseExceptionHandler().handle(e, "Error: Get System GPU Information:")
