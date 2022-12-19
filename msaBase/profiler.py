@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import codecs
-import time
 from typing import Dict, Optional
 
 from pyinstrument import Profiler
@@ -13,11 +12,12 @@ class MSAProfilerMiddleware:
 
     Used to create an HTML from the Profiler result if enabled in the MSAServiceDefinition instance.
 
-    Args:
-        msa_app: Optional[Router] = None, Instance of the MSAApp
-        profiler_interval: float = 0.0001,
-        profiler_output_type: str = "html", ``text`` or ``html``should be html if Admin Site Profiler Page should be used.
-        track_each_request: bool = True, Tracks each single request and profiles it immediatly, if off then profiler creates result while shutdwon event.
+    Parameters:
+        msa_app: Instance of the MSAApp
+        profiler_interval: 0.0001
+        profiler_output_type: "text" or "html" should be html if Admin Site Profiler Page should be used.
+        track_each_request: True, Tracks each single request and profiles it immediatly, if off then profiler
+        creates result during shutdown event.
         **profiler_kwargs: other pyinstrument args like 'html_file_name'
     """
 
@@ -43,7 +43,14 @@ class MSAProfilerMiddleware:
         self._track_each_request: bool = track_each_request
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        """register an event handler for profiler stop"""
+        """
+        Register an event handler for profiler stop
+
+        Parameters:
+            scope: event scope
+            receive: receive callable
+            send: send callable
+        """
         if self._server_app is not None and not self._handler_init_done:
             self._handler_init_done = True
             self._server_app.add_event_handler("shutdown", self.get_profiler_result)
@@ -69,14 +76,19 @@ class MSAProfilerMiddleware:
             if scope["type"] == "http":
                 if self._profiler.is_running:
                     self._profiler.stop()
-                    end = time.perf_counter()
                     if self._output_type == "html" and not self._htmlfile_init_done:
                         await self.get_profiler_result()
                     elif self._track_each_request:
                         await self.get_profiler_result()
 
     async def get_profiler_result(self, html_file: str = "profiler.html", replace_title: str = "msaBase-Profiler"):
-        """Produces the profiler result in the defined output type format, ``text`` or ``html``"""
+        """
+        Produces the profiler result in the defined output type format, "text" or "html"
+
+        Parameters:
+            html_file: path to html file
+            replace_title: title to replace "pyinstrument" with.
+        """
         if self._output_type == "text":
             print(self._profiler.output_text(**self._profiler_kwargs))
         elif self._output_type == "html":

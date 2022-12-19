@@ -2,9 +2,10 @@ from fastapi_utils.api_settings import APISettings
 
 
 class MSAAppSettings(APISettings):
-    """MSAAppSettingsbase, inherit APISettings and BaseModel
+    """
+    MSAAppSettings base, inherit APISettings and BaseModel
 
-    Pydantic gives a powerful tool to parse also environment variables and process them with its validators.
+    Pydantic gives a powerful tool to parse environment variables and process them with its validators.
     """
 
     class Config:

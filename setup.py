@@ -28,7 +28,8 @@ setup_info = dict(
         "Source": "https://github.com/u2d-ai/msaBase",
         "Tracker": "https://github.com/u2d-ai/msaBase/issues",
     },
-    description="msaBase - General package for Microservices based on FastAPI like Profiler, Scheduler, Sysinfo, Healtcheck, Error Handling etc.",
+    description="msaBase - General package for Microservices based on FastAPI like Profiler, Scheduler, Sysinfo, "
+    "Healtcheck, Error Handling etc.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     license="MIT",

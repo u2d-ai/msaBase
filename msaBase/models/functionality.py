@@ -2,20 +2,25 @@ import enum
 
 
 class FunctionalityTypes(enum.Enum):
+    """
+    Types of functionalities and whether they require a service reload when changed.
+
+    Attributes:
+        uvloop: UVLoop.
+        servicerouter: Servicerouter.
+        healthdefinition: Healthcheck.
+        instrument: Prometheus Instrument and Expose.
+        background_scheduler: Asyncio Scheduler.
+        asyncio_scheduler: Background Scheduler
+        abstract_fs: Abstract Filesystem."""
+
     uvloop = ("UVLoop", True)
-    """UVLoop."""
     servicerouter = ("Servicerouter", True)
-    """Servicerouter."""
     healthdefinition = ("Healthcheck", True)
-    """Healthcheck."""
     instrument = ("Prometheus Instrument and Expose", True)
-    """Prometheus Instrument and Expose."""
     background_scheduler = ("Asyncio Scheduler", False)
-    """Asyncio Scheduler"""
     asyncio_scheduler = ("Background Scheduler", False)
-    "Background Scheduler"
     abstract_fs = ("Abstract Filesystem", False)
-    """Abstract Filesystem."""
 
     def __init__(self, readable_name: str, need_restart: bool):
         self.readable_name = readable_name

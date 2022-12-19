@@ -5,8 +5,8 @@ from loguru import logger
 from msaBase.config import get_msa_app_settings
 from msaBase.configurate import MSAApp
 
-setting = get_msa_app_settings()
-app = MSAApp(settings=setting)
+settings = get_msa_app_settings()
+app = MSAApp(settings=settings)
 
 
 async def extend_startup_event(self) -> None:
@@ -21,7 +21,8 @@ app.extend_startup_event = types.MethodType(extend_startup_event, app)
 app.extend_shutdown_event = types.MethodType(extend_shutdown_event, app)
 
 if __name__ == "__main__":
-    logger.info("Starting Services...")
+    app.logger.info("Starting Services...")
+    app.send_config()
     uvicorn.run(
         app,
         host=app.settings.host,

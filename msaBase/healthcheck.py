@@ -11,7 +11,7 @@ class MSAHealthCheck(Thread):
     def __init__(self, healthdefinition: MSAHealthDefinition, host: str, port: int):
         """MSAHealthCheckObject, provides a thread to give a healthcheck.
 
-        Args:
+        Parameters:
             healthdefinition: The MSAHealthDefinition instance
             host: IP/URl to call the healtcheck endpoint
             port: Port of the healtcheck endpoint server listener/endpoint
@@ -25,15 +25,17 @@ class MSAHealthCheck(Thread):
         self.error: str = ""
 
     async def get_health(self) -> str:
-        """Get the last health check result
+        """
+        Get the last health check result
 
-        The string is "positiv: status_code" or "negative: status_code"
-
+        Returns:
+            string "positiv: status_code" or "negative: status_code"
         """
         return self.healthy
 
     def run(self):
-        """Run the Healthcheck Thread
+        """
+        Run the Healthcheck Thread
 
         Sleeps by the interval provided by the MSAHealthDefinition.
 

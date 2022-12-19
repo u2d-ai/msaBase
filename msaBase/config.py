@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-from functools import lru_cache
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, Union
 
+# from msaBase.configurate import MSAApp
 from msaBase.logger import logger
 from msaBase.models.settings import MSAAppSettings
 from msaDocModels.health import MSAHealthDefinition
@@ -37,98 +37,118 @@ class MSAServiceDefinition(MSAAppSettings):
 
     Note that assignments to variables are also validated, ensuring that even if you make runtime-modifications
     to the config, they should have the correct types.
+
+    Attributes:
+        name: Service Name, also used as Title.
+        description: Description of the Service.
+        version: Version of the Service.
+        host: Host/IP which the service runs on.
+        port: Port which the service binds to.
+        dapr_http_port: Port http which  used dapr app.
+        dapr_grpc_port: Port grpc which used dapr app.
+        tags: Optional Metadata: Use this to carry some variables through the service instance.
+        allow_origins: CORSMiddleware. List of allowed origins (as strings) or all of them with the wildcard "*".
+        allow_credentials: CORSMiddleware. Allow (False) Credentials (Authorization headers, Cookies, etc).
+        allow_methods: CORSMiddleware. Specific HTTP methods (POST, PUT) or all of them with the wildcard "*".
+        allow_headers: CORSMiddleware. List[str]. Specific HTTP headers or all of them with the wildcard "*".
+        healthdefinition: Healthdefinition Instance.
+        uvloop: Use UVLoop instead of asyncio loop.
+        sysrouter: Enable the System Routes defined by router.system module (/sysinfo, /sysgpuinfo, /syserror, ...).
+        servicerouter: Enable the Service Routes defined by the MSAApp
+        (/scheduler, /status, /defintion, /settings, /schema, /info, ...).
+        starception: Enable Starception Middleware.
+        validationception: Enable Validation Exception Handler.
+        httpception: Enable the HTTP Exception Handler, which provides HTML Error Pages instead of JSONResponse.
+        httpception_exclude: List of HTTP Exception Codes which are excluded and just
+        forwarded by the HTTP Exception Handler.
+        cors: Enable CORS Middleware.
+        httpsredirect: Enable HTTPS Redirect Middleware.
+        gzip: Enable GZIP Middleware.
+        session: Enable Session Middleware.
+        csrf: Enable CSRF Forms Protection Middleware.
+        msgpack: Enable Messagepack Negotiation Middleware.
+        instrument: Enable Prometheus Instrumentation for the instance.
+        signal_middleware: Enable MSASignal Middleware.
+        task_middleware: Enable MSATask Middleware.
+        context: Enable Context Middleware.
+        profiler: Enable Profiler Middleware.
+        profiler_output_type: Set the Profiler Output Type, should be html or text,
+        html is needed if you want to use the profiler on the Admin Site.
+        profiler_single_calls: Enable to Track each Request by the Profiler.
+        profiler_url: Set the URL to reach the profiler result html, /profiler.
+        timing: Enables Timing Middleware, reports timing data at the granularity of individual endpoint calls.
+        limiter: Enables Rate Limiter (slowapi).
+        background_scheduler: Enables Background Scheduler.
+        asyncio_scheduler: Enables Asyncio Scheduler.
+        abstract_fs: Enables internal Abstract Filesystem.
+        abstract_fs_url: Set's Filesystem URL.
+        json_db_url: Set's DB URL, for nonlocal JSON DB.
+        contact: Contacts of the service owner.
     """
 
     name: str = "msaBase Service"
-    """Service Name, also used as Title."""
+    description: str = ""
     version: str = "0.0.0"
-    """Version of the Service."""
-    host: str = "127.0.0.1"
-    """Host/IP which the service runs on."""
+    host: str = "0.0.0.0"
     port: int = 8000
-    """Port which the service binds to."""
     dapr_http_port: int = 6000
-    """Port http which  used dapr app."""
     dapr_grpc_port: int = 50001
-    """Port grpc which used dapr app."""
     tags: List[str] = []
-    """Optional Metadata: Use this to carry some variables through the service instance."""
     allow_origins: List[str] = ["*"]
-    """CORSMiddleware. List[str]. List of allowed origins (as strings) or all of them with the wildcard ``*`` ."""
     allow_credentials: bool = False
-    """CORSMiddleware. Bool. Allow (False) Credentials (Authorization headers, Cookies, etc)."""
     allow_methods: List[str] = ["*"]
-    """CORSMiddleware. List[str]. Specific HTTP methods (POST, PUT) or all of them with the wildcard ``*`` ."""
     allow_headers: List[str] = ["*"]
-    """CORSMiddleware. List[str]. Specific HTTP headers or all of them with the wildcard ``*`` ."""
     healthdefinition: MSAHealthDefinition = MSAHealthDefinition()
-    """Healthdefinition Instance."""
     uvloop: bool = True
-    """Use UVLoop instead of asyncio loop."""
     sysrouter: bool = True
-    """Enable the System Routes defined by router.system module (/sysinfo, /sysgpuinfo, /syserror, ...)."""
     servicerouter: bool = True
-    """Enable the Service Routes defined by the MSAApp (/scheduler, /status, /defintion, /settings, /schema, /info, ...)."""
     starception: bool = True
-    """Enable Starception Middleware."""
     validationception: bool = True
-    """Enable Validation Exception Handler."""
     httpception: bool = True
-    """Enable the HTTP Exception Handler, which provides HTML Error Pages instead of JSONResponse."""
-    httpception_exclude: List[int] = [
-        307,
-    ]
-    """List of HTTP Exception Codes which are excluded and just forwarded by the HTTP Exception Handler."""
+    httpception_exclude: List[int] = [307]
     cors: bool = True
-    """Enable CORS Middleware."""
     httpsredirect: bool = False
-    """Enable HTTPS Redirect Middleware."""
     gzip: bool = False
-    """Enable GZIP Middleware."""
     session: bool = False
-    """Enable Session Middleware."""
     csrf: bool = False
-    """Enable CSRF Forms Protection Middleware."""
     msgpack: bool = False
-    """Enable Messagepack Negotiation Middleware."""
     instrument: bool = True
-    """Enable Prometheus Instrumentation for the instance."""
     signal_middleware: bool = False
-    """Enable MSASignal Middleware."""
     task_middleware: bool = False
-    """Enable MSATask Middleware."""
     context: bool = False
-    """Enable Context Middleware."""
     profiler: bool = False
-    """Enable Profiler Middleware."""
     profiler_output_type: str = "html"  # text or html
-    """Set the Profiler Output Type, should be html or text, html is needed if you want to use the profiler on the Admin Site."""
     profiler_single_calls: bool = False
-    """Enable to Track each Request by the Profiler."""
     profiler_url: str = "/profiler"
-    """Set the URL to reach the profiler result html, /profiler."""
     timing: bool = False
-    """Enables Timing Middleware, reports timing data at the granularity of individual endpoint calls."""
     limiter: bool = False
-    """Enables Rate Limiter (slowapi)."""
     background_scheduler: bool = False
-    "Enables Background Scheduler."
     asyncio_scheduler: bool = False
-    "Enables Asyncio Scheduler."
     abstract_fs: bool = False
-    """Enables internal Abstract Filesystem."""
     abstract_fs_url: str = "."
-    """Set's Filesystem URL"""
     json_db_url: str = ""
-    """Set's DB URL, for nonlocal JSON DB"""
+    contact: Dict[str, Union[str, Any]] = {
+        "name": "Marcus Rostalski",
+        "url": "https://www.sparkasse-bremen.de/",
+        "email": "marcus.rostalski@sparkasse-bremen.de",
+    }
 
-    def saveConfig(self):
+    def save_config(self) -> None:
+        """
+        Saves config to a JSON file
+        """
         sa = self.copy(deep=True)
         with open("config.json", "w") as fp:
             json.dump(sa.dict(), fp, sort_keys=True, indent=4)
 
     @staticmethod
-    def loadConfig():
+    def load_config():
+        """
+        Loads config from JSON file.
+
+        Returns:
+            MSAServiceDefinition config model
+        """
         ret: MSAServiceDefinition = MSAServiceDefinition()
         if os.path.exists("config.json"):
             with open("config.json", "rb") as fp:
@@ -136,18 +156,55 @@ class MSAServiceDefinition(MSAAppSettings):
                 ret = MSAServiceDefinition.parse_obj(intext)
             logger.info("Loaded config file")
         else:
-            ret.saveConfig()
+            ret.save_config()
         return ret
 
 
-_msa_config: MSAServiceDefinition = MSAServiceDefinition.loadConfig()
-
-
-@lru_cache()
 def get_msa_app_settings() -> MSAServiceDefinition:
     """
-    This function returns a cached instance of the MSAServiceDefinition object.
+    Returns a cached instance of the MSAServiceDefinition object.
+
     Note:
         Caching is used to prevent re-reading the environment every time the API settings are used in an endpoint.
     """
     return _msa_config
+
+
+class ConfigDTO(BaseModel):
+    """
+    DTO that contains needed attributes to be processed.
+
+    Attributes:
+        one_time: Flag indicating whether the configuration is applied only to one request.
+        config: Service config.
+    """
+
+    one_time: bool = False
+    config: MSAServiceDefinition
+
+
+class ConfigInput(BaseModel):
+    """
+    Pydantic model to receive service configs from pub/sub.
+
+    Attributes:
+        data: Service config.
+    """
+
+    data: ConfigDTO
+
+
+class ConfigDataDTO(BaseModel):
+    """
+    DTO that represents result of service work.
+
+    Attributes:
+        service_name: Service name to distinguish.
+        config_dto: Service config.
+    """
+
+    service_name: str
+    config_dto: ConfigDTO
+
+
+_msa_config: MSAServiceDefinition = MSAServiceDefinition.load_config()

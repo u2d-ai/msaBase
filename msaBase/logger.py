@@ -14,6 +14,12 @@ class InterceptHandler(logging.Handler):
     """
 
     def emit(self, record: logging.LogRecord):
+        """
+        Gets corresponding Loguru level if it exists, finds caller.
+
+        Parameters:
+            record: log record
+        """
         # Get corresponding Loguru level if it exists
         try:
             level = logger.level(record.levelname).name
@@ -37,7 +43,8 @@ def format_record(record: dict) -> str:
 
     Example:
         ```python
-        payload = [{"users":[{"name": "Nick", "age": 87, "is_active": True}, {"name": "Alex", "age": 27, "is_active": True}], "count": 2}]
+        payload = [{"users":[{"name": "Nick", "age": 87, "is_active": True},
+        {"name": "Alex", "age": 27, "is_active": True}], "count": 2}]
         logger.bind(payload=).debug("users payload")
         [   {   'count': 2,
                 'users': [   {'age': 87, 'is_active': True, 'name': 'Nick'},
