@@ -36,7 +36,7 @@ from starlette_context import plugins
 from msaBase.config import MSAServiceDefinition, MSAServiceStatus
 from msaBase.errorhandling import getMSABaseExceptionHandler
 from msaBase.logger import init_logging
-from msaBase.models.config import ConfigInput
+from msaBase.models.config import ConfigDataDTO, ConfigDTO, ConfigInput
 from msaBase.models.functionality import FunctionalityTypes
 from msaBase.models.middlewares import MiddlewareTypes
 from msaBase.models.sysinfo import MSASystemGPUInfo, MSASystemInfo
@@ -284,7 +284,7 @@ class MSAApp(FastAPI):
         self.abstract_fs: "MSAFilesystem" = None
         self.fs: "FS" = None
         self.healthcheck: "health.MSAHealthCheck" = None
-        self.logger.info_pub = self.logger_info
+        self.logger.info_pub = self.publish
 
         init_logging()
         self.add_middlewares()
@@ -328,7 +328,8 @@ class MSAApp(FastAPI):
         """
         Makes an endpoint use one-time config whenever it is present.
 
-        Returns:
+        Parameters:
+            function: an endpoint to wrap
         """
 
         @wraps(function)
@@ -344,14 +345,13 @@ class MSAApp(FastAPI):
 
         return decorator
 
-    def logger_info(self, message: str, topic_name: str = "") -> None:
+    def publish(self, message: ConfigDataDTO, topic_name: str = "") -> None:
         """
         Sends message to pubsub topic.
 
         Parameters:
             message: JSON message to send.
             topic_name: name of pubsub topic that needs this message.
-
         """
         self.logger.info("Sending config to spkRegistry...")
         if topic_name:
@@ -359,7 +359,7 @@ class MSAApp(FastAPI):
                 client.publish_event(
                     pubsub_name="spkpubsub",
                     topic_name=topic_name,
-                    data=message,
+                    data=message.json(),
                     data_content_type="application/json",
                 )
 
@@ -1004,4 +1004,8 @@ class MSAApp(FastAPI):
         Sends current config to pubsub registry topic.
         """
         with open("config.json") as json_file:
-            self.logger_info(json_file.read(), REGISTRY_TOPIC)
+            config = MSAServiceDefinition.parse_obj(json.load(json_file))
+            data = ConfigDataDTO(
+                config_dto=ConfigDTO(config=config), service_name=self.settings.name
+            )
+        self.publish(data, REGISTRY_TOPIC)

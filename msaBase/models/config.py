@@ -23,3 +23,15 @@ class ConfigInput(BaseModel):
     """
 
     data: ConfigDTO
+
+
+class ConfigDataDTO(BaseModel):
+    """
+    DTO that represents result of service work.
+    Attributes:
+        service_name: Service name to distinguish.
+        config_dto: Service config.
+    """
+
+    service_name: str
+    config_dto: ConfigDTO
