@@ -25,7 +25,7 @@ from loguru import logger as logger_gruru
 from msaBase.config import MSAServiceDefinition, MSAServiceStatus
 from msaBase.errorhandling import getMSABaseExceptionHandler
 from msaBase.logger import init_logging
-from msaBase.models.config import ConfigDataDTO, ConfigDTO, ConfigInput
+from msaBase.models.config import ConfigDTO, ConfigInput
 from msaBase.models.functionality import FunctionalityTypes
 from msaBase.models.middlewares import MiddlewareTypes
 from msaBase.models.sysinfo import MSASystemGPUInfo, MSASystemInfo
@@ -128,43 +128,6 @@ class MSAApp(FastAPI):
         title: Optional[str] = None,
         description: Optional[str] = None,
         host: Optional[str] = None,
-        port: Optional[int] = None,
-        dapr_http_port: Optional[int] = None,
-        dapr_grpc_port: Optional[int] = None,
-        tags: Optional[List[str]] = None,
-        allow_origins: Optional[str] = None,
-        allow_credentials: Optional[bool] = None,
-        allow_methods: Optional[List[str]] = None,
-        allow_headers: Optional[List[str]] = None,
-        healthdefinition: Optional[MSAHealthDefinition] = None,
-        uvloop: Optional[bool] = None,
-        sysrouter: Optional[bool] = None,
-        servicerouter: Optional[bool] = None,
-        starception: Optional[bool] = None,
-        validationception: Optional[bool] = None,
-        httpception: Optional[bool] = None,
-        httpception_exclude: Optional[List[int]] = None,
-        cors: Optional[bool] = None,
-        httpsredirect: Optional[bool] = None,
-        gzip: Optional[bool] = None,
-        session: Optional[bool] = None,
-        csrf: Optional[bool] = None,
-        msgpack: Optional[bool] = None,
-        instrument: Optional[bool] = None,
-        signal_middleware: Optional[bool] = None,
-        task_middleware: Optional[bool] = None,
-        context: Optional[bool] = None,
-        profiler: Optional[bool] = None,
-        profiler_output_type: Optional[str] = None,
-        profiler_single_calls: Optional[bool] = None,
-        profiler_url: Optional[str] = None,
-        timing: Optional[bool] = None,
-        limiter: Optional[bool] = None,
-        background_scheduler: Optional[bool] = None,
-        asyncio_scheduler: Optional[bool] = None,
-        abstract_fs: Optional[bool] = None,
-        abstract_fs_url: Optional[str] = None,
-        json_db_url: Optional[str] = None,
         version: Optional[str] = None,
         openapi_url: Optional[str] = None,
         openapi_tags: Optional[List[Dict[str, Any]]] = None,
@@ -186,49 +149,6 @@ class MSAApp(FastAPI):
         self.title = title if title else self.settings.title
         self.description = description if description else self.settings.description
         self.host = host if host else self.settings.host
-        self.port = port if port else self.settings.port
-        self.dapr_http_port = dapr_http_port if dapr_http_port else self.settings.dapr_http_port
-        self.dapr_grpc_port = dapr_grpc_port if dapr_grpc_port else self.settings.dapr_grpc_port
-        self.tags = tags if tags else self.settings.tags
-        self.allow_origins = allow_origins if allow_origins else self.settings.allow_origins
-        self.allow_credentials = allow_credentials if allow_credentials else self.settings.allow_credentials
-        self.allow_methods = allow_methods if allow_methods else self.settings.allow_methods
-        self.allow_headers = allow_headers if allow_headers else self.settings.allow_headers
-        self.healthdefinition = healthdefinition if healthdefinition else self.settings.healthdefinition
-        self.uvloop = uvloop if uvloop else self.settings.uvloop
-        self.sysrouter = sysrouter if sysrouter else self.settings.sysrouter
-        self.servicerouter = servicerouter if servicerouter else self.settings.servicerouter
-        self.starception = starception if starception else self.settings.starception
-        self.validationception = validationception if validationception else self.settings.validationception
-        self.httpception = httpception if httpception else self.settings.httpception
-        self.httpception_exclude = httpception_exclude if httpception_exclude else self.settings.httpception_exclude
-        self.cors = cors if cors else self.settings.cors
-        self.httpsredirect = httpsredirect if httpsredirect else self.settings.httpsredirect
-        self.gzip = gzip if gzip else self.settings.gzip
-        self.session = session if session else self.settings.session
-        self.csrf = csrf if csrf else self.settings.csrf
-        self.msgpack = msgpack if msgpack else self.settings.msgpack
-        self.instrument = instrument if instrument else self.settings.instrument
-        self.signal_middleware = signal_middleware if signal_middleware else self.settings.signal_middleware
-        self.task_middleware = task_middleware if task_middleware else self.settings.task_middleware
-        self.context = context if context else self.settings.context
-        self.profiler = profiler if profiler else self.settings.profiler
-        self.profiler_output_type = (
-            profiler_output_type if profiler_output_type else self.settings.profiler_output_type
-        )
-        self.profiler_single_calls = (
-            profiler_single_calls if profiler_single_calls else self.settings.profiler_single_calls
-        )
-        self.profiler_url = profiler_url if profiler_url else self.settings.profiler_url
-        self.timing = timing if timing else self.settings.timing
-        self.limiter = limiter if limiter else self.settings.limiter
-        self.background_scheduler = (
-            background_scheduler if background_scheduler else self.settings.background_scheduler
-        )
-        self.asyncio_scheduler = asyncio_scheduler if asyncio_scheduler else self.settings.asyncio_scheduler
-        self.abstract_fs = abstract_fs if abstract_fs else self.settings.abstract_fs
-        self.abstract_fs_url = abstract_fs_url if abstract_fs_url else self.settings.abstract_fs_url
-        self.json_db_url = json_db_url if json_db_url else self.settings.json_db_url
 
         self.version = version if version else self.settings.version
         self.openapi_url = openapi_url if openapi_url else self.settings.openapi_url
@@ -248,7 +168,7 @@ class MSAApp(FastAPI):
         self.abstract_fs: "MSAFilesystem" = None
         self.fs: "FS" = None
         self.healthcheck: "health.MSAHealthCheck" = None
-        self.logger.info_pub = self.publish
+        self.logger.info_pub = self.logger_info
 
         init_logging()
         self.add_middlewares()
@@ -305,7 +225,7 @@ class MSAApp(FastAPI):
 
         return decorator
 
-    def publish(self, message: ConfigDataDTO, topic_name: str = "") -> None:
+    def logger_info(self, message: str, topic_name: str = "") -> None:
         """
         Sends message to pubsub topic.
 
@@ -313,15 +233,15 @@ class MSAApp(FastAPI):
             message: JSON message to send.
             topic_name: name of pubsub topic that needs this message.
         """
-        self.logger.info("Sending config to spkRegistry...")
         if topic_name:
             with DaprClient() as client:
                 client.publish_event(
                     pubsub_name="spkpubsub",
                     topic_name=topic_name,
-                    data=message.json(),
+                    data=message,
                     data_content_type="application/json",
                 )
+        self.logger.info(message)
 
     async def extend_startup_event(self) -> None:
         """You can extend the main shutdown"""
@@ -937,7 +857,11 @@ class MSAApp(FastAPI):
         """
         Sends current config to pubsub registry topic.
         """
-        with open("config.json") as json_file:
-            config = MSAServiceDefinition.parse_obj(json.load(json_file))
-            data = ConfigDataDTO(config_dto=ConfigDTO(config=config), service_name=self.settings.name)
-        self.publish(data, REGISTRY_TOPIC)
+        try:
+            self.logger.info("")
+            with open("config.json") as json_file:
+                config = MSAServiceDefinition.parse_obj(json.load(json_file))
+                data = ConfigDTO(config=config, one_time=False)
+            self.logger.info_pub(data.json(), REGISTRY_TOPIC)
+        except Exception as ex:
+            self.logger.error(f"An error occurred while trying to send config to spkRegistry. Exception: {ex}")
