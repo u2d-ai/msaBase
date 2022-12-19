@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import codecs
-import time
 from typing import Dict, Optional
 
 from pyinstrument import Profiler
@@ -14,10 +13,11 @@ class MSAProfilerMiddleware:
     Used to create an HTML from the Profiler result if enabled in the MSAServiceDefinition instance.
 
     Args:
-        msa_app: Optional[Router] = None, Instance of the MSAApp
-        profiler_interval: float = 0.0001,
-        profiler_output_type: str = "html", ``text`` or ``html``should be html if Admin Site Profiler Page should be used.
-        track_each_request: bool = True, Tracks each single request and profiles it immediatly, if off then profiler creates result while shutdwon event.
+        msa_app: Instance of the MSAApp
+        profiler_interval: 0.0001
+        profiler_output_type: "html", ``text`` or ``html``should be html if Admin Site Profiler Page should be used.
+        track_each_request: True, Tracks each single request and profiles it immediatly, if off then profiler
+        creates result during shutdown event.
         **profiler_kwargs: other pyinstrument args like 'html_file_name'
     """
 
@@ -69,15 +69,12 @@ class MSAProfilerMiddleware:
             if scope["type"] == "http":
                 if self._profiler.is_running:
                     self._profiler.stop()
-                    end = time.perf_counter()
                     if self._output_type == "html" and not self._htmlfile_init_done:
                         await self.get_profiler_result()
                     elif self._track_each_request:
                         await self.get_profiler_result()
 
-    async def get_profiler_result(
-        self, html_file: str = "profiler.html", replace_title: str = "msaBase-Profiler"
-    ):
+    async def get_profiler_result(self, html_file: str = "profiler.html", replace_title: str = "msaBase-Profiler"):
         """Produces the profiler result in the defined output type format, ``text`` or ``html``"""
         if self._output_type == "text":
             print(self._profiler.output_text(**self._profiler_kwargs))
@@ -89,8 +86,6 @@ class MSAProfilerMiddleware:
                 **self._profiler_kwargs
             )  # HTMLRenderer().render(session=self._profiler.last_session)
             if replace_title:
-                html_code = html_code.replace("pyinstrument", replace_title).replace(
-                    "Pyinstrument", replace_title
-                )
+                html_code = html_code.replace("pyinstrument", replace_title).replace("Pyinstrument", replace_title)
             with codecs.open(html_name, "w", "utf-8") as f:
                 f.write(html_code)

@@ -26,9 +26,7 @@ class InterceptHandler(logging.Handler):
             frame = frame.f_back
             depth += 1
 
-        logger.opt(depth=depth, exception=record.exc_info).log(
-            level, record.getMessage()
-        )
+        logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
 
 
 def format_record(record: dict) -> str:
@@ -39,7 +37,8 @@ def format_record(record: dict) -> str:
 
     Example:
         ```python
-        payload = [{"users":[{"name": "Nick", "age": 87, "is_active": True}, {"name": "Alex", "age": 27, "is_active": True}], "count": 2}]
+        payload = [{"users":[{"name": "Nick", "age": 87, "is_active": True},
+        {"name": "Alex", "age": 27, "is_active": True}], "count": 2}]
         logger.bind(payload=).debug("users payload")
         [   {   'count': 2,
                 'users': [   {'age': 87, 'is_active': True, 'name': 'Nick'},
@@ -49,9 +48,7 @@ def format_record(record: dict) -> str:
 
     format_string = LOGURU_FORMAT
     if record["extra"].get("payload") is not None:
-        record["extra"]["payload"] = pformat(
-            record["extra"]["payload"], indent=4, compact=True, width=88
-        )
+        record["extra"]["payload"] = pformat(record["extra"]["payload"], indent=4, compact=True, width=88)
         format_string += "\n<level>{extra[payload]}</level>"
 
     format_string += "{exception}\n"
@@ -87,11 +84,7 @@ def init_logging():
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
 
-    loggers = (
-        logging.getLogger(name)
-        for name in logging.root.manager.loggerDict
-        if name.startswith("uvicorn.")
-    )
+    loggers = (logging.getLogger(name) for name in logging.root.manager.loggerDict if name.startswith("uvicorn."))
 
     # change handler for default uvicorn logger
     intercept_handler = InterceptHandler()
@@ -106,6 +99,4 @@ def init_logging():
     logging.getLogger("rocketry").handlers = []
 
     # set logs output, level and format
-    logger.configure(
-        handlers=[{"sink": sys.stdout, "level": logging.INFO, "format": format_record}]
-    )
+    logger.configure(handlers=[{"sink": sys.stdout, "level": logging.INFO, "format": format_record}])

@@ -1,6 +1,5 @@
-from pydantic.main import BaseModel
-
 from msaBase.config import MSAServiceDefinition
+from pydantic.main import BaseModel
 
 
 class ConfigDTO(BaseModel):

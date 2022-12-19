@@ -78,19 +78,25 @@ class MSANetworkConnection(BaseModel):
 
     index: Optional[int]
     file_descriptor: Optional[int]
-    """the socket file descriptor. If the connection refers to the current process this may be passed to socket.fromfd to obtain a usable socket object. On Windows and SunOS this is always set to -1."""
+    """the socket file descriptor. If the connection refers to the current process this may be passed to socket.
+    fromfd to obtain a usable socket object. On Windows and SunOS this is always set to -1."""
     family: Optional[int]
     """the address family, either AF_INET, AF_INET6 or AF_UNIX."""
     type: Optional[int]
     """the address type, either ``SOCK_STREAM``, ``SOCK_DGRAM`` or ``SOCK_SEQPACKET``."""
     local_addr: Optional[str]
-    """the local address as a ``(ip, port)`` named tuple or a ``path`` in case of AF_UNIX sockets. For UNIX sockets see notes below."""
+    """the local address as a ``(ip, port)`` named tuple or a ``path`` in case of AF_UNIX sockets.
+    For UNIX sockets see notes below."""
     remote_addr: Optional[str]
-    """the remote address as a ``(ip, port)`` named tuple or an absolute ``path`` in case of UNIX sockets. When the remote endpoint is not connected you’ll get an empty tuple (AF_INET*) or ``""`` (AF_UNIX). For UNIX sockets see notes below."""
+    """the remote address as a ``(ip, port)`` named tuple or an absolute ``path`` in case of UNIX sockets.
+    When the remote endpoint is not connected you’ll get an empty tuple (AF_INET*) or ``""`` (AF_UNIX).
+    For UNIX sockets see notes below."""
     status: str = ""
-    """represents the status of a TCP connection. The return value is one of the ``psutil.CONN_*`` constants (a string). For UDP and UNIX sockets this is always going to be psutil.CONN_NONE."""
+    """represents the status of a TCP connection. The return value is one of the ``psutil.CONN_*``
+    constants (a string). For UDP and UNIX sockets this is always going to be psutil.CONN_NONE."""
     pid: Optional[int]
-    """the PID of the process which opened the socket, if retrievable, else ``None``. On some platforms (e.g. Linux) the availability of this field changes depending on process privileges (root is needed)."""
+    """the PID of the process which opened the socket, if retrievable, else ``None``. On some platforms (e.g. Linux)
+    the availability of this field changes depending on process privileges (root is needed)."""
 
 
 class MSANetworkAdapter(BaseModel):
@@ -107,7 +113,8 @@ class MSANetworkAdapter(BaseModel):
     broadcast: Optional[str]
     """the broadcast address (may be None)."""
     ptp: Optional[int]
-    """stands for “point to point”; it’s the destination address on a point to point interface (typically a VPN). broadcast and ptp are mutually exclusive. May be None."""
+    """stands for “point to point”; it’s the destination address on a point to point interface
+    (typically a VPN). broadcast and ptp are mutually exclusive. May be None."""
 
 
 class MSANetworkAdapters(BaseModel):
@@ -181,7 +188,8 @@ class MSACPUTimes(BaseModel):
     user: Optional[float]
     """time spent by normal processes executing in user mode; on Linux this also includes guest time"""
     nice: Optional[int]
-    """(UNIX): time spent by niced (prioritized) processes executing in user mode; on Linux this also includes guest_nice time"""
+    """(UNIX): time spent by niced (prioritized) processes executing in user mode;
+    on Linux this also includes guest_nice time"""
     system: Optional[float]
     """time spent by processes executing in kernel mode"""
     idle: Optional[float]
@@ -195,9 +203,11 @@ class MSACPUTimes(BaseModel):
     steal: Optional[int]
     """(Linux 2.6.11+): time spent by other operating systems running in a virtualized environment"""
     guest: Optional[float]
-    """(Linux 2.6.24+): time spent running a virtual CPU for guest operating systems under the control of the Linux kernel"""
+    """(Linux 2.6.24+): time spent running a virtual CPU for guest operating systems
+    under the control of the Linux kernel"""
     guest_nice: Optional[int]
-    """(Linux 3.2.0+): time spent running a niced guest (virtual CPU for guest operating systems under the control of the Linux kernel)"""
+    """(Linux 3.2.0+): time spent running a niced guest (virtual CPU for guest operating systems under the control
+    of the Linux kernel)"""
 
 
 class MSACPUStats(BaseModel):
@@ -223,11 +233,15 @@ class MSAMemoryUsage(BaseModel):
     total: Optional[float]
     """total physical memory (exclusive swap)."""
     available: Optional[float]
-    """the memory that can be given instantly to processes without the system going into swap. This is calculated by summing different memory values depending on the platform and it is supposed to be used to monitor actual memory usage in a cross platform fashion."""
+    """the memory that can be given instantly to processes without the system going into swap.
+    This is calculated by summing different memory values depending on the platform and it is supposed to be
+    used to monitor actual memory usage in a cross platform fashion."""
     used: Optional[float]
-    """memory used, calculated differently depending on the platform and designed for informational purposes only. total - free does not necessarily match used."""
+    """memory used, calculated differently depending on the platform and designed for informational purposes only.
+    total - free does not necessarily match used."""
     free: Optional[float]
-    """memory not being used at all (zeroed) that is readily available; note that this doesn’t reflect the actual memory available (use available instead). total - used does not necessarily match free."""
+    """memory not being used at all (zeroed) that is readily available; note that this doesn’t
+    reflect the actual memory available (use available instead). total - used does not necessarily match free."""
     percent: Optional[float]
     """the percentage usage calculated as (total - available) / total * 100"""
     buffers: Optional[float]

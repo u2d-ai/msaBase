@@ -5,9 +5,7 @@ from pkg_resources import parse_requirements
 from setuptools import find_packages, setup
 
 with pathlib.Path("requirements.txt").open() as requirements_txt:
-    REQUIREMETS = [
-        str(requirement) for requirement in parse_requirements(requirements_txt)
-    ]
+    REQUIREMETS = [str(requirement) for requirement in parse_requirements(requirements_txt)]
 
 
 # Parse version number from pyglet/__init__.py:
@@ -30,7 +28,8 @@ setup_info = dict(
         "Source": "https://github.com/u2d-ai/msaBase",
         "Tracker": "https://github.com/u2d-ai/msaBase/issues",
     },
-    description="msaBase - General package for Microservices based on FastAPI like Profiler, Scheduler, Sysinfo, Healtcheck, Error Handling etc.",
+    description="msaBase - General package for Microservices based on FastAPI like Profiler, Scheduler, Sysinfo, "
+    "Healtcheck, Error Handling etc.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     license="MIT",

@@ -3,12 +3,11 @@ import json
 import os
 from typing import Any, Dict, List, Optional, Union
 
-from msaDocModels.health import MSAHealthDefinition
-from pydantic import BaseModel
-
 # from msaBase.configurate import MSAApp
 from msaBase.logger import logger
 from msaBase.models.settings import MSAAppSettings
+from msaDocModels.health import MSAHealthDefinition
+from pydantic import BaseModel
 
 
 class MSAServiceStatus(BaseModel):
@@ -71,7 +70,8 @@ class MSAServiceDefinition(MSAAppSettings):
     sysrouter: bool = True
     """Enable the System Routes defined by router.system module (/sysinfo, /sysgpuinfo, /syserror, ...)."""
     servicerouter: bool = True
-    """Enable the Service Routes defined by the MSAApp (/scheduler, /status, /defintion, /settings, /schema, /info, ...)."""
+    """Enable the Service Routes defined by the MSAApp
+    (/scheduler, /status, /defintion, /settings, /schema, /info, ...)."""
     starception: bool = True
     """Enable Starception Middleware."""
     validationception: bool = True
@@ -105,7 +105,8 @@ class MSAServiceDefinition(MSAAppSettings):
     profiler: bool = False
     """Enable Profiler Middleware."""
     profiler_output_type: str = "html"  # text or html
-    """Set the Profiler Output Type, should be html or text, html is needed if you want to use the profiler on the Admin Site."""
+    """Set the Profiler Output Type, should be html or text,
+    html is needed if you want to use the profiler on the Admin Site."""
     profiler_single_calls: bool = False
     """Enable to Track each Request by the Profiler."""
     profiler_url: str = "/profiler"

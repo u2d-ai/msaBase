@@ -38,8 +38,7 @@ class MSABaseExceptionHandler:
 
         # Format stacktrace
         self.stack_trace = [
-            "File : %s , Line : %d, Func.Name : %s, Message : %s"
-            % (trace[0], trace[1], trace[2], trace[3])
+            "File : %s , Line : %d, Func.Name : %s, Message : %s" % (trace[0], trace[1], trace[2], trace[3])
             for trace in trace_back
         ]
 
