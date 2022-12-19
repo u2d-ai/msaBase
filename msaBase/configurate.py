@@ -22,10 +22,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
 from fs.base import FS
 from loguru import logger as logger_gruru
-from msaBase.config import MSAServiceDefinition, MSAServiceStatus
+from msaBase.config import ConfigDTO, ConfigInput, MSAServiceDefinition, MSAServiceStatus
 from msaBase.errorhandling import getMSABaseExceptionHandler
 from msaBase.logger import init_logging
-from msaBase.models.config import ConfigDTO, ConfigInput
 from msaBase.models.functionality import FunctionalityTypes
 from msaBase.models.middlewares import MiddlewareTypes
 from msaBase.models.sysinfo import MSASystemGPUInfo, MSASystemInfo

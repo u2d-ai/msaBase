@@ -144,9 +144,10 @@ class MSAServiceDefinition(MSAAppSettings):
     @staticmethod
     def load_config():
         """
-        Loads config from JSON file
-        Returns:
+        Loads config from JSON file.
 
+        Returns:
+            MSAServiceDefinition config model
         """
         ret: MSAServiceDefinition = MSAServiceDefinition()
         if os.path.exists("config.json"):
@@ -162,10 +163,48 @@ class MSAServiceDefinition(MSAAppSettings):
 def get_msa_app_settings() -> MSAServiceDefinition:
     """
     Returns a cached instance of the MSAServiceDefinition object.
+
     Note:
         Caching is used to prevent re-reading the environment every time the API settings are used in an endpoint.
     """
     return _msa_config
+
+
+class ConfigDTO(BaseModel):
+    """
+    DTO that contains needed attributes to be processed.
+
+    Attributes:
+        one_time: Flag indicating whether the configuration is applied only to one request.
+        config: Service config.
+    """
+
+    one_time: bool = False
+    config: MSAServiceDefinition
+
+
+class ConfigInput(BaseModel):
+    """
+    Pydantic model to receive service configs from pub/sub.
+
+    Attributes:
+        data: Service config.
+    """
+
+    data: ConfigDTO
+
+
+class ConfigDataDTO(BaseModel):
+    """
+    DTO that represents result of service work.
+
+    Attributes:
+        service_name: Service name to distinguish.
+        config_dto: Service config.
+    """
+
+    service_name: str
+    config_dto: ConfigDTO
 
 
 _msa_config: MSAServiceDefinition = MSAServiceDefinition.load_config()
