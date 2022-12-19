@@ -14,6 +14,12 @@ class InterceptHandler(logging.Handler):
     """
 
     def emit(self, record: logging.LogRecord):
+        """
+        Gets corresponding Loguru level if it exists, finds caller.
+
+        Parameters:
+            record: log record
+        """
         # Get corresponding Loguru level if it exists
         try:
             level = logger.level(record.levelname).name

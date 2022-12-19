@@ -8,7 +8,7 @@ import re
 import socket
 import uuid
 from subprocess import getoutput
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import GPUtil
 import psutil
@@ -39,7 +39,7 @@ def get_hostname() -> str:
     Get current host name.
 
     Returns:
-        hostname: str
+        hostname string
     """
     hostname: str = socket.gethostname()
     return hostname
@@ -50,7 +50,7 @@ def get_list_partitions() -> List:
     Get mounted partitions as a list.
 
     Returns:
-        partitions_list: List = []
+        List of mounted partitions.
     """
     partitions_list = []
     partitions = psutil.disk_partitions()
@@ -64,7 +64,7 @@ def get_gpus() -> List[MSAGPUInfo]:
     Get GPU information.
 
     Returns:
-        list_gpus: List[MSAGPUInfo] = []
+        List of GPUs
     """
     gpus = GPUtil.getGPUs()
     list_gpus: List[MSAGPUInfo] = []
@@ -94,7 +94,7 @@ def get_partition_usage(partitions) -> Dict:
     Get disc usage statistics for given partitions.
 
     Returns:
-        ret: Dict = {"partition": list, "total": list, "used": list, "free": list, "percent": list}
+        Dictionary containing partition usage statistics info
     """
     lstotal = []
     lsused = []
@@ -123,10 +123,10 @@ def get_partition_usage(partitions) -> Dict:
 
 def get_map_disk_usage() -> Dict:
     """
-    Get get_partition_usage(get_list_partitions())
+    Get reformatted disk usage info
 
     Returns:
-        rdict: Dict
+        Dictionary containing reformatted disk usage statistics info
     """
     MapUsage: Dict = get_partition_usage(get_list_partitions())
     disk = MapUsage["partition"]
@@ -140,10 +140,10 @@ def get_map_disk_usage() -> Dict:
 
 def get_memory_usage() -> MSAMemoryUsage:
     """
-    Get psutil.virtual_memory()
+    Get virtual memory usage
 
     Returns:
-        mu: MSAMemoryUsage
+        Pydantic model containing memory usage information
     """
     mu: MSAMemoryUsage = MSAMemoryUsage()
     memory = psutil.virtual_memory()
@@ -162,10 +162,10 @@ def get_memory_usage() -> MSAMemoryUsage:
 
 def get_cpu_freq() -> MSACPUFrequency:
     """
-    Get psutil.cpu_freq()
+    Get CPU frequency information
 
     Returns:
-        cpf: MSACPUFrequency
+        Pydantic model containing CPU frequency information
     """
     cpf: MSACPUFrequency = MSACPUFrequency()
     cpf.current, cpf.min, cpf.max = psutil.cpu_freq()
@@ -174,10 +174,10 @@ def get_cpu_freq() -> MSACPUFrequency:
 
 def get_cpu_times() -> MSACPUTimes:
     """
-    Get psutil.cpu_times()
+    Get CPU timings information
 
     Returns:
-        cti: MSACPUTimes
+        Pydantic model containing CPU timings information
     """
     cti: MSACPUTimes = MSACPUTimes()
     (
@@ -200,7 +200,7 @@ def get_cpu_stats() -> MSACPUStats:
     Get CPU statistics
 
     Returns:
-        cst: MSACPUStats
+        Pydantic model containing CPU statistics
     """
     cst: MSACPUStats = MSACPUStats()
     (
@@ -214,10 +214,10 @@ def get_cpu_stats() -> MSACPUStats:
 
 def get_disk_io() -> MSADiskIO:
     """
-    Get psutil.disk_io_counters()
+    Get disk input/output information.
 
     Returns:
-        dio: MSADiskIO
+        Pydantic model containing disk input/output information
     """
     dio: MSADiskIO = MSADiskIO()
     (
@@ -236,10 +236,10 @@ def get_disk_io() -> MSADiskIO:
 
 def get_network_io() -> MSANetworkIO:
     """
-    Get psutil.net_io_counters()
+    Get network input/output information.
 
     Returns:
-        nio: MSANetworkIO
+        Pydantic model containing network input/output information
     """
     nio: MSANetworkIO = MSANetworkIO()
     (
@@ -257,10 +257,10 @@ def get_network_io() -> MSANetworkIO:
 
 def get_network_adapters() -> List[MSANetworkAdapters]:
     """
-    Get psutil.net_if_addrs()
+    Get the addresses associated to each NIC (network interface card)
 
     Returns:
-        ret: List[MSANetworkAdapters] = []
+        List of Network Adapters List models
     """
     ret: List[MSANetworkAdapters] = []
     la: Dict = psutil.net_if_addrs()
@@ -282,10 +282,10 @@ def get_network_adapters() -> List[MSANetworkAdapters]:
 
 def get_temperatures() -> List[MSATemperatures]:
     """
-    Get psutil.sensors_temperatures()
+    Get hardware temperatures.
 
     Returns:
-        ret: List[MSATemperatures] = []
+        List of models containing temperature information.
     """
     ret: List[MSATemperatures] = []
     ta: Dict = psutil.sensors_temperatures()
@@ -305,10 +305,10 @@ def get_temperatures() -> List[MSATemperatures]:
 
 def get_network_stats() -> List[MSANetworkStats]:
     """
-    Get psutil.net_if_stats()
+    Get information about each NIC (network interface card)
 
     Returns:
-        ret: List[MSANetworkStats] = []
+        List of models containing network statistics information.
     """
     ret: List[MSANetworkStats] = []
     net_stats: Dict = psutil.net_if_stats()
@@ -327,10 +327,10 @@ def get_network_stats() -> List[MSANetworkStats]:
 
 def get_network_connections() -> List[MSANetworkConnection]:
     """
-    Get psutil.net_connections()
+    Get system-wide socket connections as a list
 
     Returns:
-        rlist: List[MSANetworkConnection] = []
+        List of models containing network connections information.
     """
     rlist: List[MSANetworkConnection] = []
     inlist = psutil.net_connections()
@@ -352,10 +352,10 @@ def get_network_connections() -> List[MSANetworkConnection]:
 
 def get_swap() -> MSASwap:
     """
-    Get psutil.swap_memory()
+    Get system swap memory statistics.
 
     Returns:
-        sw: MSASwap
+        Pydantic model containing system swap memory information
     """
     swap = psutil.swap_memory()
     sw: MSASwap = MSASwap()
@@ -379,7 +379,7 @@ def get_load_average() -> List[float]:
     return [x / psutil.cpu_count() * 100 for x in psutil.getloadavg()]
 
 
-def get_cpu_usage(user: str = None, ignore_self: bool = False) -> tuple[int, int, str]:
+def get_cpu_usage(user: str = None, ignore_self: bool = False) -> Tuple[int, int, str]:
     """
     Returns the total CPU usage for all available cores.
 
@@ -391,7 +391,6 @@ def get_cpu_usage(user: str = None, ignore_self: bool = False) -> tuple[int, int
         total: total usage
         largest_process: largest process usage
         largest_process_name: name of the largest process
-
     """
     pid = os.getpid()
     cmd = "ps aux"
@@ -414,11 +413,10 @@ def get_cpu_usage(user: str = None, ignore_self: bool = False) -> tuple[int, int
 
 def get_sysinfo() -> MSASystemInfo:
     """
-    Get MSASystemInfo
+    Get system information.
 
     Returns:
-        system_info: Pydantic System Info Model.
-
+        Pydantic System Info Model.
     """
     system_info: MSASystemInfo = MSASystemInfo()
     try:
@@ -470,10 +468,10 @@ def get_sysinfo() -> MSASystemInfo:
 
 def get_sysgpuinfo() -> MSASystemGPUInfo:
     """
-    Get MSASystemGPUInfo
+    Get GPU information
 
     Returns:
-        system_gpu_info: Pydantic System GPU Info Model.
+        Pydantic model containing GPU information
     """
     system_gpu_info: MSASystemGPUInfo = MSASystemGPUInfo()
     try:

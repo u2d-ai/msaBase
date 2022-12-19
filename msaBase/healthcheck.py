@@ -28,8 +28,8 @@ class MSAHealthCheck(Thread):
         """
         Get the last health check result
 
-        The string is "positiv: status_code" or "negative: status_code"
-
+        Returns:
+            string "positiv: status_code" or "negative: status_code"
         """
         return self.healthy
 
