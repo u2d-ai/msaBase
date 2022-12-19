@@ -12,10 +12,10 @@ class MSAProfilerMiddleware:
 
     Used to create an HTML from the Profiler result if enabled in the MSAServiceDefinition instance.
 
-    Args:
+    Parameters:
         msa_app: Instance of the MSAApp
         profiler_interval: 0.0001
-        profiler_output_type: "html", ``text`` or ``html``should be html if Admin Site Profiler Page should be used.
+        profiler_output_type: "text" or "html" should be html if Admin Site Profiler Page should be used.
         track_each_request: True, Tracks each single request and profiles it immediatly, if off then profiler
         creates result during shutdown event.
         **profiler_kwargs: other pyinstrument args like 'html_file_name'
@@ -75,7 +75,7 @@ class MSAProfilerMiddleware:
                         await self.get_profiler_result()
 
     async def get_profiler_result(self, html_file: str = "profiler.html", replace_title: str = "msaBase-Profiler"):
-        """Produces the profiler result in the defined output type format, ``text`` or ``html``"""
+        """Produces the profiler result in the defined output type format, "text" or "html" """
         if self._output_type == "text":
             print(self._profiler.output_text(**self._profiler_kwargs))
         elif self._output_type == "html":
