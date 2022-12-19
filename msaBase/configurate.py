@@ -235,7 +235,7 @@ class MSAApp(FastAPI):
         if topic_name:
             with DaprClient() as client:
                 client.publish_event(
-                    pubsub_name="spkpubsub",
+                    pubsub_name=PUBSUB_NAME,
                     topic_name=topic_name,
                     data=message,
                     data_content_type="application/json",
