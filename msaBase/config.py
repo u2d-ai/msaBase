@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-from typing import List, Optional, Dict, Union, Any
+from typing import Any, Dict, List, Optional, Union
+
+from msaDocModels.health import MSAHealthDefinition
+from pydantic import BaseModel
 
 # from msaBase.configurate import MSAApp
 from msaBase.logger import logger
 from msaBase.models.settings import MSAAppSettings
-from msaDocModels.health import MSAHealthDefinition
-from pydantic import BaseModel
 
 
 class MSAServiceStatus(BaseModel):

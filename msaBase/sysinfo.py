@@ -12,6 +12,7 @@ from typing import Dict, List
 
 import GPUtil
 import psutil
+
 from msaBase.errorhandling import getMSABaseExceptionHandler
 from msaBase.models.sysinfo import (
     MSACPUFrequency,

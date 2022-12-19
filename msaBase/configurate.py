@@ -6,11 +6,11 @@ Initialize with a MSAServiceDefintion Instance to control the features and funct
 """
 import json
 import os
+from asyncio import Task
 from datetime import datetime
 from functools import wraps
 from typing import Any, Dict, List, Optional, Type, Union
 
-from asyncio import Task
 from dapr.clients import DaprClient
 from dapr.ext.fastapi import DaprApp
 from fastapi import FastAPI, HTTPException
@@ -19,17 +19,6 @@ from fastapi.exception_handlers import http_exception_handler
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
 from loguru import logger as logger_gruru
-from msaBase.config import (
-    ConfigInput,
-    MSAServiceDefinition,
-    MSAServiceStatus, )
-from msaBase.errorhandling import getMSABaseExceptionHandler
-from msaBase.logger import init_logging
-from msaBase.models.functionality import FunctionalityTypes
-from msaBase.models.middlewares import MiddlewareTypes
-from msaBase.models.sysinfo import MSASystemGPUInfo, MSASystemInfo
-from msaBase.sysinfo import get_sysgpuinfo, get_sysinfo
-from msaBase.utils.constants import PUBSUB_NAME, REGISTRY_TOPIC, SERVICE_TOPIC
 from msaDocModels.health import MSAHealthDefinition, MSAHealthMessage
 from msaDocModels.openapi import MSAOpenAPIInfo
 from msaDocModels.scheduler import (
@@ -43,6 +32,16 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse, Response
 from starlette_context import plugins
+
+from msaBase.config import MSAServiceDefinition, MSAServiceStatus
+from msaBase.errorhandling import getMSABaseExceptionHandler
+from msaBase.logger import init_logging
+from msaBase.models.config import ConfigInput
+from msaBase.models.functionality import FunctionalityTypes
+from msaBase.models.middlewares import MiddlewareTypes
+from msaBase.models.sysinfo import MSASystemGPUInfo, MSASystemInfo
+from msaBase.sysinfo import get_sysgpuinfo, get_sysinfo
+from msaBase.utils.constants import PUBSUB_NAME, REGISTRY_TOPIC, SERVICE_TOPIC
 
 
 def getSecretKey() -> str:
@@ -119,19 +118,57 @@ class MSAApp(FastAPI):
     """
 
     def __init__(
-            self,
-            settings: MSAServiceDefinition,
-            auto_mount_site: Optional[bool] = True,
-            title: Optional[str] = None,
-            description: Optional[str] = None,
-            version: Optional[str] = None,
-            openapi_url: Optional[str] = None,
-            openapi_tags: Optional[List[Dict[str, Any]]] = None,
-            terms_of_service: Optional[str] = None,
-            contact: Optional[Dict[str, Union[str, Any]]] = None,
-            license_info: Optional[Dict[str, Union[str, Any]]] = None,
-            *args,
-            **kwargs,
+        self,
+        settings: MSAServiceDefinition,
+        auto_mount_site: Optional[bool] = True,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        host: Optional[str] = None,
+        port: Optional[int] = None,
+        dapr_http_port: Optional[int] = None,
+        dapr_grpc_port: Optional[int] = None,
+        tags: Optional[List[str]] = None,
+        allow_origins: Optional[str] = None,
+        allow_credentials: Optional[bool] = None,
+        allow_methods: Optional[List[str]] = None,
+        allow_headers: Optional[List[str]] = None,
+        healthdefinition: Optional[MSAHealthDefinition] = None,
+        uvloop: Optional[bool] = None,
+        sysrouter: Optional[bool] = None,
+        servicerouter: Optional[bool] = None,
+        starception: Optional[bool] = None,
+        validationception: Optional[bool] = None,
+        httpception: Optional[bool] = None,
+        httpception_exclude: Optional[List[int]] = None,
+        cors: Optional[bool] = None,
+        httpsredirect: Optional[bool] = None,
+        gzip: Optional[bool] = None,
+        session: Optional[bool] = None,
+        csrf: Optional[bool] = None,
+        msgpack: Optional[bool] = None,
+        instrument: Optional[bool] = None,
+        signal_middleware: Optional[bool] = None,
+        task_middleware: Optional[bool] = None,
+        context: Optional[bool] = None,
+        profiler: Optional[bool] = None,
+        profiler_output_type: Optional[str] = None,
+        profiler_single_calls: Optional[bool] = None,
+        profiler_url: Optional[str] = None,
+        timing: Optional[bool] = None,
+        limiter: Optional[bool] = None,
+        background_scheduler: Optional[bool] = None,
+        asyncio_scheduler: Optional[bool] = None,
+        abstract_fs: Optional[bool] = None,
+        abstract_fs_url: Optional[str] = None,
+        json_db_url: Optional[str] = None,
+        version: Optional[str] = None,
+        openapi_url: Optional[str] = None,
+        openapi_tags: Optional[List[Dict[str, Any]]] = None,
+        terms_of_service: Optional[str] = None,
+        contact: Optional[Dict[str, Union[str, Any]]] = None,
+        license_info: Optional[Dict[str, Union[str, Any]]] = None,
+        *args,
+        **kwargs,
     ) -> None:
         # call super class __init__
         super().__init__(*args, **settings.fastapi_kwargs)
@@ -144,6 +181,89 @@ class MSAApp(FastAPI):
         self.daprApp = DaprApp(self)
         self.title = title if title else self.settings.title
         self.description = description if description else self.settings.description
+        self.host = host if host else self.settings.host
+        self.port = port if port else self.settings.port
+        self.dapr_http_port = (
+            dapr_http_port if dapr_http_port else self.settings.dapr_http_port
+        )
+        self.dapr_grpc_port = (
+            dapr_grpc_port if dapr_grpc_port else self.settings.dapr_grpc_port
+        )
+        self.tags = tags if tags else self.settings.tags
+        self.allow_origins = (
+            allow_origins if allow_origins else self.settings.allow_origins
+        )
+        self.allow_credentials = (
+            allow_credentials if allow_credentials else self.settings.allow_credentials
+        )
+        self.allow_methods = (
+            allow_methods if allow_methods else self.settings.allow_methods
+        )
+        self.allow_headers = (
+            allow_headers if allow_headers else self.settings.allow_headers
+        )
+        self.healthdefinition = (
+            healthdefinition if healthdefinition else self.settings.healthdefinition
+        )
+        self.uvloop = uvloop if uvloop else self.settings.uvloop
+        self.sysrouter = sysrouter if sysrouter else self.settings.sysrouter
+        self.servicerouter = (
+            servicerouter if servicerouter else self.settings.servicerouter
+        )
+        self.starception = starception if starception else self.settings.starception
+        self.validationception = (
+            validationception if validationception else self.settings.validationception
+        )
+        self.httpception = httpception if httpception else self.settings.httpception
+        self.httpception_exclude = (
+            httpception_exclude
+            if httpception_exclude
+            else self.settings.httpception_exclude
+        )
+        self.cors = cors if cors else self.settings.cors
+        self.httpsredirect = (
+            httpsredirect if httpsredirect else self.settings.httpsredirect
+        )
+        self.gzip = gzip if gzip else self.settings.gzip
+        self.session = session if session else self.settings.session
+        self.csrf = csrf if csrf else self.settings.csrf
+        self.msgpack = msgpack if msgpack else self.settings.msgpack
+        self.instrument = instrument if instrument else self.settings.instrument
+        self.signal_middleware = (
+            signal_middleware if signal_middleware else self.settings.signal_middleware
+        )
+        self.task_middleware = (
+            task_middleware if task_middleware else self.settings.task_middleware
+        )
+        self.context = context if context else self.settings.context
+        self.profiler = profiler if profiler else self.settings.profiler
+        self.profiler_output_type = (
+            profiler_output_type
+            if profiler_output_type
+            else self.settings.profiler_output_type
+        )
+        self.profiler_single_calls = (
+            profiler_single_calls
+            if profiler_single_calls
+            else self.settings.profiler_single_calls
+        )
+        self.profiler_url = profiler_url if profiler_url else self.settings.profiler_url
+        self.timing = timing if timing else self.settings.timing
+        self.limiter = limiter if limiter else self.settings.limiter
+        self.background_scheduler = (
+            background_scheduler
+            if background_scheduler
+            else self.settings.background_scheduler
+        )
+        self.asyncio_scheduler = (
+            asyncio_scheduler if asyncio_scheduler else self.settings.asyncio_scheduler
+        )
+        self.abstract_fs = abstract_fs if abstract_fs else self.settings.abstract_fs
+        self.abstract_fs_url = (
+            abstract_fs_url if abstract_fs_url else self.settings.abstract_fs_url
+        )
+        self.json_db_url = json_db_url if json_db_url else self.settings.json_db_url
+
         self.version = version if version else self.settings.version
         self.openapi_url = openapi_url if openapi_url else self.settings.openapi_url
         self.auto_mount_site: bool = auto_mount_site
@@ -187,15 +307,19 @@ class MSAApp(FastAPI):
                 received_config: Data to update current config with.
             """
             try:
-                self.logger.info(f"RECEIVED CONFIG {received_config.data}")
+                self.logger.info(
+                    f"Received config from spkRegistry. Data: {received_config.data}"
+                )
                 if received_config.data.config.name == self.settings.name:
-                    reload_needed = self.update_settings(received_config.data.config, received_config.data.one_time)
-                    self.logger.info(f"reload needed: {reload_needed}")
+                    reload_needed = self.update_settings(
+                        received_config.data.config, received_config.data.one_time
+                    )
                     if reload_needed:
+                        self.logger.info("New config needs reload.")
                         with open("config.json", "w") as json_file:
                             json.dump(received_config.data.dict(), json_file)
 
-                        self.logger.info("save config")
+                        self.logger.info("New config saved to config.json")
 
             except Exception as ex:
                 self.logger.info(ex)
@@ -222,13 +346,14 @@ class MSAApp(FastAPI):
 
     def logger_info(self, message: str, topic_name: str = "") -> None:
         """
-        Sends messege to pubsub topic.
+        Sends message to pubsub topic.
 
         Parameters:
             message: JSON message to send.
             topic_name: name of pubsub topic that needs this message.
 
         """
+        self.logger.info("Sending config to spkRegistry...")
         if topic_name:
             with DaprClient() as client:
                 client.publish_event(
@@ -237,7 +362,6 @@ class MSAApp(FastAPI):
                     data=message,
                     data_content_type="application/json",
                 )
-        self.logger.info(message)
 
     async def extend_startup_event(self) -> None:
         """You can extend the main shutdown"""
@@ -316,8 +440,8 @@ class MSAApp(FastAPI):
         self.logger.info("Called - get_scheduler_status :" + str(request.url))
         sst: MSASchedulerStatus = MSASchedulerStatus()
         if (
-                not self.settings.background_scheduler
-                or not self.settings.asyncio_scheduler
+            not self.settings.background_scheduler
+            or not self.settings.asyncio_scheduler
         ):
             sst.name = self.settings.name
             sst.message = "Schedulers is disabled!"
@@ -394,13 +518,11 @@ class MSAApp(FastAPI):
         """
         Get Service OpenAPI Schema
 
-        Args:
+        Parameters:
             request: The input http request object
 
         Returns:
-            openapi: ORJSONResponse openapi schema
-
-
+            ORJSONResponse openapi schema
         """
         self.logger.info("Called - get_services_openapi_schema :" + str(request.url))
 
@@ -419,18 +541,17 @@ class MSAApp(FastAPI):
         )
 
     async def msa_exception_handler(
-            self, request: Request, exc: HTTPException
+        self, request: Request, exc: HTTPException
     ) -> Response:
         """
         Handles all HTTPExceptions if enabled with HTML Response or forward error if the code is in the exclude settings list.
 
-        Args:
+        Parameters:
             request: The input http request object
             exc : The HTTPException instance
 
         Returns:
-            HTTPException
-
+            HTTPResponse: response with status code corresponding to the handled exception.
         """
         error_content = {
             "request": request.__dict__,
@@ -475,7 +596,7 @@ class MSAApp(FastAPI):
         return oai
 
     async def validation_exception_handler(
-            self, request: Request, exc: RequestValidationError
+        self, request: Request, exc: RequestValidationError
     ) -> JSONResponse:
         """
         Handles validation error exception and returns exception info as a JSON.
@@ -493,7 +614,7 @@ class MSAApp(FastAPI):
         )
 
     async def msa_exception_handler_disabled(
-            self, request: Request, exc: HTTPException
+        self, request: Request, exc: HTTPException
     ) -> JSONResponse:
         """
         Handles all HTTPExceptions if Disabled with JSON Response.
@@ -555,6 +676,7 @@ class MSAApp(FastAPI):
 
         Parameters:
             new_config: MSAServiceDefinition. Config received from SPKRegistry.
+            one_time: a flag for using the config only one time.
         Returns:
             bool. True if app reload is needed, False otherwise.
         """
@@ -567,7 +689,7 @@ class MSAApp(FastAPI):
             new_middleware = getattr(new_config, middleware.name, None)
 
             if (current_middleware is not None and new_middleware is not None) and (
-                    current_middleware != new_middleware
+                current_middleware != new_middleware
             ):
                 return True
 
@@ -578,7 +700,7 @@ class MSAApp(FastAPI):
             reload_needed = functionality.need_restart
 
             if (
-                    current_functionality is not None and new_functionality is not None
+                current_functionality is not None and new_functionality is not None
             ) and (current_functionality != new_functionality):
 
                 if reload_needed:
@@ -602,7 +724,7 @@ class MSAApp(FastAPI):
         self.logger.info("Unknown Functionality")
 
     def choose_middleware_configurator(
-            self, middleware: Union[MiddlewareTypes, FunctionalityTypes]
+        self, middleware: Union[MiddlewareTypes, FunctionalityTypes]
     ) -> Type[unknown_middleware]:
         """
         Get the configurator by type of Middleware
@@ -628,7 +750,7 @@ class MSAApp(FastAPI):
         return configurator_mappings.get(middleware, self.unknown_middleware)
 
     def choose_functionality_configurator(
-            self, middleware: FunctionalityTypes
+        self, middleware: FunctionalityTypes
     ) -> Type[unknown_functionality]:
         """
         Get the configurator by type of Functionality
