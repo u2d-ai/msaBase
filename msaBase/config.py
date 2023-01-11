@@ -84,6 +84,7 @@ class MSAServiceDefinition(MSAAppSettings):
         abstract_fs_url: Set's Filesystem URL.
         json_db_url: Set's DB URL, for nonlocal JSON DB.
         contact: Contacts of the service owner.
+        progress_topic: Topic to which services send their progress.
     """
 
     name: str = "msaBase Service"
@@ -132,6 +133,7 @@ class MSAServiceDefinition(MSAAppSettings):
         "url": "https://www.sparkasse-bremen.de/",
         "email": "marcus.rostalski@sparkasse-bremen.de",
     }
+    progress_topic: str = "spk-progress"
 
     def save_config(self) -> None:
         """
