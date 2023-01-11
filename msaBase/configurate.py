@@ -224,20 +224,21 @@ class MSAApp(FastAPI):
 
         return decorator
 
-    def logger_info(self, message: str, topic_name: str = "") -> None:
+    def logger_info(self, message: str, service_name: str, topic_name: str = "") -> None:
         """
         Sends message to pubsub topic.
 
         Parameters:
             message: JSON message to send.
             topic_name: name of pubsub topic that needs this message.
+            service_name: the name of the service from which the call was made
         """
         if topic_name:
             with DaprClient() as client:
                 client.publish_event(
                     pubsub_name=PUBSUB_NAME,
                     topic_name=topic_name,
-                    data=message,
+                    data=f"[{service_name}]: "+ message,
                     data_content_type="application/json",
                 )
         self.logger.info(message)
