@@ -128,6 +128,7 @@ class MSAServiceDefinition(MSAAppSettings):
     abstract_fs: bool = False
     abstract_fs_url: str = "."
     json_db_url: str = ""
+    sql_db_url: str = ""
     contact: Dict[str, Union[str, Any]] = {
         "name": "Marcus Rostalski",
         "url": "https://www.sparkasse-bremen.de/",
