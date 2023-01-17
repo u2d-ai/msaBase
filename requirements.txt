@@ -35,6 +35,7 @@ dapr-ext-fastapi~=1.7.0 # Dapr is a portable, serverless, event-driven runtime
 
 # File Management related libs
 aiofiles>=22.1.0 # handling local disk files in asyncio applications
+fs>=2.4.16 # Python's filesystem abstraction layer
 
 # Starlette related Dependencies
 starlette~=0.20.4 # Starlette is a lightweight ASGI framework/toolkit, which is ideal for building async web services in Python.
