@@ -35,16 +35,6 @@ dapr-ext-fastapi~=1.7.0 # Dapr is a portable, serverless, event-driven runtime
 
 # File Management related libs
 aiofiles>=22.1.0 # handling local disk files in asyncio applications
-fs>=2.4.16 # Python's filesystem abstraction layer
-fs.webdavfs~=0.4.2 # WebDAV support
-fs-dlk~=0.1.3 # Azure Datalake support
-fs-s3fs~=1.1.1 # Amazon S3 filesystem support
-fs-gcsfs~=1.5.1 # Google Cloud Storage (GCS) support
-fs.googledrivefs~=2.3.0 # Google Drive support
-fs.dropboxfs~=0.2.2.post2 # Dropbox support
-fs.onedrivefs~=1.1.1 # OneDrive support
-fs.youtube~=0.3.1 # Youtube support
-fs.smbfs~=1.0.5 # SMB support
 
 # Starlette related Dependencies
 starlette~=0.20.4 # Starlette is a lightweight ASGI framework/toolkit, which is ideal for building async web services in Python.
