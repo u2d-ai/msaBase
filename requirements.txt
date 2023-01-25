@@ -27,6 +27,7 @@ pyinstrument>=4.3.0 # pyinstrument to check service performance.
 msgpack-asgi>=1.1.0 # Drop-in MessagePack support for ASGI applications and frameworks
 slowapi>=0.1.6 # A rate limiting extension for Starlette and Fastapi
 addict>=2.4.0 # A dictionary whose items can be set using both attribute and item syntax.
+pymongo>=4.3.3 # A Python distribution containing tools for working with MongoDB
 
 # Dapr Dependencies
 dapr~=1.7.0 # Dapr is a portable, serverless, event-driven runtime that makes it easy for developers to build resilient, stateless and stateful microservices that run on the cloud and edge
@@ -47,7 +48,6 @@ Starlette-WTF~=0.4.3 # Simple integration of Starlette and WTForms.
 httpx~=0.23.0 # The next generation HTTP client.
 aiohttp>=3.8.3 # The next generation HTTP client.
 hjson~=3.1.0 # Hjson, a user interface for JSON.
-bson==0.5.10 # Independent BSON codec for Python that doesn't depend on MongoDB
 
 # Uvicorn related Dependencies
 uvicorn~=0.18.3 # The lightning-fast ASGI server.
