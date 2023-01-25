@@ -47,6 +47,7 @@ Starlette-WTF~=0.4.3 # Simple integration of Starlette and WTForms.
 httpx~=0.23.0 # The next generation HTTP client.
 aiohttp>=3.8.3 # The next generation HTTP client.
 hjson~=3.1.0 # Hjson, a user interface for JSON.
+bson==0.5.10 # Independent BSON codec for Python that doesn't depend on MongoDB
 
 # Uvicorn related Dependencies
 uvicorn~=0.18.3 # The lightning-fast ASGI server.
