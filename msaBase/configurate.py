@@ -224,7 +224,7 @@ class MSAApp(FastAPI):
 
         return decorator
 
-    def logger_info(self, message: str, service_name: str, topic_name: str = "") -> None:
+    def logger_info(self, message: str, service_name: str = "", topic_name: str = "") -> None:
         """
         Sends message to pubsub topic.
 
@@ -238,7 +238,7 @@ class MSAApp(FastAPI):
                 client.publish_event(
                     pubsub_name=PUBSUB_NAME,
                     topic_name=topic_name,
-                    data=f"[{service_name}]: "+ message,
+                    data=f"[{service_name if service_name else self.title}]: " + message,
                     data_content_type="application/json",
                 )
         self.logger.info(message)
@@ -862,7 +862,7 @@ class MSAApp(FastAPI):
             with open("config.json") as json_file:
                 config = MSAServiceDefinition.parse_obj(json.load(json_file))
                 data = ConfigDTO(config=config, one_time=False)
-            self.logger_info(data.json(), REGISTRY_TOPIC)
+            self.logger_info(data.json(), self.title, REGISTRY_TOPIC)
             self.logger.info(f"Sent config to pubsub, {data}")
         except Exception as ex:
             self.logger.error(f"An error occurred while trying to send config to spkRegistry. Exception: {ex}")
