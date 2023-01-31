@@ -863,7 +863,7 @@ class MSAApp(FastAPI):
             with open("config.json") as json_file:
                 config = MSAServiceDefinition.parse_obj(json.load(json_file))
                 data = ConfigDTO(config=config, one_time=False)
-            self.logger_info(data.json(), self.title, REGISTRY_TOPIC)
+            self.logger_info(data.json(), topic_name=REGISTRY_TOPIC)
             self.logger.info(f"Sent config to pubsub, {data}")
         except Exception as ex:
             self.logger.error(f"An error occurred while trying to send config to spkRegistry. Exception: {ex}")
