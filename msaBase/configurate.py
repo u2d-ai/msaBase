@@ -233,12 +233,13 @@ class MSAApp(FastAPI):
             topic_name: name of pubsub topic that needs this message.
             service_name: the name of the service from which the call was made
         """
+        data = f"[{service_name}]: " + message if service_name else message
         if topic_name:
             with DaprClient() as client:
                 client.publish_event(
                     pubsub_name=PUBSUB_NAME,
                     topic_name=topic_name,
-                    data=f"[{service_name if service_name else self.title}]: " + message,
+                    data=data,
                     data_content_type="application/json",
                 )
         self.logger.info(message)
