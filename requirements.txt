@@ -11,7 +11,7 @@ pyinstrument>=4.3.0 # pyinstrument to check service performance.
 
 # General Dependencies
 autoflake>=1.6.1 # Removes unused imports and unused variables
-black>=22.8.0 # Code formatter
+black==22.6.0 # Code formatter
 pyproject-flake8>=5.0.4 # configure flake8
 flake8>=5.0.4 # modular source code checker: pep8 pyflakes and co
 colorama>=0.4.6 # Makes ANSI escape character sequence
