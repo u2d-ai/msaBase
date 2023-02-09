@@ -22,7 +22,6 @@ mypy>=0.971 # Optional static typing for Python
 setuptools>=65.2.0 # Easily download, build, install, upgrade, and uninstall Python packages
 prometheus_fastapi_instrumentator>=5.9.1 # Instrument your FastAPI with Prometheus metrics
 Jinja2>=3.1.2 # A very fast and expressive template engine.
-orjson>=3.8.0 # Fast, correct Python JSON library supporting dataclasses, datetimes, and numpy
 pyinstrument>=4.3.0 # pyinstrument to check service performance.
 msgpack-asgi>=1.1.0 # Drop-in MessagePack support for ASGI applications and frameworks
 slowapi>=0.1.6 # A rate limiting extension for Starlette and Fastapi
