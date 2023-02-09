@@ -4,7 +4,7 @@ import os.path
 import pickle
 from os.path import exists
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 import mkdocs_gen_files
 
@@ -50,18 +50,22 @@ def generate_sub_process_result(requirement_file) -> dict:
                     package: str = (
                         str(parts_front).split("=")[0].replace(">", "").replace("<", "").replace("~", "").split("[")[0]
                     )
-                    version: str = ""
                     package = package.lower()
                     comment: str = ""
                     if len(str(parts_front).split("=")) > 1:
                         version: str = (
                             str(parts_front).split("=")[1].replace(">", "").replace("<", "").replace("~", "").strip()
                         )
-                        version_link: str = f"[![PyPI version fury.io](https://badge.fury.io/py/{package}.svg)](https://pypi.org/project/{package}/{version}/)"
+                        version_link: str = f"[![PyPI version fury.io](https://badge.fury.io/py/{package}.svg)](https://pypi.org/project/{package}/{version}/)"  # noqa 501
                         condition: str = parts_front.replace(package, "")  # .replace(version, "")
                         if condition.__contains__("]"):
                             condition = condition.split("]")[1]
-
+                    else:
+                        version: str = ""
+                        version_link: str = f"[![PyPI version fury.io](https://badge.fury.io/py/{package}.svg)](https://pypi.org/project/{package}/)"  # noqa 501
+                        condition: str = parts_front.replace(package, "")  # .replace(version, "")
+                        if condition.__contains__("]"):
+                            condition = condition.split("]")[1]
                     if len(parts) > 1:
                         comment = str(parts[1]).strip().capitalize()
 
@@ -145,12 +149,12 @@ def generate_code_reference_documentation(
     requirement_file: str = "requirements.txt",
     md_file_type: str = ".md",
     recreate_pip_info: bool = False,
-    exclude_functions: List[str] = [
+    exclude_functions: Tuple[str] = (
         "__init__",
         "__main__",
         "main",
         "run",
-    ],
+    ),
     pkl_info_file: str = "docs/saved_req_package_pip_info.pkl",
 ):
     """Generates the virtual mkdocs md files and adds them to the navigation.
@@ -205,7 +209,6 @@ def generate_code_reference_documentation(
     with open(requirement_file, "r") as req_file:
         req_txt = req_file.read()
         if req_txt and len(req_txt) > 0:
-            from subprocess import PIPE, run
 
             with mkdocs_gen_files.open(req_md_file, "w") as fd:
                 fd.write(f"# {source_path.replace('_', ' ')} - Included Libraries\n***\n\n")
@@ -253,9 +256,7 @@ def generate_code_reference_documentation(
                                 comment: str = sub_entry["comment"]
                                 fd.write(f"{comment.capitalize()}\n\n")
                             else:
-                                fd.write(f"\n\n")
-
-                            pip_result: str = sub_entry["pip_result"]
+                                fd.write("\n\n")
 
                             if "req_line_text" in sub_entry:
                                 req_line_text: str = sub_entry["req_line_text"]
@@ -276,7 +277,6 @@ def generate_code_reference_documentation(
                                     entry = entry.lower()
                                     if entry in sub_process_result:
                                         sub_entry_req: dict = sub_process_result[entry]
-                                        pip_result: str = sub_entry_req["pip_result"]
                                         req_line_text = sub_entry_req["req_line_text"]
 
                                         fd.write(f'=== "rqr: {entry}"\n')
