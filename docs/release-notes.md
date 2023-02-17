@@ -3,6 +3,10 @@
 
 ## 0.0.39
 
+update version msaDocModels, for spkTextKeywords
+
+## 0.0.39
+
 update version msaDocModels
 
 ## 0.0.38
