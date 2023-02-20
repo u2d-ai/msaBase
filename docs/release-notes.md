@@ -1,7 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
-## 0.0.39
+## 0.0.41
+
+update version msaDocModels, for default Language and fix send config to pubsub
+
+## 0.0.40
 
 update version msaDocModels, for spkTextKeywords
 

@@ -238,7 +238,7 @@ class MSAApp(FastAPI):
                 client.publish_event(
                     pubsub_name=PUBSUB_NAME,
                     topic_name=topic_name,
-                    data=f"[{service_name if service_name else self.title}]: " + message,
+                    data=f"[{service_name}]: " + message if service_name else message,
                     data_content_type="application/json",
                 )
         self.logger.info(message)
