@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.42 
+
+update version msaDocModels, add language for SPKDataCleanAIInput
+
 ## 0.0.41
 
 update version msaDocModels, for default Language and fix send config to pubsub
