@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.43
+
+update version msaDocModels, add webhook url and constant to train model
+
 ## 0.0.42 
 
 update version msaDocModels, add language for SPKDataCleanAIInput
