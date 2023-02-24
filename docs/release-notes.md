@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.45
+
+update version msaDocModels, change  AutoMLStatus model
+
 ## 0.0.44
 
 update version msaDocModels, fix typo in webhook url 
