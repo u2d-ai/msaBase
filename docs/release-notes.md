@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.44
+
+update version msaDocModels, fix typo in webhook url 
+
 ## 0.0.43
 
 update version msaDocModels, add webhook url and constant to train model
