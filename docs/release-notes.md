@@ -1,19 +1,23 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.46
+
+update dapr version to 1.9.0
+
 ## 0.0.45
 
 update version msaDocModels, change  AutoMLStatus model
 
 ## 0.0.44
 
-update version msaDocModels, fix typo in webhook url 
+update version msaDocModels, fix typo in webhook url
 
 ## 0.0.43
 
 update version msaDocModels, add webhook url and constant to train model
 
-## 0.0.42 
+## 0.0.42
 
 update version msaDocModels, add language for SPKDataCleanAIInput
 
