@@ -3,7 +3,6 @@ import json
 import os
 from typing import Any, Dict, List, Optional, Union
 
-# from msaBase.configurate import MSAApp
 from msaBase.logger import logger
 from msaBase.models.settings import MSAAppSettings
 from msaDocModels.health import MSAHealthDefinition
