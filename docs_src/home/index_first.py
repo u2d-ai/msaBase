@@ -1,7 +1,6 @@
 import types
 
 import uvicorn
-from loguru import logger
 from msaBase.config import get_msa_app_settings
 from msaBase.configurate import MSAApp
 

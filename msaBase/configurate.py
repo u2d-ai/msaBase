@@ -34,7 +34,7 @@ from msaDocModels import health
 from msaDocModels.health import MSAHealthDefinition, MSAHealthMessage
 from msaDocModels.openapi import MSAOpenAPIInfo
 from msaDocModels.scheduler import MSASchedulerStatus, MSASchedulerTaskDetail, MSASchedulerTaskStatus
-from msaDocModels.sdu import SDUVersion
+from msaDocModels.spk import SDUVersion
 from msaFilesystem.msafs import MSAFilesystem
 from slowapi import Limiter
 from starlette import status

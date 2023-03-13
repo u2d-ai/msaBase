@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.47
+
+change structure for SPKDBBaseDocumentInput
+add models for spkTextExtractionDefaults, spkTextExtractionNLP
+
 ## 0.0.46
 
 update dapr version to 1.9.0
