@@ -44,7 +44,7 @@ from starlette.responses import HTMLResponse, JSONResponse, Response
 from starlette_context import plugins
 
 
-def getSecretKey() -> str:
+def get_secret_key() -> str:
     """
     Get Secret Key for Token creation from OS Environment Variable **SECRET_KEY_TOKEN**
 
@@ -59,7 +59,7 @@ def getSecretKey() -> str:
     return key
 
 
-def getSecretKeySessions() -> str:
+def get_secret_key_sessions() -> str:
     """
     Get Secret Key for Session Middleware from OS Environment Variable **SECRET_KEY_SESSIONS**
 
@@ -74,7 +74,7 @@ def getSecretKeySessions() -> str:
     return key
 
 
-def getSecretKeyCSRF() -> str:
+def get_secret_key_csrf() -> str:
     """
     Get Secret Key for CSRF Middleware from OS Environment Variable **SECRET_KEY_CSRF**
 
@@ -203,6 +203,7 @@ class MSAApp(FastAPI):
             except Exception as ex:
                 self.logger.info(ex)
 
+    @staticmethod
     def uses_temporary_config(function):
         """
         Makes an endpoint use one-time config whenever it is present.
@@ -781,14 +782,14 @@ class MSAApp(FastAPI):
         self.logger.info("Add Middleware CSRF")
         from starlette_wtf import CSRFProtectMiddleware
 
-        self.add_middleware(CSRFProtectMiddleware, csrf_secret=getSecretKeyCSRF())
+        self.add_middleware(CSRFProtectMiddleware, csrf_secret=get_secret_key_csrf())
 
     def configure_session_middleware(self) -> None:
         """Add Middleware Session"""
         self.logger.info("Add Middleware Session")
         from starlette.middleware.sessions import SessionMiddleware
 
-        self.add_middleware(SessionMiddleware, secret_key=getSecretKeySessions())
+        self.add_middleware(SessionMiddleware, secret_key=get_secret_key_sessions())
 
     def configure_background_scheduler(self) -> None:
         """Add Background Scheduler"""

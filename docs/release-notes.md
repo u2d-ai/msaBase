@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.50
+
+fix fields for SPKTextExtractionDocumentNLPInput
+
 ## 0.0.48
 
 add id to ExtractionDefaultResult, RecognizerDefaultResult
