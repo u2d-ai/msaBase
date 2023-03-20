@@ -1,6 +1,9 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.54
+
+change model for NotaryDTO, when notary are not found
 
 ## 0.0.53
 
