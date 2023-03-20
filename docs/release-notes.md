@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.51
+
+fix model for result Defaults
+
 ## 0.0.50
 
 add models for result of NLP, NER services 
