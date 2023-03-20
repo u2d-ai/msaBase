@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.52
+
+fix model for result NER
+
 ## 0.0.51
 
 fix model for result Defaults
