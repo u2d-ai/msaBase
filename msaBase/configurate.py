@@ -30,7 +30,6 @@ from msaBase.models.middlewares import MiddlewareTypes
 from msaBase.models.sysinfo import MSASystemGPUInfo, MSASystemInfo
 from msaBase.sysinfo import get_sysgpuinfo, get_sysinfo
 from msaBase.utils.constants import PUBSUB_NAME, REGISTRY_TOPIC, SERVICE_TOPIC
-from msaDocModels import health
 from msaDocModels.health import MSAHealthDefinition, MSAHealthMessage
 from msaDocModels.openapi import MSAOpenAPIInfo
 from msaDocModels.scheduler import MSASchedulerStatus, MSASchedulerTaskDetail, MSASchedulerTaskStatus

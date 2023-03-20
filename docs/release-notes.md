@@ -3,17 +3,22 @@
 
 ## 0.0.50
 
-fix fields for SPKTextExtractionDocumentNLPInput
+add models for result of NLP, NER services 
+add function to get all sentences per page
+
+## 0.0.49
+
+fix fields for TextExtractionDocumentNLPInput
 
 ## 0.0.48
 
 add id to ExtractionDefaultResult, RecognizerDefaultResult
-add defaults for SPKTextExtractionDefaults model
+add defaults for TextExtractionDefaults model
 
 ## 0.0.47
 
-change structure for SPKDBBaseDocumentInput
-add models for spkTextExtractionDefaults, spkTextExtractionNLP
+change structure for DBBaseDocumentInput
+add models for TextExtractionDefaults, TextExtractionNLP
 
 ## 0.0.46
 
@@ -33,7 +38,7 @@ update version msaDocModels, add webhook url and constant to train model
 
 ## 0.0.42
 
-update version msaDocModels, add language for SPKDataCleanAIInput
+update version msaDocModels, add language for DataCleanAIInput
 
 ## 0.0.41
 
@@ -41,7 +46,7 @@ update version msaDocModels, for default Language and fix send config to pubsub
 
 ## 0.0.40
 
-update version msaDocModels, for spkTextKeywords
+update version msaDocModels, for TextKeywords
 
 ## 0.0.39
 
@@ -137,7 +142,7 @@ update version of msaDocModels, remove libraries to working with db
 
 ## 0.0.13
 
-update version of msaDocModels, add spk models
+update version of msaDocModels, add  models
 
 ## 0.0.12
 
