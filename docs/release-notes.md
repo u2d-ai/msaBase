@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+
+## 0.0.53
+
+add input and output  models for Notary
+
 ## 0.0.52
 
 fix model for result NER
