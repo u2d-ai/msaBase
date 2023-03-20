@@ -33,7 +33,7 @@ from msaBase.utils.constants import PUBSUB_NAME, REGISTRY_TOPIC, SERVICE_TOPIC
 from msaDocModels.health import MSAHealthDefinition, MSAHealthMessage
 from msaDocModels.openapi import MSAOpenAPIInfo
 from msaDocModels.scheduler import MSASchedulerStatus, MSASchedulerTaskDetail, MSASchedulerTaskStatus
-from msaDocModels.spk import SDUVersion
+from msaDocModels.sdu import SDUVersion
 from msaFilesystem.msafs import MSAFilesystem
 from slowapi import Limiter
 from starlette import status
