@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.56
+
+remove language from extraction NLP
+
 ## 0.0.55
 
 change model for NotaryDTO, when notary are not found
