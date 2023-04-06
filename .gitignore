@@ -1,5 +1,5 @@
 /dist/
 /dist_docs/
-
+.idea/
 /msaBase.egg-info/
 .lh/*

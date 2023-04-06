@@ -4,11 +4,8 @@ Main package based on FastAPI like Profiler, Scheduler, Sysinfo, Healtcheck, Err
 
 ## Usage
 
-msaBase contains various TODO ... 
-
-
-Once you have an instance of msaCore just use it the following way:
+Once you have an instance of msaBase just use it the following way:
 
 ```python
-# TODO
+{!./docs_src/home/index_first.py!}
 ```
