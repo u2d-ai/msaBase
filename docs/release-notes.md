@@ -1,6 +1,9 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.58
+
+Update version of setuptools
 
 ## 0.0.57
 

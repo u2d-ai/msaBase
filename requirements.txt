@@ -19,7 +19,7 @@ isort==5.12.0 # library to sort Python imports.
 loguru==0.6.0 # Python logging made (stupidly) simple
 lxml==4.9.2 # Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API.
 mypy==1.0.0 # Optional static typing for Python
-setuptools==67.2.0 # Easily download, build, install, upgrade, and uninstall Python packages
+setuptools==67.6.1 # Easily download, build, install, upgrade, and uninstall Python packages
 prometheus_fastapi_instrumentator==5.9.1 # Instrument your FastAPI with Prometheus metrics
 Jinja2==3.1.2 # A very fast and expressive template engine.
 orjson==3.8.3 # Fast, correct Python JSON library supporting dataclasses, datetimes, and numpy
