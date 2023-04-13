@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.60
+
+- Add models for Phrases mining
+
 ## 0.0.59
 
 - Update OpenAPI model
