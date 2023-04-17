@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.61
+
+- Add models for extract Keywords 
+- Fix empty name of the largest CPU process 
+
 ## 0.0.60
 
 - Add models for Phrases mining
