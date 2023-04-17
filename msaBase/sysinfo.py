@@ -397,7 +397,7 @@ def get_cpu_usage(user: str = None, ignore_self: bool = False) -> Tuple[int, int
     output = getoutput(cmd)
     total: int = 0
     largest_process = 0
-    largest_process_name = None
+    largest_process_name = ""
     for row in output.split("\n")[1:]:
         erow: List = row.split()
         if erow[1] == str(pid) and ignore_self:
