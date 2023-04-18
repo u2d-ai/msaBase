@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+
+## 0.0.62
+
+- Add models to extract phrases from text
+
 ## 0.0.61
 
 - Add models for extract Keywords 
