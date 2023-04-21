@@ -5,7 +5,9 @@ from pkg_resources import parse_requirements
 from setuptools import find_packages, setup
 
 with pathlib.Path("requirements.txt").open() as requirements_txt:
-    REQUIREMETS = [str(requirement) for requirement in parse_requirements(requirements_txt)]
+    REQUIREMETS = [
+        str(requirement) for requirement in parse_requirements(requirements_txt)
+    ]
 
 
 # Parse version number from pyglet/__init__.py:

@@ -3,10 +3,11 @@ import json
 import os
 from typing import Any, Dict, List, Optional, Union
 
-from msaBase.logger import logger
-from msaBase.models.settings import MSAAppSettings
 from msaDocModels.health import MSAHealthDefinition
 from pydantic import BaseModel
+
+from msaBase.logger import logger
+from msaBase.models.settings import MSAAppSettings
 
 
 class MSAServiceStatus(BaseModel):

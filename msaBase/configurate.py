@@ -22,17 +22,10 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
 from fs.base import FS
 from loguru import logger as logger_gruru
-from msaBase.config import ConfigDTO, ConfigInput, MSAServiceDefinition, MSAServiceStatus
-from msaBase.errorhandling import getMSABaseExceptionHandler
-from msaBase.logger import init_logging
-from msaBase.models.functionality import FunctionalityTypes
-from msaBase.models.middlewares import MiddlewareTypes
-from msaBase.models.sysinfo import MSASystemGPUInfo, MSASystemInfo
-from msaBase.sysinfo import get_sysgpuinfo, get_sysinfo
-from msaBase.utils.constants import PUBSUB_NAME, REGISTRY_TOPIC, SERVICE_TOPIC
 from msaDocModels.health import MSAHealthDefinition, MSAHealthMessage
 from msaDocModels.openapi import MSAOpenAPIInfo
-from msaDocModels.scheduler import MSASchedulerStatus, MSASchedulerTaskDetail, MSASchedulerTaskStatus
+from msaDocModels.scheduler import (MSASchedulerStatus, MSASchedulerTaskDetail,
+                                    MSASchedulerTaskStatus)
 from msaDocModels.sdu import SDUVersion
 from msaFilesystem.msafs import MSAFilesystem
 from slowapi import Limiter
@@ -41,6 +34,16 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse, Response
 from starlette_context import plugins
+
+from msaBase.config import (ConfigDTO, ConfigInput, MSAServiceDefinition,
+                            MSAServiceStatus)
+from msaBase.errorhandling import getMSABaseExceptionHandler
+from msaBase.logger import init_logging
+from msaBase.models.functionality import FunctionalityTypes
+from msaBase.models.middlewares import MiddlewareTypes
+from msaBase.models.sysinfo import MSASystemGPUInfo, MSASystemInfo
+from msaBase.sysinfo import get_sysgpuinfo, get_sysinfo
+from msaBase.utils.constants import PUBSUB_NAME, REGISTRY_TOPIC, SERVICE_TOPIC
 
 
 def get_secret_key() -> str:
@@ -151,7 +154,9 @@ class MSAApp(FastAPI):
         self.version = version if version else self.settings.version
         self.openapi_url = openapi_url if openapi_url else self.settings.openapi_url
         self.auto_mount_site: bool = auto_mount_site
-        self.SDUVersion = SDUVersion(version=self.settings.version, creation_date=datetime.utcnow().isoformat())
+        self.SDUVersion = SDUVersion(
+            version=self.settings.version, creation_date=datetime.utcnow().isoformat()
+        )
         self.license_info = license_info
         self.contact = contact if contact else self.settings.contact
         self.terms_of_service = terms_of_service
@@ -189,9 +194,13 @@ class MSAApp(FastAPI):
                 received_config: Data to update current config with.
             """
             try:
-                self.logger.info(f"Received config from spkRegistry. Data: {received_config.data}")
+                self.logger.info(
+                    f"Received config from spkRegistry. Data: {received_config.data}"
+                )
                 if received_config.data.config.name == self.settings.name:
-                    reload_needed = self.update_settings(received_config.data.config, received_config.data.one_time)
+                    reload_needed = self.update_settings(
+                        received_config.data.config, received_config.data.one_time
+                    )
                     if reload_needed:
                         self.logger.info("New config needs reload.")
                         with open("config.json", "w") as json_file:
@@ -224,7 +233,9 @@ class MSAApp(FastAPI):
 
         return decorator
 
-    def logger_info(self, message: str, service_name: str = "", topic_name: str = "") -> None:
+    def logger_info(
+        self, message: str, service_name: str = "", topic_name: str = ""
+    ) -> None:
         """
         Sends message to pubsub topic.
 
@@ -277,7 +288,9 @@ class MSAApp(FastAPI):
                 self.logger.info("Closing Abstract Filesystem")
                 self.fs.close()
             except Exception as ex:
-                getMSABaseExceptionHandler().handle(ex, "Error: Closing Abstract Filesystem failed:")
+                getMSABaseExceptionHandler().handle(
+                    ex, "Error: Closing Abstract Filesystem failed:"
+                )
 
     @staticmethod
     async def get_system_gpu_info() -> MSASystemGPUInfo:
@@ -317,7 +330,10 @@ class MSAApp(FastAPI):
         """
         self.logger.info("Called - get_scheduler_status :" + str(request.url))
         sst: MSASchedulerStatus = MSASchedulerStatus()
-        if not self.settings.background_scheduler or not self.settings.asyncio_scheduler:
+        if (
+            not self.settings.background_scheduler
+            or not self.settings.asyncio_scheduler
+        ):
             sst.name = self.settings.name
             sst.message = "Schedulers is disabled!"
 
@@ -415,7 +431,9 @@ class MSAApp(FastAPI):
             }
         )
 
-    async def msa_exception_handler(self, request: Request, exc: HTTPException) -> Response:
+    async def msa_exception_handler(
+        self, request: Request, exc: HTTPException
+    ) -> Response:
         """
         Handles all HTTPExceptions if enabled with HTML
         Response or forward error if the code is in the exclude settings list.
@@ -469,7 +487,9 @@ class MSAApp(FastAPI):
 
         return oai
 
-    async def validation_exception_handler(self, request: Request, exc: RequestValidationError) -> JSONResponse:
+    async def validation_exception_handler(
+        self, request: Request, exc: RequestValidationError
+    ) -> JSONResponse:
         """
         Handles validation error exception and returns exception info as a JSON.
 
@@ -485,7 +505,9 @@ class MSAApp(FastAPI):
             content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
         )
 
-    async def msa_exception_handler_disabled(self, request: Request, exc: HTTPException) -> JSONResponse:
+    async def msa_exception_handler_disabled(
+        self, request: Request, exc: HTTPException
+    ) -> JSONResponse:
         """
         Handles all HTTPExceptions if Disabled with JSON Response.
 
@@ -569,9 +591,9 @@ class MSAApp(FastAPI):
             new_functionality = getattr(new_config, functionality.name, None)
             reload_needed = functionality.need_restart
 
-            if (current_functionality is not None and new_functionality is not None) and (
-                current_functionality != new_functionality
-            ):
+            if (
+                current_functionality is not None and new_functionality is not None
+            ) and (current_functionality != new_functionality):
 
                 if reload_needed:
                     return True
@@ -619,7 +641,9 @@ class MSAApp(FastAPI):
         }
         return configurator_mappings.get(middleware, self.unknown_middleware)
 
-    def choose_functionality_configurator(self, middleware: FunctionalityTypes) -> Type[unknown_functionality]:
+    def choose_functionality_configurator(
+        self, middleware: FunctionalityTypes
+    ) -> Type[unknown_functionality]:
         """
         Get the configurator by type of Functionality
 
@@ -654,8 +678,12 @@ class MSAApp(FastAPI):
                 tags=["service"],
                 response_model=MSASchedulerStatus,
             )
-        self.add_api_route("/", self.get_sduversion, tags=["service"], response_model=SDUVersion)
-        self.add_api_route("/sysinfo", get_sysinfo, tags=["service"], response_model=MSASystemInfo)
+        self.add_api_route(
+            "/", self.get_sduversion, tags=["service"], response_model=SDUVersion
+        )
+        self.add_api_route(
+            "/sysinfo", get_sysinfo, tags=["service"], response_model=MSASystemInfo
+        )
         self.add_api_route(
             "/sysgpuinfo",
             self.get_system_gpu_info,
@@ -669,7 +697,9 @@ class MSAApp(FastAPI):
             tags=["service"],
             response_model=MSAServiceStatus,
         )
-        self.add_api_route("/schema", self.get_services_openapi_schema, tags=["openapi"])
+        self.add_api_route(
+            "/schema", self.get_services_openapi_schema, tags=["openapi"]
+        )
         self.add_api_route(
             "/info",
             self.get_services_openapi_info,
@@ -704,14 +734,18 @@ class MSAApp(FastAPI):
         """Add Handler HTTPException"""
         self.logger.info("Add Handler HTTPException")
         exception_handler = (
-            self.msa_exception_handler if self.settings.httpception else self.msa_exception_handler_disabled
+            self.msa_exception_handler
+            if self.settings.httpception
+            else self.msa_exception_handler_disabled
         )
         self.add_exception_handler(StarletteHTTPException, exception_handler)
 
     def configure_validation_handler(self) -> None:
         """Add Handler ValidationError"""
         self.logger.info("Add Handler ValidationError")
-        self.add_exception_handler(RequestValidationError, self.validation_exception_handler)
+        self.add_exception_handler(
+            RequestValidationError, self.validation_exception_handler
+        )
 
     def configure_healthdefinition(self) -> None:
         """Configure health definition and start healthcheck thread."""
@@ -742,7 +776,9 @@ class MSAApp(FastAPI):
                 self.logger.info("Closing Abstract Filesystem")
                 self.fs.close()
             except Exception as ex:
-                getMSABaseExceptionHandler().handle(ex, "Error: Closing Abstract Filesystem failed:")
+                getMSABaseExceptionHandler().handle(
+                    ex, "Error: Closing Abstract Filesystem failed:"
+                )
         else:
             self.fs = self.abstract_fs.fs
             self.abstract_fs = MSAFilesystem(fs_url=self.settings.abstract_fs_url)
@@ -837,7 +873,9 @@ class MSAApp(FastAPI):
         self.logger.info("Add Middleware Timing")
         from fastapi_utils.timing import add_timing_middleware
 
-        add_timing_middleware(self, record=self.logger.info, prefix="app", exclude="untimed")
+        add_timing_middleware(
+            self, record=self.logger.info, prefix="app", exclude="untimed"
+        )
 
     def configure_gzip_middleware(self) -> None:
         """Add Middleware GZip"""
@@ -865,4 +903,6 @@ class MSAApp(FastAPI):
             self.logger_info(data.json(), topic_name=REGISTRY_TOPIC)
             self.logger.info(f"Sent config to pubsub, {data}")
         except Exception as ex:
-            self.logger.error(f"An error occurred while trying to send config to spkRegistry. Exception: {ex}")
+            self.logger.error(
+                f"An error occurred while trying to send config to spkRegistry. Exception: {ex}"
+            )

@@ -58,7 +58,9 @@ class MSAHealthCheck(Thread):
                 self.error = e.__str__()
 
             self.healthy = (
-                "positiv:" + str(status_code) if (200 <= status_code < 300) else "negativ:" + str(status_code)
+                "positiv:" + str(status_code)
+                if (200 <= status_code < 300)
+                else "negativ:" + str(status_code)
             )
 
             time.sleep(self.interval)
