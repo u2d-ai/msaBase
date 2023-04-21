@@ -2,8 +2,9 @@
 import codecs
 from typing import Dict, Optional
 
+from msaBase.configurate import MSAApp
 from pyinstrument import Profiler
-from starlette.routing import Router
+from starlette.responses import HTMLResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 
@@ -25,16 +26,15 @@ class MSAProfilerMiddleware:
         self,
         app: ASGIApp,
         *,
-        msa_app: Optional[Router] = None,
+        msa_app: Optional[MSAApp] = None,
         profiler_interval: float = 0.0001,
         profiler_output_type: str = "html",
         track_each_request: bool = True,
-        **profiler_kwargs: Dict
+        **profiler_kwargs: Dict,
     ):
         self.app = app
         """Linked/Mounted MSAApp Instance"""
         self._profiler = Profiler(interval=profiler_interval)
-
         self._server_app = msa_app
         self._output_type = profiler_output_type
         self._profiler_kwargs: dict = profiler_kwargs
@@ -54,6 +54,7 @@ class MSAProfilerMiddleware:
         if self._server_app is not None and not self._handler_init_done:
             self._handler_init_done = True
             self._server_app.add_event_handler("shutdown", self.get_profiler_result)
+            self._server_app.add_api_route("/profiler", self.get_profiler, tags=["service"])
 
         if scope["type"] != "http":
             await self.app(scope, receive, send)
@@ -102,3 +103,19 @@ class MSAProfilerMiddleware:
                 html_code = html_code.replace("pyinstrument", replace_title).replace("Pyinstrument", replace_title)
             with codecs.open(html_name, "w", "utf-8") as f:
                 f.write(html_code)
+            return html_code
+
+    async def get_profiler(self) -> HTMLResponse:
+        """
+        Produces the profiler result and return in the html
+
+        Returns:
+            HTMLResponse: response with html code of profiler
+        """
+
+        if self._profiler.is_running:
+            self._profiler.stop()
+        html_code = await self.get_profiler_result(replace_title=f"{self._server_app.settings.name}-Profiler")
+        if not self._profiler.is_running:
+            self._profiler.start()
+        return HTMLResponse(html_code)

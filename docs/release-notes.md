@@ -1,6 +1,9 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.64
+
+- Add profiler endpoint
 
 ## 0.0.63
 
