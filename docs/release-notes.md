@@ -2,6 +2,10 @@
 ## Possible future features:
 
 
+## 0.0.63
+
+- Add models to extended endpoints in summary
+
 ## 0.0.62
 
 - Add models to extract phrases from text
