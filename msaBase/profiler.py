@@ -2,11 +2,10 @@
 import codecs
 from typing import Dict, Optional
 
+from msaBase.configurate import MSAApp
 from pyinstrument import Profiler
 from starlette.responses import HTMLResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
-
-from msaBase.configurate import MSAApp
 
 
 class MSAProfilerMiddleware:
@@ -55,9 +54,7 @@ class MSAProfilerMiddleware:
         if self._server_app is not None and not self._handler_init_done:
             self._handler_init_done = True
             self._server_app.add_event_handler("shutdown", self.get_profiler_result)
-            self._server_app.add_api_route(
-                "/profiler", self.get_profiler, tags=["service"]
-            )
+            self._server_app.add_api_route("/profiler", self.get_profiler, tags=["service"])
 
         if scope["type"] != "http":
             await self.app(scope, receive, send)
@@ -85,9 +82,7 @@ class MSAProfilerMiddleware:
                     elif self._track_each_request:
                         await self.get_profiler_result()
 
-    async def get_profiler_result(
-        self, html_file: str = "profiler.html", replace_title: str = "msaBase-Profiler"
-    ):
+    async def get_profiler_result(self, html_file: str = "profiler.html", replace_title: str = "msaBase-Profiler"):
         """
         Produces the profiler result in the defined output type format, "text" or "html"
 
@@ -105,9 +100,7 @@ class MSAProfilerMiddleware:
                 **self._profiler_kwargs
             )  # HTMLRenderer().render(session=self._profiler.last_session)
             if replace_title:
-                html_code = html_code.replace("pyinstrument", replace_title).replace(
-                    "Pyinstrument", replace_title
-                )
+                html_code = html_code.replace("pyinstrument", replace_title).replace("Pyinstrument", replace_title)
             with codecs.open(html_name, "w", "utf-8") as f:
                 f.write(html_code)
             return html_code
@@ -122,9 +115,7 @@ class MSAProfilerMiddleware:
 
         if self._profiler.is_running:
             self._profiler.stop()
-        html_code = await self.get_profiler_result(
-            replace_title=f"{self._server_app.settings.name}-Profiler"
-        )
+        html_code = await self.get_profiler_result(replace_title=f"{self._server_app.settings.name}-Profiler")
         if not self._profiler.is_running:
             self._profiler.start()
         return HTMLResponse(html_code)

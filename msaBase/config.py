@@ -3,11 +3,10 @@ import json
 import os
 from typing import Any, Dict, List, Optional, Union
 
-from msaDocModels.health import MSAHealthDefinition
-from pydantic import BaseModel
-
 from msaBase.logger import logger
 from msaBase.models.settings import MSAAppSettings
+from msaDocModels.health import MSAHealthDefinition
+from pydantic import BaseModel
 
 
 class MSAServiceStatus(BaseModel):
@@ -117,9 +116,9 @@ class MSAServiceDefinition(MSAAppSettings):
     signal_middleware: bool = False
     task_middleware: bool = False
     context: bool = False
-    profiler: bool = False
-    profiler_output_type: str = "html"  # text or html
-    profiler_single_calls: bool = False
+    profiler: bool = True
+    profiler_output_type: str = "html"
+    profiler_single_calls: bool = True
     profiler_url: str = "/profiler"
     timing: bool = False
     limiter: bool = False
