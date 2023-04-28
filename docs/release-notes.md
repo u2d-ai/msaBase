@@ -1,6 +1,9 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.67
+
+- Add models for information extraction
 
 ## 0.0.66
 
