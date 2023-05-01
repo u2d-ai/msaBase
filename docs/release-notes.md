@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.69
+
+- fix information_extraction_answer key
+
 # 0.0.68
 
 - Change keys from answers/questions to result
