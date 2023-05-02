@@ -4,6 +4,7 @@
 # 0.0.70
 
 - add name of service and version to /sysinfo and /sysgpuinfo
+- add profiler endpoint without middleware
 
 # 0.0.69
 

@@ -4,7 +4,6 @@
 Initialize with a MSAServiceDefintion Instance to control the features and functions of the MSAApp.
 
 """
-import codecs
 import json
 import os
 from asyncio import Task
@@ -23,6 +22,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
 from fs.base import FS
 from loguru import logger as logger_gruru
+from pyinstrument import Profiler
+
 from msaBase.config import ConfigDTO, ConfigInput, MSAServiceDefinition, MSAServiceStatus
 from msaBase.errorhandling import getMSABaseExceptionHandler
 from msaBase.logger import init_logging
@@ -138,6 +139,7 @@ class MSAApp(FastAPI):
     ) -> None:
         # call super class __init__
         super().__init__(*args, **settings.fastapi_kwargs)
+        self.profiler = None
         self.settings = settings
 
         self.previous_settings = None
@@ -487,16 +489,12 @@ class MSAApp(FastAPI):
         Returns:
             HTMLResponse: response with html code of profiler
         """
-        self.logger.info("Called - get_profiler :" + str(request.url))
-        try:
-            with codecs.open("profiler.html", "r", "utf-8") as f:
-                html_code = f.read()
-            return HTMLResponse(html_code)
-        except FileNotFoundError as ex:
-            self.logger.error(f"An error occurred while trying to read profiler. Exception: {ex}")
-            with codecs.open("profiler.html", "w", "utf-8") as f:
-                f.write(f"Profiler error - {ex}")
-            return HTMLResponse(f"Profiler error - {ex}")
+        self.profiler.start()
+        self.profiler.stop()
+        html = self.profiler.output_html()
+        service_name = f"Profiler for {self.settings.name} {self.settings.version} was disabled"
+        html_code = html.replace("pyinstrument", service_name).replace("Pyinstrument", service_name)
+        return HTMLResponse(html_code)
 
     async def validation_exception_handler(self, request: Request, exc: RequestValidationError) -> JSONResponse:
         """
@@ -706,6 +704,7 @@ class MSAApp(FastAPI):
             response_model=MSAOpenAPIInfo,
         )
         if not self.settings.profiler:
+            self.profiler = Profiler()
             self.add_api_route("/profiler", self.get_profiler, tags=["service"], response_model=MSAOpenAPIInfo)
 
     def configure_limiter_handler(self) -> None:
