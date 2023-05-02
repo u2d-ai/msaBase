@@ -4,6 +4,7 @@
 Initialize with a MSAServiceDefintion Instance to control the features and functions of the MSAApp.
 
 """
+import codecs
 import json
 import os
 from asyncio import Task
@@ -476,6 +477,27 @@ class MSAApp(FastAPI):
 
         return oai
 
+    def get_profiler(self, request: Request) -> HTMLResponse:
+        """
+        Get Profiler
+
+        Parameters:
+            request: The input http request object
+
+        Returns:
+            HTMLResponse: response with html code of profiler
+        """
+        self.logger.info("Called - get_profiler :" + str(request.url))
+        try:
+            with codecs.open("profiler.html", "r", "utf-8") as f:
+                html_code = f.read()
+            return HTMLResponse(html_code)
+        except FileNotFoundError as ex:
+            self.logger.error(f"An error occurred while trying to read profiler. Exception: {ex}")
+            with codecs.open("profiler.html", "w", "utf-8") as f:
+                f.write(f"Profiler error - {ex}")
+            return HTMLResponse(f"Profiler error - {ex}")
+
     async def validation_exception_handler(self, request: Request, exc: RequestValidationError) -> JSONResponse:
         """
         Handles validation error exception and returns exception info as a JSON.
@@ -683,6 +705,8 @@ class MSAApp(FastAPI):
             tags=["openapi"],
             response_model=MSAOpenAPIInfo,
         )
+        if not self.settings.profiler:
+            self.add_api_route("/profiler", self.get_profiler, tags=["service"], response_model=MSAOpenAPIInfo)
 
     def configure_limiter_handler(self) -> None:
         """Add Limiter Handler"""
