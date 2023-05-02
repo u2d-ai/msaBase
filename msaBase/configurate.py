@@ -279,14 +279,21 @@ class MSAApp(FastAPI):
             except Exception as ex:
                 getMSABaseExceptionHandler().handle(ex, "Error: Closing Abstract Filesystem failed:")
 
-    @staticmethod
-    async def get_system_gpu_info() -> MSASystemGPUInfo:
+    async def get_system_info(self) -> MSASystemGPUInfo:
         """Get System Nvidia GPU's Info
         Returns:
-            sysgpuinfo: MSASystemGPUInfo Pydantic Model
+            sys_info: MSASystemGPUInfo Pydantic Model
         """
-        sysgpuinfo = get_sysgpuinfo()
-        return sysgpuinfo
+        sys_info = get_sysinfo(f"{self.settings.name} {self.settings.version}")
+        return sys_info
+
+    async def get_system_gpu_info(self) -> MSASystemGPUInfo:
+        """Get System Nvidia GPU's Info
+        Returns:
+            sys_gpu_info: MSASystemGPUInfo Pydantic Model
+        """
+        sys_gpu_info = get_sysgpuinfo(f"{self.settings.name} {self.settings.version}")
+        return sys_gpu_info
 
     async def get_healthcheck(self, request: Request) -> ORJSONResponse:
         """
@@ -655,7 +662,7 @@ class MSAApp(FastAPI):
                 response_model=MSASchedulerStatus,
             )
         self.add_api_route("/", self.get_sduversion, tags=["service"], response_model=SDUVersion)
-        self.add_api_route("/sysinfo", get_sysinfo, tags=["service"], response_model=MSASystemInfo)
+        self.add_api_route("/sysinfo", self.get_system_info, tags=["service"], response_model=MSASystemInfo)
         self.add_api_route(
             "/sysgpuinfo",
             self.get_system_gpu_info,

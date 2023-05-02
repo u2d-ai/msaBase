@@ -115,7 +115,7 @@ class MSAProfilerMiddleware:
 
         if self._profiler.is_running:
             self._profiler.stop()
-        html_code = await self.get_profiler_result(replace_title=f"{self._server_app.settings.name}-Profiler")
+        html_code = await self.get_profiler_result(replace_title=f"{self._server_app.settings.name} {self._server_app.settings.version}")
         if not self._profiler.is_running:
             self._profiler.start()
         return HTMLResponse(html_code)

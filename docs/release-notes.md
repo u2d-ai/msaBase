@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.70
+
+- add name of service and version to /sysinfo and /sysgpuinfo
+
 # 0.0.69
 
 - fix information_extraction_answer key
