@@ -411,7 +411,7 @@ def get_cpu_usage(user: str = None, ignore_self: bool = False) -> Tuple[int, int
     return total, largest_process, largest_process_name
 
 
-def get_sysinfo() -> MSASystemInfo:
+def get_sysinfo(version: str) -> MSASystemInfo:
     """
     Get system information.
 
@@ -420,6 +420,7 @@ def get_sysinfo() -> MSASystemInfo:
     """
     system_info: MSASystemInfo = MSASystemInfo()
     try:
+        system_info.Version = version
         system_info.OS_Name = os.uname().sysname
         system_info.Node_Name = os.uname().nodename
         system_info.Host_Name = get_hostname()
@@ -466,7 +467,7 @@ def get_sysinfo() -> MSASystemInfo:
     return system_info
 
 
-def get_sysgpuinfo() -> MSASystemGPUInfo:
+def get_sysgpuinfo(version: str) -> MSASystemGPUInfo:
     """
     Get GPU information
 
@@ -475,6 +476,7 @@ def get_sysgpuinfo() -> MSASystemGPUInfo:
     """
     system_gpu_info: MSASystemGPUInfo = MSASystemGPUInfo()
     try:
+        system_gpu_info.Version = version
         system_gpu_info.OS_Name = os.uname().sysname
         system_gpu_info.Node_Name = os.uname().nodename
         system_gpu_info.Host_Name = get_hostname()

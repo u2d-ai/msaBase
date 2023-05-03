@@ -118,7 +118,7 @@ class MSAServiceDefinition(MSAAppSettings):
     context: bool = False
     profiler: bool = True
     profiler_output_type: str = "html"
-    profiler_single_calls: bool = True
+    profiler_single_calls: bool = False
     profiler_url: str = "/profiler"
     timing: bool = False
     limiter: bool = False
@@ -169,7 +169,7 @@ def get_msa_app_settings() -> MSAServiceDefinition:
     Note:
         Caching is used to prevent re-reading the environment every time the API settings are used in an endpoint.
     """
-    return _msa_config
+    return MSAServiceDefinition.load_config()
 
 
 class ConfigDTO(BaseModel):
@@ -207,6 +207,3 @@ class ConfigDataDTO(BaseModel):
 
     service_name: str
     config_dto: ConfigDTO
-
-
-_msa_config: MSAServiceDefinition = MSAServiceDefinition.load_config()

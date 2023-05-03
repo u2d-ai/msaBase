@@ -54,7 +54,8 @@ class MSAProfilerMiddleware:
         if self._server_app is not None and not self._handler_init_done:
             self._handler_init_done = True
             self._server_app.add_event_handler("shutdown", self.get_profiler_result)
-            self._server_app.add_api_route("/profiler", self.get_profiler, tags=["service"])
+            if self._server_app.settings.profiler:
+                self._server_app.add_api_route("/profiler", self.get_profiler, tags=["service"])
 
         if scope["type"] != "http":
             await self.app(scope, receive, send)
@@ -115,7 +116,9 @@ class MSAProfilerMiddleware:
 
         if self._profiler.is_running:
             self._profiler.stop()
-        html_code = await self.get_profiler_result(replace_title=f"{self._server_app.settings.name}-Profiler")
+        html_code = await self.get_profiler_result(
+            replace_title=f"{self._server_app.settings.name} {self._server_app.settings.version}"
+        )
         if not self._profiler.is_running:
             self._profiler.start()
         return HTMLResponse(html_code)

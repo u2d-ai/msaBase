@@ -324,6 +324,7 @@ class MSASystemInfo(BaseModel):
     Pydantic System Info Model.
 
     Attributes:
+        Version: name and version
         OS_Name: name of the operational system
         Node_Name: name of the node
         Host_Name: name of the host
@@ -361,6 +362,7 @@ class MSASystemInfo(BaseModel):
         Runtime_Status: Service Status, running or stopped
     """
 
+    Version: str = ""
     OS_Name: str = ""
     Node_Name: str = ""
     Host_Name: str = ""
@@ -403,6 +405,7 @@ class MSASystemGPUInfo(BaseModel):
     Pydantic System GPU Info Model.
 
     Attributes:
+        Version: name and version
         OS_Name: name of the operational system
         Node_Name: name of the current node
         Host_Name: name of the host
@@ -425,6 +428,7 @@ class MSASystemGPUInfo(BaseModel):
         Runtime_Status: Service Status, running or stopped
     """
 
+    Version: str = ""
     OS_Name: str = ""
     Node_Name: str = ""
     Host_Name: str = ""

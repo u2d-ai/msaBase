@@ -6,6 +6,7 @@ Initialize with a MSAServiceDefintion Instance to control the features and funct
 """
 import json
 import os
+import aiohttp
 from asyncio import Task
 from datetime import datetime
 from functools import wraps
@@ -22,6 +23,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
 from fs.base import FS
 from loguru import logger as logger_gruru
+from pyinstrument import Profiler
+
 from msaBase.config import ConfigDTO, ConfigInput, MSAServiceDefinition, MSAServiceStatus
 from msaBase.errorhandling import getMSABaseExceptionHandler
 from msaBase.logger import init_logging
@@ -88,6 +91,30 @@ def get_secret_key_csrf() -> str:
     return key
 
 
+async def load_config(url: str) -> None:
+    """
+    Get config.
+
+    Parameters:
+
+        url: request URL.
+    """
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                if resp.status == 200:
+                    config = MSAServiceDefinition.parse_obj(await resp.json())
+
+                    with open("config.json", "w") as json_file:
+                        json.dump(config.dict(), json_file, sort_keys=True, indent=4)
+
+                    logger_gruru.info("New config saved to config.json")
+                else:
+                    logger_gruru.info(f"Config not found")
+    except BaseException as ex:
+        logger_gruru.error(ex)
+
+
 class MSAApp(FastAPI):
     """Creates an application msaBase instance.
 
@@ -137,6 +164,7 @@ class MSAApp(FastAPI):
     ) -> None:
         # call super class __init__
         super().__init__(*args, **settings.fastapi_kwargs)
+        self.profiler = None
         self.settings = settings
 
         self.previous_settings = None
@@ -279,14 +307,21 @@ class MSAApp(FastAPI):
             except Exception as ex:
                 getMSABaseExceptionHandler().handle(ex, "Error: Closing Abstract Filesystem failed:")
 
-    @staticmethod
-    async def get_system_gpu_info() -> MSASystemGPUInfo:
+    async def get_system_info(self) -> MSASystemGPUInfo:
         """Get System Nvidia GPU's Info
         Returns:
-            sysgpuinfo: MSASystemGPUInfo Pydantic Model
+            sys_info: MSASystemGPUInfo Pydantic Model
         """
-        sysgpuinfo = get_sysgpuinfo()
-        return sysgpuinfo
+        sys_info = get_sysinfo(f"{self.settings.name} {self.settings.version}")
+        return sys_info
+
+    async def get_system_gpu_info(self) -> MSASystemGPUInfo:
+        """Get System Nvidia GPU's Info
+        Returns:
+            sys_gpu_info: MSASystemGPUInfo Pydantic Model
+        """
+        sys_gpu_info = get_sysgpuinfo(f"{self.settings.name} {self.settings.version}")
+        return sys_gpu_info
 
     async def get_healthcheck(self, request: Request) -> ORJSONResponse:
         """
@@ -468,6 +503,23 @@ class MSAApp(FastAPI):
             oai.tags = ["error:400 error" + e.__str__()]
 
         return oai
+
+    def get_profiler(self, request: Request) -> HTMLResponse:
+        """
+        Get Profiler
+
+        Parameters:
+            request: The input http request object
+
+        Returns:
+            HTMLResponse: response with html code of profiler
+        """
+        self.profiler.start()
+        self.profiler.stop()
+        html = self.profiler.output_html()
+        service_name = f"Profiler for {self.settings.name} {self.settings.version} was disabled"
+        html_code = html.replace("pyinstrument", service_name).replace("Pyinstrument", service_name)
+        return HTMLResponse(html_code)
 
     async def validation_exception_handler(self, request: Request, exc: RequestValidationError) -> JSONResponse:
         """
@@ -655,7 +707,7 @@ class MSAApp(FastAPI):
                 response_model=MSASchedulerStatus,
             )
         self.add_api_route("/", self.get_sduversion, tags=["service"], response_model=SDUVersion)
-        self.add_api_route("/sysinfo", get_sysinfo, tags=["service"], response_model=MSASystemInfo)
+        self.add_api_route("/sysinfo", self.get_system_info, tags=["service"], response_model=MSASystemInfo)
         self.add_api_route(
             "/sysgpuinfo",
             self.get_system_gpu_info,
@@ -676,6 +728,9 @@ class MSAApp(FastAPI):
             tags=["openapi"],
             response_model=MSAOpenAPIInfo,
         )
+        if not self.settings.profiler:
+            self.profiler = Profiler()
+            self.add_api_route("/profiler", self.get_profiler, tags=["service"], response_model=MSAOpenAPIInfo)
 
     def configure_limiter_handler(self) -> None:
         """Add Limiter Handler"""

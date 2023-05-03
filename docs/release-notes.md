@@ -1,6 +1,12 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.70
+
+- add name of service and version to /sysinfo and /sysgpuinfo
+- add profiler endpoint without middleware
+- add function for loading config
+
 # 0.0.69
 
 - fix information_extraction_answer key
