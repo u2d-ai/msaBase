@@ -207,6 +207,3 @@ class ConfigDataDTO(BaseModel):
 
     service_name: str
     config_dto: ConfigDTO
-
-
-_msa_config: MSAServiceDefinition = MSAServiceDefinition.load_config()
