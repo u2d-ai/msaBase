@@ -116,7 +116,7 @@ class MSAServiceDefinition(MSAAppSettings):
     signal_middleware: bool = False
     task_middleware: bool = False
     context: bool = False
-    profiler: bool = False
+    profiler: bool = True
     profiler_output_type: str = "html"
     profiler_single_calls: bool = False
     profiler_url: str = "/profiler"

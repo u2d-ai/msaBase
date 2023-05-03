@@ -99,18 +99,20 @@ async def load_config(url: str) -> None:
 
         url: request URL.
     """
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                if resp.status == 200:
+                    config = MSAServiceDefinition.parse_obj(await resp.json())
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as resp:
-            if resp.status == 200:
-                config = MSAServiceDefinition.parse_obj(await resp.json())
+                    with open("config.json", "w") as json_file:
+                        json.dump(config.dict(), json_file, sort_keys=True, indent=4)
 
-                with open("config.json", "w") as json_file:
-                    json.dump(config.dict(), json_file, sort_keys=True, indent=4)
-
-                logger_gruru.info("New config saved to config.json")
-            else:
-                logger_gruru.info(f"Config not found")
+                    logger_gruru.info("New config saved to config.json")
+                else:
+                    logger_gruru.info(f"Config not found")
+    except BaseException as ex:
+        logger_gruru.error(ex)
 
 
 class MSAApp(FastAPI):
