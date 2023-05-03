@@ -169,7 +169,7 @@ def get_msa_app_settings() -> MSAServiceDefinition:
     Note:
         Caching is used to prevent re-reading the environment every time the API settings are used in an endpoint.
     """
-    return _msa_config
+    return MSAServiceDefinition.load_config()
 
 
 class ConfigDTO(BaseModel):

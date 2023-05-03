@@ -91,6 +91,28 @@ def get_secret_key_csrf() -> str:
     return key
 
 
+async def load_config(url: str) -> None:
+    """
+    Get config.
+
+    Parameters:
+
+        url: request URL.
+    """
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            if resp.status == 200:
+                config = MSAServiceDefinition.parse_obj(await resp.json())
+
+                with open("config.json", "w") as json_file:
+                    json.dump(config.dict(), json_file, sort_keys=True, indent=4)
+
+                logger_gruru.info("New config saved to config.json")
+            else:
+                logger_gruru.info(f"Config not found")
+
+
 class MSAApp(FastAPI):
     """Creates an application msaBase instance.
 
@@ -179,42 +201,6 @@ class MSAApp(FastAPI):
         self.add_event_handler("startup", self.startup_event)
         self.create_dapr_endpoint()
 
-    def save_config(self, config: ConfigInput) -> None:
-        """
-        Save config to file.
-
-        Parameters:
-
-            config: config for save.
-        """
-
-        if config.data.config.name == self.settings.name:
-            reload_needed = self.update_settings(config.data.config, config.data.one_time)
-            if reload_needed:
-                self.logger.info("New config needs reload.")
-                with open("config.json", "w") as json_file:
-                    json.dump(config.data.dict(), json_file)
-
-                self.logger.info("New config saved to config.json")
-
-    async def load_config(self, url: str) -> None:
-        """
-        Get config.
-
-        Parameters:
-
-            url: request URL.
-        """
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as resp:
-                if resp.status == 200:
-                    config = MSAServiceDefinition.parse_obj(await resp.json())
-                    data = ConfigDTO(config=config, one_time=False)
-                    self.save_config(config=ConfigInput(data=data))
-                else:
-                    self.logger.info(f"Config not found")
-
     def create_dapr_endpoint(self):
         """
         Subscribes service to pubsub topic through which new configs will be received.
@@ -230,7 +216,14 @@ class MSAApp(FastAPI):
             """
             try:
                 self.logger.info(f"Received config from spkRegistry. Data: {received_config.data}")
-                self.save_config(config=received_config)
+                if received_config.data.config.name == self.settings.name:
+                    reload_needed = self.update_settings(received_config.data.config, received_config.data.one_time)
+                    if reload_needed:
+                        self.logger.info("New config needs reload.")
+                        with open("config.json", "w") as json_file:
+                            json.dump(received_config.data.dict(), json_file)
+
+                        self.logger.info("New config saved to config.json")
 
             except Exception as ex:
                 self.logger.info(ex)
