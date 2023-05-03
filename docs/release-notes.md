@@ -5,6 +5,7 @@
 
 - add name of service and version to /sysinfo and /sysgpuinfo
 - add profiler endpoint without middleware
+- add function for loading config
 
 # 0.0.69
 
