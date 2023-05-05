@@ -25,7 +25,7 @@ from fs.base import FS
 from loguru import logger as logger_gruru
 from pyinstrument import Profiler
 
-from msaBase.config import ConfigDTO, ConfigInput, MSAServiceDefinition, MSAServiceStatus
+from msaBase.config import ConfigDTO, ConfigInput, MSAServiceDefinition, MSAServiceStatus, get_msa_app_settings
 from msaBase.errorhandling import getMSABaseExceptionHandler
 from msaBase.logger import init_logging
 from msaBase.models.functionality import FunctionalityTypes
@@ -104,6 +104,9 @@ async def load_config(url: str) -> None:
             async with session.get(url) as resp:
                 if resp.status == 200:
                     config = MSAServiceDefinition.parse_obj(await resp.json())
+                    new_config = get_msa_app_settings()
+                    if new_config.dict(exclude={"version"}) == config.dict(exclude={"version"}):
+                        return
 
                     with open("config.json", "w") as json_file:
                         json.dump(config.dict(), json_file, sort_keys=True, indent=4)
