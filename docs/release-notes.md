@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.72
+
+- fix model TextExtractionDefaultsDTO
+
 # 0.0.71
 
 - don't update config when local config have only new version
