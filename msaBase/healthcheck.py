@@ -5,6 +5,7 @@ from threading import Thread
 
 import httpx
 from msaDocModels.health import MSAHealthDefinition
+from starlette import status
 
 
 class MSAHealthCheck(Thread):
@@ -23,6 +24,7 @@ class MSAHealthCheck(Thread):
         self.healthy: str = "No Healthcheck executed yet:400"
         self.is_healthy: bool = False
         self.error: str = ""
+        self.status = status.HTTP_200_OK
 
     async def get_health(self) -> str:
         """
@@ -32,6 +34,15 @@ class MSAHealthCheck(Thread):
             string "positiv: status_code" or "negative: status_code"
         """
         return self.healthy
+
+    async def get_status(self) -> str:
+        """
+        Get the status code of check result
+
+        Returns:
+            status code
+        """
+        return self.status
 
     def run(self):
         """
@@ -47,22 +58,23 @@ class MSAHealthCheck(Thread):
             try:
                 self.error = ""
                 resp = httpx.get(url=self.url, timeout=3.0)
-                status_code = resp.status_code
-                if 200 <= status_code < 300:
+                if status.HTTP_200_OK <= resp.status_code < status.HTTP_300_MULTIPLE_CHOICES:
                     self.is_healthy = True
+                    self.status = status.HTTP_200_OK
                 else:
                     self.is_healthy = False
+                    self.status = status.HTTP_503_SERVICE_UNAVAILABLE
             except Exception as e:
-                status_code = 400
+                self.status = status.HTTP_503_SERVICE_UNAVAILABLE
                 self.is_healthy = False
                 self.error = e.__str__()
 
             self.healthy = (
-                "positiv:" + str(status_code) if (200 <= status_code < 300) else "negativ:" + str(status_code)
+                "positiv:" + str(self.status) if (200 <= self.status < 300) else "negativ:" + str(self.status)
             )
 
             time.sleep(self.interval)
 
-    async def stop(self):
+    def stop(self):
         """Stops the Healthcheck Thread."""
         self._is_running = False

@@ -6,12 +6,12 @@ Initialize with a MSAServiceDefintion Instance to control the features and funct
 """
 import json
 import os
-import aiohttp
 from asyncio import Task
 from datetime import datetime
 from functools import wraps
 from typing import Any, Dict, List, Optional, Type, Union
 
+import aiohttp
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
 from dapr.clients import DaprClient
@@ -23,8 +23,6 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
 from fs.base import FS
 from loguru import logger as logger_gruru
-from pyinstrument import Profiler
-
 from msaBase.config import ConfigDTO, ConfigInput, MSAServiceDefinition, MSAServiceStatus, get_msa_app_settings
 from msaBase.errorhandling import getMSABaseExceptionHandler
 from msaBase.logger import init_logging
@@ -38,6 +36,7 @@ from msaDocModels.openapi import MSAOpenAPIInfo
 from msaDocModels.scheduler import MSASchedulerStatus, MSASchedulerTaskDetail, MSASchedulerTaskStatus
 from msaDocModels.sdu import SDUVersion
 from msaFilesystem.msafs import MSAFilesystem
+from pyinstrument import Profiler
 from slowapi import Limiter
 from starlette import status
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -300,7 +299,7 @@ class MSAApp(FastAPI):
 
         if self.healthcheck:
             self.logger.info("Stopping Healthcheck Thread")
-            await self.healthcheck.stop()
+            self.healthcheck.stop()
             self.healthcheck = None
 
         if self.settings.abstract_fs:
@@ -330,17 +329,18 @@ class MSAApp(FastAPI):
         """
         Get Healthcheck Status
         """
-        self.logger.info("Called - get_healthcheck :" + str(request.url))
         msg: MSAHealthMessage = MSAHealthMessage()
         if not self.healthcheck:
             msg.message = "Healthcheck is disabled!"
+            health_status = status.HTTP_409_CONFLICT
         else:
             msg.healthy = self.healthcheck.is_healthy
             msg.message = await self.healthcheck.get_health()
+            health_status = await self.healthcheck.get_status()
             if len(self.healthcheck.error) > 0:
                 msg.error = self.healthcheck.error
 
-        return ORJSONResponse(content=jsonable_encoder(msg))
+        return ORJSONResponse(content=jsonable_encoder(msg), status_code=health_status)
 
     async def get_scheduler_status(self, request: Request) -> MSASchedulerStatus:
         """
@@ -776,13 +776,14 @@ class MSAApp(FastAPI):
         self.logger.info("Init Healthcheck")
         from msaBase.healthcheck import MSAHealthCheck
 
-        self.healthcheck = MSAHealthCheck(
-            healthdefinition=self.healthdefinition,
-            host=self.settings.host,
-            port=self.settings.port,
-        )
-        self.logger.info("Start Healthcheck Thread")
-        self.healthcheck.start()
+        if self.settings.healthdefinition.enabled:
+            self.healthcheck = MSAHealthCheck(
+                healthdefinition=self.healthdefinition,
+                host=self.settings.host,
+                port=self.settings.port,
+            )
+            self.logger.info("Start Healthcheck Thread")
+            self.healthcheck.start()
         self.add_api_route(
             self.healthdefinition.path,
             self.get_healthcheck,
@@ -924,3 +925,19 @@ class MSAApp(FastAPI):
             self.logger.info(f"Sent config to pubsub, {data}")
         except Exception as ex:
             self.logger.error(f"An error occurred while trying to send config to spkRegistry. Exception: {ex}")
+
+    def info_pub_logger(self, message: str) -> None:
+        """Sending progress to the topic
+
+        Parameters:
+
+            message: message with status
+        """
+        if self.settings.debug:
+            self.logger.info(message)
+        else:
+            self.logger.info_pub(
+                message,
+                topic_name=self.settings.progress_topic,
+                service_name=self.settings.name,
+            )

@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.73
+
+- fix healthcheck
+- add logger to redis topic 
+
 # 0.0.72
 
 - fix model TextExtractionDefaultsDTO
