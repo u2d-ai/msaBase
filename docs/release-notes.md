@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.74
+
+- fix scheduler
+- add some fields for document 
+
 # 0.0.73
 
 - fix healthcheck

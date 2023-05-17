@@ -6,7 +6,6 @@ Initialize with a MSAServiceDefintion Instance to control the features and funct
 """
 import json
 import os
-from asyncio import Task
 from datetime import datetime
 from functools import wraps
 from typing import Any, Dict, List, Optional, Type, Union
@@ -25,6 +24,7 @@ from fs.base import FS
 from loguru import logger as logger_gruru
 from msaBase.config import ConfigDTO, ConfigInput, MSAServiceDefinition, MSAServiceStatus, get_msa_app_settings
 from msaBase.errorhandling import getMSABaseExceptionHandler
+from msaBase.healthcheck import MSAHealthCheck
 from msaBase.logger import init_logging
 from msaBase.models.functionality import FunctionalityTypes
 from msaBase.models.middlewares import MiddlewareTypes
@@ -112,7 +112,7 @@ async def load_config(url: str) -> None:
 
                     logger_gruru.info("New config saved to config.json")
                 else:
-                    logger_gruru.info(f"Config not found")
+                    logger_gruru.info("Config not found")
     except BaseException as ex:
         logger_gruru.error(ex)
 
@@ -142,8 +142,6 @@ class MSAApp(FastAPI):
         settings: MSAServiceDefinition settings instance.
         healthdefinition: MSAHealthDefinition settings.healthdefinition
         limiter: Limiter = None
-        scheduler: MSAScheduler = None
-        scheduler_task: The Task instance that runs the Scheduler in the Background
         ROOTPATH: str os.path.join(os.path.dirname(__file__))
 
     """
@@ -187,15 +185,14 @@ class MSAApp(FastAPI):
         self.terms_of_service = terms_of_service
         self.openapi_tags = openapi_tags
         self.healthdefinition: MSAHealthDefinition = self.settings.healthdefinition
-        self.limiter: "Limiter" = None
-        self.background_scheduler: "BackgroundScheduler" = None
-        self.asyncio_scheduler: "AsyncIOScheduler" = None
+        self.limiter: Optional[Limiter] = None
+        self.background_scheduler: Optional[BackgroundScheduler] = None
+        self.asyncio_scheduler: Optional[AsyncIOScheduler] = None
         self.site = None
-        self._scheduler_task: Task = None
         self.ROOTPATH = os.path.join(os.path.dirname(__file__))
-        self.abstract_fs: "MSAFilesystem" = None
-        self.fs: "FS" = None
-        self.healthcheck: "health.MSAHealthCheck" = None
+        self.abstract_fs: Optional[MSAFilesystem] = None
+        self.fs: Optional[FS] = None
+        self.healthcheck: Optional[MSAHealthCheck] = None
         self.logger.info_pub = self.logger_info
 
         init_logging()
@@ -289,13 +286,8 @@ class MSAApp(FastAPI):
         self.logger.info("msaBase Internal Shutdown MSAUIEvent")
         await self.extend_shutdown_event()
 
-        if self.settings.background_scheduler and self.background_scheduler.get_jobs():
-            self.logger.info("Stop Background Scheduler")
-            self.background_scheduler.shutdown()
-
-        if self.settings.asyncio_scheduler and self.asyncio_scheduler.get_jobs():
-            self.logger.info("Stop Asyncio Scheduler")
-            self.asyncio_scheduler.shutdown()
+        self.stop_scheduler(self.background_scheduler, "Background")
+        self.stop_scheduler(self.asyncio_scheduler, "Asyncio")
 
         if self.healthcheck:
             self.logger.info("Stopping Healthcheck Thread")
@@ -308,6 +300,16 @@ class MSAApp(FastAPI):
                 self.fs.close()
             except Exception as ex:
                 getMSABaseExceptionHandler().handle(ex, "Error: Closing Abstract Filesystem failed:")
+
+    def stop_scheduler(self, scheduler: Union[None, AsyncIOScheduler, BackgroundScheduler], name: str) -> None:
+        if scheduler:
+            self.logger.info(f"Stop {name} Scheduler")
+            if scheduler.get_jobs():
+                scheduler.shutdown()
+            if isinstance(scheduler, AsyncIOScheduler):
+                self.asyncio_scheduler = None
+            else:
+                self.background_scheduler = None
 
     async def get_system_info(self) -> MSASystemGPUInfo:
         """Get System Nvidia GPU's Info
@@ -803,8 +805,8 @@ class MSAApp(FastAPI):
             except Exception as ex:
                 getMSABaseExceptionHandler().handle(ex, "Error: Closing Abstract Filesystem failed:")
         else:
-            self.fs = self.abstract_fs.fs
             self.abstract_fs = MSAFilesystem(fs_url=self.settings.abstract_fs_url)
+            self.fs = self.abstract_fs.fs
 
     def configure_msgpack_middleware(self) -> None:
         """Add Middleware MSGPack"""
@@ -854,22 +856,20 @@ class MSAApp(FastAPI):
         self.logger.info("Add Background Scheduler")
         from apscheduler.schedulers.background import BackgroundScheduler
 
-        if self.background_scheduler and self.background_scheduler.get_jobs():
-            self.background_scheduler.shutdown()
-        else:
+        if self.settings.background_scheduler and not self.background_scheduler:
             self.background_scheduler = BackgroundScheduler()
-            self.background_scheduler.start()
+        elif not self.settings.background_scheduler:
+            self.stop_scheduler(self.background_scheduler, "Asyncio")
 
     def configure_asyncio_scheduler(self) -> None:
         """Add Asyncio Scheduler"""
         self.logger.info("Add Asyncio Scheduler")
         from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-        if self.asyncio_scheduler and self.asyncio_scheduler.get_jobs():
-            self.asyncio_scheduler.shutdown()
-        else:
+        if self.settings.asyncio_scheduler and not self.asyncio_scheduler:
             self.asyncio_scheduler = AsyncIOScheduler()
-            self.asyncio_scheduler.start()
+        elif not self.settings.asyncio_scheduler:
+            self.stop_scheduler(self.asyncio_scheduler, "Asyncio")
 
     def configure_event_loop(self) -> None:
         """Enable UVLoop"""
