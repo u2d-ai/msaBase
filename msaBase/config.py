@@ -133,7 +133,7 @@ class MSAServiceDefinition(MSAAppSettings):
         "url": "https://www.sparkasse-bremen.de/",
         "email": "marcus.rostalski@sparkasse-bremen.de",
     }
-    progress_topic: str = "spk-progress"
+    progress_topic: str = "progress"
 
     def save_config(self) -> None:
         """

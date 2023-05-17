@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.75
+
+- change pubsub topic
+
 # 0.0.74
 
 - fix scheduler
