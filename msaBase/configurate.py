@@ -216,7 +216,7 @@ class MSAApp(FastAPI):
                 received_config: Data to update current config with.
             """
             try:
-                self.logger.info(f"Received config from spkRegistry. Data: {received_config.data}")
+                self.logger.info(f"Received config from svcRegistry. Data: {received_config.data}")
                 if received_config.data.config.name == self.settings.name:
                     reload_needed = self.update_settings(received_config.data.config, received_config.data.one_time)
                     if reload_needed:
@@ -602,7 +602,7 @@ class MSAApp(FastAPI):
         Updates app configuration.
 
         Parameters:
-            new_config: MSAServiceDefinition. Config received from SPKRegistry.
+            new_config: MSAServiceDefinition. Config received from svcRegistry.
             one_time: a flag for using the config only one time.
         Returns:
             bool. True if app reload is needed, False otherwise.
@@ -924,7 +924,7 @@ class MSAApp(FastAPI):
             self.logger_info(data.json(), topic_name=REGISTRY_TOPIC)
             self.logger.info(f"Sent config to pubsub, {data}")
         except Exception as ex:
-            self.logger.error(f"An error occurred while trying to send config to spkRegistry. Exception: {ex}")
+            self.logger.error(f"An error occurred while trying to send config to svcRegistry. Exception: {ex}")
 
     def info_pub_logger(self, message: str) -> None:
         """Sending progress to the topic
