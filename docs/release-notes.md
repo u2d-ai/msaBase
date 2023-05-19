@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.76
+
+- add models to working with full document/pages/paragraphs/sentences
+
 # 0.0.75
 
 - change pubsub topic
