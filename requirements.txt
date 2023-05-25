@@ -1,6 +1,6 @@
 # MSA Dependencies
 msaFileSystem==0.0.3 # Agnostic Abstract Filesystem API which allows to use S3, GCS, Azure Datalake, your local FS, Youtube etc Optimized for use with FastAPI/Pydantic.
-msaDocModels==0.0.74 # MSA Document Pydantic Models and Schemas, used to store Parser, NLP, NLU and AI results for processed documents
+msaDocModels==0.0.75 # MSA Document Pydantic Models and Schemas, used to store Parser, NLP, NLU and AI results for processed documents
 
 # FastAPI related Dependencies
 fastapi[all]==0.86.0 # FastAPI framework, high performance, easy to learn, fast to code, ready for production
@@ -16,6 +16,7 @@ pyproject-flake8==6.0.0 # configure flake8
 flake8==6.0.0 # modular source code checker: pep8 pyflakes and co
 colorama==0.4.6 # Makes ANSI escape character sequence
 isort==5.12.0 # library to sort Python imports.
+sentry-sdk==1.24.0 # library to automatic reporting of errors and exceptions.
 loguru==0.6.0 # Python logging made (stupidly) simple
 lxml==4.9.2 # Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API.
 mypy==1.0.0 # Optional static typing for Python

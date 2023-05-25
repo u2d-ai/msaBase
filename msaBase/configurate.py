@@ -11,6 +11,7 @@ from functools import wraps
 from typing import Any, Dict, List, Optional, Type, Union
 
 import aiohttp
+import sentry_sdk
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
 from dapr.clients import DaprClient
@@ -147,20 +148,20 @@ class MSAApp(FastAPI):
     """
 
     def __init__(
-        self,
-        settings: MSAServiceDefinition,
-        auto_mount_site: Optional[bool] = True,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        host: Optional[str] = None,
-        version: Optional[str] = None,
-        openapi_url: Optional[str] = None,
-        openapi_tags: Optional[List[Dict[str, Any]]] = None,
-        terms_of_service: Optional[str] = None,
-        contact: Optional[Dict[str, Union[str, Any]]] = None,
-        license_info: Optional[Dict[str, Union[str, Any]]] = None,
-        *args,
-        **kwargs,
+            self,
+            settings: MSAServiceDefinition,
+            auto_mount_site: Optional[bool] = True,
+            title: Optional[str] = None,
+            description: Optional[str] = None,
+            host: Optional[str] = None,
+            version: Optional[str] = None,
+            openapi_url: Optional[str] = None,
+            openapi_tags: Optional[List[Dict[str, Any]]] = None,
+            terms_of_service: Optional[str] = None,
+            contact: Optional[Dict[str, Union[str, Any]]] = None,
+            license_info: Optional[Dict[str, Union[str, Any]]] = None,
+            *args,
+            **kwargs,
     ) -> None:
         # call super class __init__
         super().__init__(*args, **settings.fastapi_kwargs)
@@ -474,6 +475,7 @@ class MSAApp(FastAPI):
             "definitions": jsonable_encoder(self.settings),
         }
         self.logger.error("msa_exception_handler - " + str(error_content))
+        sentry_sdk.capture_exception(exc)
         return await http_exception_handler(request, exc)
 
     def get_sduversion(self) -> SDUVersion:
@@ -616,7 +618,7 @@ class MSAApp(FastAPI):
             new_middleware = getattr(new_config, middleware.name, None)
 
             if (current_middleware is not None and new_middleware is not None) and (
-                current_middleware != new_middleware
+                    current_middleware != new_middleware
             ):
                 return True
 
@@ -627,7 +629,7 @@ class MSAApp(FastAPI):
             reload_needed = functionality.need_restart
 
             if (current_functionality is not None and new_functionality is not None) and (
-                current_functionality != new_functionality
+                    current_functionality != new_functionality
             ):
 
                 if reload_needed:
@@ -651,7 +653,7 @@ class MSAApp(FastAPI):
         self.logger.info("Unknown Functionality")
 
     def choose_middleware_configurator(
-        self, middleware: Union[MiddlewareTypes, FunctionalityTypes]
+            self, middleware: Union[MiddlewareTypes, FunctionalityTypes]
     ) -> Type[unknown_middleware]:
         """
         Get the configurator by type of Middleware
@@ -940,4 +942,17 @@ class MSAApp(FastAPI):
                 message,
                 topic_name=self.settings.progress_topic,
                 service_name=self.settings.name,
+            )
+
+    def init_sentry(self, sentry_dsn: str) -> None:
+        """Sending progress to the topic
+
+        Parameters:
+
+            sentry_dsn: dsn to sentry project
+        """
+        if self.settings.debug:
+            sentry_sdk.init(
+                dsn=sentry_dsn,
+                traces_sample_rate=1.0,
             )
