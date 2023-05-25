@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.79
+
+- add models for working with document statuses
+- add sentry to project
+
 # 0.0.78
 
 - add model to working with document for Summary/Phrases 
