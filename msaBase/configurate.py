@@ -951,7 +951,7 @@ class MSAApp(FastAPI):
 
             sentry_dsn: dsn to sentry project
         """
-        if self.settings.debug:
+        if not self.settings.debug:
             sentry_sdk.init(
                 dsn=sentry_dsn,
                 traces_sample_rate=1.0,
