@@ -1,5 +1,7 @@
+import os
 from typing import Any, Dict, List, Union
 
+from dotenv import load_dotenv
 from msaDocModels.sdu import SDUPage
 
 
@@ -64,3 +66,32 @@ async def get_all_sentences(text_pages: List[SDUPage]) -> Dict[int, List[str]]:
             for sen in par.sentences:
                 sentences[page.id].append(sen.text)
     return sentences
+
+
+def _prioritize_envs_in_settings(prefix: str) -> dict[str, Any]:
+    """
+    Helper function to fix an issue where config.json overwrites .env variables with specified prefix
+    in Config child class of Pydantic's settings
+
+    Args:
+        prefix: A string value from inner Config class of a pydantic model. Example:
+        ```
+        class Config:
+            env_file = ".env"
+            env_file_encoding = "utf-8"
+            env_prefix = "msa_app_"
+        ```
+        to dynamically retrieve the env_prefix: `MSAServiceDefinition().Config().env_prefix`
+
+    Returns:
+        map of the env variables which will overwrite values provided in config.json file
+    """
+    load_dotenv()
+    envs: list[str] = os.environ
+    envs_map = {}
+    for env in envs:
+        if env.startswith(prefix):
+            env_with_prefix_key: str = env
+            env_key = env_with_prefix_key.replace(prefix, "")
+            envs_map[env_key] = os.environ.get(env)
+    return envs_map

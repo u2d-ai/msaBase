@@ -3,10 +3,12 @@ import json
 import os
 from typing import Any, Dict, List, Optional, Union
 
-from msaBase.logger import logger
-from msaBase.models.settings import MSAAppSettings
 from msaDocModels.health import MSAHealthDefinition
 from pydantic import BaseModel
+
+from msaBase.helpers import _prioritize_envs_in_settings
+from msaBase.logger import logger
+from msaBase.models.settings import MSAAppSettings
 
 
 class MSAServiceStatus(BaseModel):
@@ -151,14 +153,18 @@ class MSAServiceDefinition(MSAAppSettings):
         Returns:
             MSAServiceDefinition config model
         """
-        ret: MSAServiceDefinition = MSAServiceDefinition()
+        settings: MSAServiceDefinition = MSAServiceDefinition()
         if os.path.exists("config.json"):
             with open("config.json", "rb") as fp:
-                intext = json.load(fp)
-                ret = MSAServiceDefinition.parse_obj(intext)
+                json_config: dict = json.load(fp)
+                retrieved_envs = _prioritize_envs_in_settings(
+                    settings.Config.env_prefix
+                )
+                merged_config_payload = {**json_config, **retrieved_envs}
+                ret = MSAServiceDefinition.parse_obj(merged_config_payload)
             logger.info("Loaded config file")
         else:
-            ret.save_config()
+            settings.save_config()
         return ret
 
 
