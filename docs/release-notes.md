@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.82
+
+- change models for filter documents by status
+
 # 0.0.81
 
 - load variables from env
