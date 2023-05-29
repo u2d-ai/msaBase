@@ -4,6 +4,7 @@
 # 0.0.83
 
 - fix health tread 
+- change initial status for document
 
 # 0.0.82
 
