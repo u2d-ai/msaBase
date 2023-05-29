@@ -5,6 +5,7 @@
 
 - fix health tread 
 - change initial status for document
+- added RemoveFolderInputModel and ClearOutDocumentInputModel models
 
 # 0.0.82
 
