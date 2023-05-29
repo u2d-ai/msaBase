@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.83
+
+- fix health tread 
+
 # 0.0.82
 
 - change models for filter documents by status
