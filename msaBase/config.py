@@ -165,6 +165,7 @@ class MSAServiceDefinition(MSAAppSettings):
             logger.info("Loaded config file")
         else:
             settings.save_config()
+            ret = MSAServiceDefinition.parse_obj(settings)
         return ret
 
 

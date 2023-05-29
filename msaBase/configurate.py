@@ -156,6 +156,7 @@ class MSAApp(FastAPI):
             host: Optional[str] = None,
             version: Optional[str] = None,
             openapi_url: Optional[str] = None,
+            redoc_url: Optional[str] = None,
             openapi_tags: Optional[List[Dict[str, Any]]] = None,
             terms_of_service: Optional[str] = None,
             contact: Optional[Dict[str, Union[str, Any]]] = None,
@@ -179,6 +180,7 @@ class MSAApp(FastAPI):
 
         self.version = version if version else self.settings.version
         self.openapi_url = openapi_url if openapi_url else self.settings.openapi_url
+        self.redoc_url = redoc_url if redoc_url else self.settings.redoc_url
         self.auto_mount_site: bool = auto_mount_site
         self.SDUVersion = SDUVersion(version=self.settings.version, creation_date=datetime.utcnow().isoformat())
         self.license_info = license_info
@@ -737,7 +739,7 @@ class MSAApp(FastAPI):
         )
         if not self.settings.profiler:
             self.profiler = Profiler()
-            self.add_api_route("/profiler", self.get_profiler, tags=["service"], response_model=MSAOpenAPIInfo)
+            self.add_api_route(self.settings.profiler_url, self.get_profiler, tags=["service"], response_model=MSAOpenAPIInfo)
 
     def configure_limiter_handler(self) -> None:
         """Add Limiter Handler"""
