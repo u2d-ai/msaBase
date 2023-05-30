@@ -476,8 +476,9 @@ class MSAApp(FastAPI):
             "status": exc.status_code,
             "definitions": jsonable_encoder(self.settings),
         }
+        if exc.status_code in self.settings.httpception_exclude:
+            sentry_sdk.capture_exception(exc)
         self.logger.error("msa_exception_handler - " + str(error_content))
-        sentry_sdk.capture_exception(exc)
         return await http_exception_handler(request, exc)
 
     def get_sduversion(self) -> SDUVersion:
