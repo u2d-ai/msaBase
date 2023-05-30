@@ -476,7 +476,7 @@ class MSAApp(FastAPI):
             "status": exc.status_code,
             "definitions": jsonable_encoder(self.settings),
         }
-        if exc.status_code in self.settings.httpception_exclude:
+        if exc.status_code not in self.settings.httpception_exclude:
             sentry_sdk.capture_exception(exc)
         self.logger.error("msa_exception_handler - " + str(error_content))
         return await http_exception_handler(request, exc)
