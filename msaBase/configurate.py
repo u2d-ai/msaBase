@@ -254,6 +254,29 @@ class MSAApp(FastAPI):
 
         return decorator
 
+    def model_block(self, func):
+        """
+        Block ML model while data in process.
+
+        Parameters:
+            func: an endpoint to wrap
+        """
+        @wraps(func)
+        def decorator(*args, **kwargs):
+            if not self.state.blocker.check_ml_model_availability():
+                raise HTTPException(
+                    status_code=status.HTTP_408_REQUEST_TIMEOUT,
+                    detail="The ML model is busy processing data and is not available at the moment. Please try later."
+                )
+            try:
+                self.state.blocker.set_ml_model_unavailable()
+                return func(*args, **kwargs)
+            except Exception as ex:
+                raise ex
+            finally:
+                self.state.blocker.set_ml_model_available()
+        return decorator
+
     def logger_info(self, message: str, service_name: str = "", topic_name: str = "") -> None:
         """
         Sends message to pubsub topic.
@@ -959,3 +982,33 @@ class MSAApp(FastAPI):
                 dsn=sentry_dsn,
                 traces_sample_rate=1.0,
             )
+
+
+class AvailabilityML:
+    def __init__(self, app: MSAApp):
+        self.in_process = False
+        self._app = app
+
+    def set_ml_model_unavailable(self) -> None:
+        """
+        Blocks the endpoint while data is being processed.
+        """
+        self.in_process = True
+        self._app.info_pub_logger("The model is processing the data and is not available.")
+
+    def set_ml_model_available(self) -> None:
+        """
+        Unblocks the endpoint.
+        """
+        self.in_process = False
+        self._app.info_pub_logger("The model has finished to process the data and is available.")
+
+    def check_ml_model_availability(self) -> bool:
+        """
+        Return True if service
+
+        Returns:
+
+            False if model is not available
+        """
+        return False if self.in_process else True
