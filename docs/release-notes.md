@@ -1,6 +1,13 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.83
+
+- fix health tread 
+- change initial status for document
+- added RemoveFolderInputModel and ClearOutDocumentInputModel models
+- added AvailabilityML for ML services
+
 # 0.0.82
 
 - change models for filter documents by status

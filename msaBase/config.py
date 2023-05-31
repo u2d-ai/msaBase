@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from msaBase.helpers import _prioritize_envs_in_settings
 from msaBase.logger import logger
 from msaBase.models.settings import MSAAppSettings
+from msaBase.utils.constants import HTTPCEPTION_EXCLUDE_STATUS_CODES
 
 
 class MSAServiceStatus(BaseModel):
@@ -107,7 +108,7 @@ class MSAServiceDefinition(MSAAppSettings):
     starception: bool = True
     validationception: bool = True
     httpception: bool = True
-    httpception_exclude: List[int] = [307]
+    httpception_exclude: List[int] = HTTPCEPTION_EXCLUDE_STATUS_CODES
     cors: bool = True
     httpsredirect: bool = False
     gzip: bool = False
@@ -165,6 +166,7 @@ class MSAServiceDefinition(MSAAppSettings):
             logger.info("Loaded config file")
         else:
             settings.save_config()
+            ret = MSAServiceDefinition.parse_obj(settings)
         return ret
 
 
