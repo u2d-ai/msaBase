@@ -367,8 +367,10 @@ class MSAApp(FastAPI):
             health_status = await self.healthcheck.get_status()
             if len(self.healthcheck.error) > 0:
                 msg.error = self.healthcheck.error
-
-        return ORJSONResponse(content=jsonable_encoder(msg), status_code=health_status)
+        if health_status == status.HTTP_200_OK:
+            return ORJSONResponse(content=jsonable_encoder(msg), status_code=health_status)
+        else:
+            raise HTTPException(detail=jsonable_encoder(msg), status_code=health_status)
 
     async def get_scheduler_status(self, request: Request) -> MSASchedulerStatus:
         """

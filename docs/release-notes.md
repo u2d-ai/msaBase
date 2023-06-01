@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.84
+
+- fix healthcheck response
+- fix ProcessStatus model
+
 # 0.0.83
 
 - fix health tread 
