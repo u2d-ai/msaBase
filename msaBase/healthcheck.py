@@ -7,7 +7,7 @@ from msaDocModels.health import MSAHealthDefinition
 from starlette import status
 
 
-class MSAHealthCheck:
+class MSAHealthCheck(Timer):
     def __init__(self, healthdefinition: MSAHealthDefinition, host: str, port: int):
         """MSAHealthCheckObject, provides a thread to give a healthcheck.
 
@@ -16,14 +16,13 @@ class MSAHealthCheck:
             host: IP/URl to call the healtcheck endpoint
             port: Port of the healtcheck endpoint server listener/endpoint
         """
-        super().__init__()
+        super().__init__(interval=healthdefinition.interval, function=self.get_healthcheck)
         self.url = "http://{}:{}/".format(host, port)
         self._is_running = True
         self.healthy: str = "No Healthcheck executed yet:400"
         self.is_healthy: bool = False
         self.error: str = ""
         self.status = status.HTTP_200_OK
-        self.timer = Timer(healthdefinition.interval, self.run)
 
     async def get_health(self) -> str:
         """
@@ -43,15 +42,17 @@ class MSAHealthCheck:
         """
         return self.status
 
-    def start(self):
-        self.timer.start()
-
     def run(self):
         """
         Run the Healthcheck Thread
 
         Sleeps by the interval provided by the MSAHealthDefinition.
+        """
+        while not self.finished.wait(self.interval):
+            self.function(*self.args, **self.kwargs)
 
+    def get_healthcheck(self):
+        """
         Uses httpx to call the healthcheck endpoint which is http://{}:{}/".format(host, port)
 
         Any 200 <= response.status_code < 300 is healthy, rest is not healthy
@@ -76,4 +77,4 @@ class MSAHealthCheck:
 
     def stop(self):
         """Stops the Healthcheck Thread."""
-        self.timer.cancel()
+        self.cancel()
