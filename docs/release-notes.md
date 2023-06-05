@@ -2,6 +2,10 @@
 ## Possible future features:
 
 
+# 0.0.87
+
+- removed self-polling of the healtcheck
+
 # 0.0.86
 
 - fix health tread
