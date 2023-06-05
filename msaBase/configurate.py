@@ -25,14 +25,13 @@ from fs.base import FS
 from loguru import logger as logger_gruru
 from msaBase.config import ConfigDTO, ConfigInput, MSAServiceDefinition, MSAServiceStatus, get_msa_app_settings
 from msaBase.errorhandling import getMSABaseExceptionHandler
-from msaBase.healthcheck import MSAHealthCheck
 from msaBase.logger import init_logging
 from msaBase.models.functionality import FunctionalityTypes
 from msaBase.models.middlewares import MiddlewareTypes
 from msaBase.models.sysinfo import MSASystemGPUInfo, MSASystemInfo
 from msaBase.sysinfo import get_sysgpuinfo, get_sysinfo
 from msaBase.utils.constants import PUBSUB_NAME, REGISTRY_TOPIC, SERVICE_TOPIC
-from msaDocModels.health import MSAHealthDefinition, MSAHealthMessage
+from msaDocModels.health import MSAHealthDefinition
 from msaDocModels.openapi import MSAOpenAPIInfo
 from msaDocModels.scheduler import MSASchedulerStatus, MSASchedulerTaskDetail, MSASchedulerTaskStatus
 from msaDocModels.sdu import SDUVersion
@@ -141,7 +140,6 @@ class MSAApp(FastAPI):
         logger: loguru logger instance
         auto_mount_site: bool auto_mount_site
         settings: MSAServiceDefinition settings instance.
-        healthdefinition: MSAHealthDefinition settings.healthdefinition
         limiter: Limiter = None
         ROOTPATH: str os.path.join(os.path.dirname(__file__))
 
@@ -195,7 +193,6 @@ class MSAApp(FastAPI):
         self.ROOTPATH = os.path.join(os.path.dirname(__file__))
         self.abstract_fs: Optional[MSAFilesystem] = None
         self.fs: Optional[FS] = None
-        self.healthcheck: Optional[MSAHealthCheck] = None
         self.logger.info_pub = self.logger_info
 
         init_logging()
@@ -315,11 +312,6 @@ class MSAApp(FastAPI):
         self.stop_scheduler(self.background_scheduler, "Background")
         self.stop_scheduler(self.asyncio_scheduler, "Asyncio")
 
-        if self.healthcheck:
-            self.logger.info("Stopping Healthcheck Thread")
-            self.healthcheck.stop()
-            self.healthcheck = None
-
         if self.settings.abstract_fs:
             try:
                 self.logger.info("Closing Abstract Filesystem")
@@ -337,7 +329,7 @@ class MSAApp(FastAPI):
             else:
                 self.background_scheduler = None
 
-    async def get_system_info(self) -> MSASystemGPUInfo:
+    async def get_system_info(self) -> MSASystemInfo:
         """Get System Nvidia GPU's Info
         Returns:
             sys_info: MSASystemGPUInfo Pydantic Model
@@ -353,24 +345,12 @@ class MSAApp(FastAPI):
         sys_gpu_info = get_sysgpuinfo(f"{self.settings.name} {self.settings.version}")
         return sys_gpu_info
 
-    async def get_healthcheck(self, request: Request) -> ORJSONResponse:
+    @staticmethod
+    async def get_healthcheck() -> int:
         """
         Get Healthcheck Status
         """
-        msg: MSAHealthMessage = MSAHealthMessage()
-        if not self.healthcheck:
-            msg.message = "Healthcheck is disabled!"
-            health_status = status.HTTP_409_CONFLICT
-        else:
-            msg.healthy = self.healthcheck.is_healthy
-            msg.message = await self.healthcheck.get_health()
-            health_status = await self.healthcheck.get_status()
-            if len(self.healthcheck.error) > 0:
-                msg.error = self.healthcheck.error
-        if health_status == status.HTTP_200_OK:
-            return ORJSONResponse(content=jsonable_encoder(msg), status_code=health_status)
-        else:
-            raise HTTPException(detail=jsonable_encoder(msg), status_code=health_status)
+        return status.HTTP_200_OK
 
     async def get_scheduler_status(self, request: Request) -> MSASchedulerStatus:
         """
@@ -418,14 +398,14 @@ class MSAApp(FastAPI):
         """
         self.logger.info("Called - get_services_status :" + str(request.url))
         sst: MSAServiceStatus = MSAServiceStatus()
-        if not self.healthcheck:
+        if not self.settings.healthdefinition.enabled:
             sst.name = self.settings.name
             sst.healthy = "disabled:400"
             sst.message = "Healthcheck is disabled!"
 
         else:
             sst.name = self.settings.name
-            sst.healthy = await self.healthcheck.get_health()
+            sst.healthy = await self.get_healthcheck()
             sst.message = "Healthcheck is enabled!"
 
         return sst
@@ -578,6 +558,7 @@ class MSAApp(FastAPI):
 
         Args:
             request: The input http request object
+            exc: exception to handle
 
         Returns:
             HTTPException: as JSONResponse
@@ -806,22 +787,13 @@ class MSAApp(FastAPI):
     def configure_healthdefinition(self) -> None:
         """Configure health definition and start healthcheck thread."""
         self.logger.info("Init Healthcheck")
-        from msaBase.healthcheck import MSAHealthCheck
-
         if self.settings.healthdefinition.enabled:
-            self.healthcheck = MSAHealthCheck(
-                healthdefinition=self.healthdefinition,
-                host=self.settings.host,
-                port=self.settings.port,
+            self.add_api_route(
+                self.healthdefinition.path,
+                self.get_healthcheck,
+                status_code=status.HTTP_200_OK,
+                tags=["service"],
             )
-            self.logger.info("Start Healthcheck Thread")
-            self.healthcheck.start()
-        self.add_api_route(
-            self.healthdefinition.path,
-            self.get_healthcheck,
-            response_model=MSAHealthMessage,
-            tags=["service"],
-        )
 
     def configure_abstract_fs(self) -> None:
         """Enable Abstract Filesystem"""
