@@ -1,6 +1,9 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.88
+
+- use loguru if dapr is not available
 
 # 0.0.87
 
