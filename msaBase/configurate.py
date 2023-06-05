@@ -14,7 +14,7 @@ import aiohttp
 import sentry_sdk
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
-from dapr.clients import DaprClient
+from dapr.clients import DaprClient, DaprInternalError
 from dapr.ext.fastapi import DaprApp
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -22,6 +22,7 @@ from fastapi.exception_handlers import http_exception_handler
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
 from fs.base import FS
+from grpc._channel import _InactiveRpcError
 from loguru import logger as logger_gruru
 from msaBase.config import ConfigDTO, ConfigInput, MSAServiceDefinition, MSAServiceStatus, get_msa_app_settings
 from msaBase.errorhandling import getMSABaseExceptionHandler
@@ -146,21 +147,21 @@ class MSAApp(FastAPI):
     """
 
     def __init__(
-            self,
-            settings: MSAServiceDefinition,
-            auto_mount_site: Optional[bool] = True,
-            title: Optional[str] = None,
-            description: Optional[str] = None,
-            host: Optional[str] = None,
-            version: Optional[str] = None,
-            openapi_url: Optional[str] = None,
-            redoc_url: Optional[str] = None,
-            openapi_tags: Optional[List[Dict[str, Any]]] = None,
-            terms_of_service: Optional[str] = None,
-            contact: Optional[Dict[str, Union[str, Any]]] = None,
-            license_info: Optional[Dict[str, Union[str, Any]]] = None,
-            *args,
-            **kwargs,
+        self,
+        settings: MSAServiceDefinition,
+        auto_mount_site: Optional[bool] = True,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        host: Optional[str] = None,
+        version: Optional[str] = None,
+        openapi_url: Optional[str] = None,
+        redoc_url: Optional[str] = None,
+        openapi_tags: Optional[List[Dict[str, Any]]] = None,
+        terms_of_service: Optional[str] = None,
+        contact: Optional[Dict[str, Union[str, Any]]] = None,
+        license_info: Optional[Dict[str, Union[str, Any]]] = None,
+        *args,
+        **kwargs,
     ) -> None:
         # call super class __init__
         super().__init__(*args, **settings.fastapi_kwargs)
@@ -258,12 +259,14 @@ class MSAApp(FastAPI):
         Parameters:
             func: an endpoint to wrap
         """
+
         @wraps(func)
         def decorator(*args, **kwargs):
             if not self.state.blocker.check_ml_model_availability():
                 raise HTTPException(
                     status_code=status.HTTP_408_REQUEST_TIMEOUT,
-                    detail="The ML model is busy processing data and is not available at the moment. Please try later."
+                    detail="The ML model is busy processing data and is not available at the moment."
+                    "Please try later.",
                 )
             try:
                 self.state.blocker.set_ml_model_unavailable()
@@ -272,6 +275,7 @@ class MSAApp(FastAPI):
                 raise ex
             finally:
                 self.state.blocker.set_ml_model_available()
+
         return decorator
 
     def logger_info(self, message: str, service_name: str = "", topic_name: str = "") -> None:
@@ -284,13 +288,16 @@ class MSAApp(FastAPI):
             service_name: the name of the service from which the call was made
         """
         if topic_name:
-            with DaprClient() as client:
-                client.publish_event(
-                    pubsub_name=PUBSUB_NAME,
-                    topic_name=topic_name,
-                    data=f"[{service_name}]: " + message if service_name else message,
-                    data_content_type="application/json",
-                )
+            try:
+                with DaprClient() as client:
+                    client.publish_event(
+                        pubsub_name=PUBSUB_NAME,
+                        topic_name=topic_name,
+                        data=f"[{service_name}]: " + message if service_name else message,
+                        data_content_type="application/json",
+                    )
+            except (_InactiveRpcError, DaprInternalError):
+                self.logger.info("Dapr is not available, switching to default logger")
         self.logger.info(message)
 
     async def extend_startup_event(self) -> None:
@@ -627,7 +634,7 @@ class MSAApp(FastAPI):
             new_middleware = getattr(new_config, middleware.name, None)
 
             if (current_middleware is not None and new_middleware is not None) and (
-                    current_middleware != new_middleware
+                current_middleware != new_middleware
             ):
                 return True
 
@@ -638,7 +645,7 @@ class MSAApp(FastAPI):
             reload_needed = functionality.need_restart
 
             if (current_functionality is not None and new_functionality is not None) and (
-                    current_functionality != new_functionality
+                current_functionality != new_functionality
             ):
 
                 if reload_needed:
@@ -662,7 +669,7 @@ class MSAApp(FastAPI):
         self.logger.info("Unknown Functionality")
 
     def choose_middleware_configurator(
-            self, middleware: Union[MiddlewareTypes, FunctionalityTypes]
+        self, middleware: Union[MiddlewareTypes, FunctionalityTypes]
     ) -> Type[unknown_middleware]:
         """
         Get the configurator by type of Middleware
@@ -746,7 +753,9 @@ class MSAApp(FastAPI):
         )
         if not self.settings.profiler:
             self.profiler = Profiler()
-            self.add_api_route(self.settings.profiler_url, self.get_profiler, tags=["service"], response_model=MSAOpenAPIInfo)
+            self.add_api_route(
+                self.settings.profiler_url, self.get_profiler, tags=["service"], response_model=MSAOpenAPIInfo
+            )
 
     def configure_limiter_handler(self) -> None:
         """Add Limiter Handler"""
