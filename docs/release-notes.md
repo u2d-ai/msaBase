@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.89
+
+- update msaDocModels
+
 # 0.0.88
 
 - use loguru if dapr is not available
@@ -24,7 +28,7 @@
 
 # 0.0.83
 
-- fix health tread 
+- fix health tread
 - change initial status for document
 - added RemoveFolderInputModel and ClearOutDocumentInputModel models
 - added AvailabilityML for ML services
@@ -48,7 +52,7 @@
 
 # 0.0.78
 
-- add model to working with document for Summary/Phrases 
+- add model to working with document for Summary/Phrases
 
 # 0.0.77
 
@@ -66,12 +70,12 @@
 # 0.0.74
 
 - fix scheduler
-- add some fields for document 
+- add some fields for document
 
 # 0.0.73
 
 - fix healthcheck
-- add logger to redis topic 
+- add logger to redis topic
 
 # 0.0.72
 
@@ -122,8 +126,8 @@
 
 ## 0.0.61
 
-- Add models for extract Keywords 
-- Fix empty name of the largest CPU process 
+- Add models for extract Keywords
+- Fix empty name of the largest CPU process
 
 ## 0.0.60
 
@@ -168,7 +172,7 @@
 
 ## 0.0.50
 
-- add models for result of NLP, NER services 
+- add models for result of NLP, NER services
 - add function to get all sentences per page
 
 ## 0.0.49
