@@ -37,7 +37,7 @@ class MSAProfilerMiddleware:
         self._profiler = Profiler(interval=profiler_interval)
         self._server_app = msa_app
         self._output_type = profiler_output_type
-        self._profiler_kwargs: dict = profiler_kwargs
+        self._profiler_kwargs: Dict = profiler_kwargs
         self._handler_init_done: bool = False
         self._htmlfile_init_done: bool = False
         self._track_each_request: bool = track_each_request
@@ -55,7 +55,9 @@ class MSAProfilerMiddleware:
             self._handler_init_done = True
             self._server_app.add_event_handler("shutdown", self.get_profiler_result)
             if self._server_app.settings.profiler:
-                self._server_app.add_api_route("/profiler", self.get_profiler, tags=["service"])
+                self._server_app.add_api_route(
+                    "/profiler", self.get_profiler, tags=["service"]
+                )
 
         if scope["type"] != "http":
             await self.app(scope, receive, send)
@@ -83,7 +85,9 @@ class MSAProfilerMiddleware:
                     elif self._track_each_request:
                         await self.get_profiler_result()
 
-    async def get_profiler_result(self, html_file: str = "profiler.html", replace_title: str = "msaBase-Profiler"):
+    async def get_profiler_result(
+        self, html_file: str = "profiler.html", replace_title: str = "msaBase-Profiler"
+    ):
         """
         Produces the profiler result in the defined output type format, "text" or "html"
 
@@ -101,7 +105,9 @@ class MSAProfilerMiddleware:
                 **self._profiler_kwargs
             )  # HTMLRenderer().render(session=self._profiler.last_session)
             if replace_title:
-                html_code = html_code.replace("pyinstrument", replace_title).replace("Pyinstrument", replace_title)
+                html_code = html_code.replace("pyinstrument", replace_title).replace(
+                    "Pyinstrument", replace_title
+                )
             with codecs.open(html_name, "w", "utf-8") as f:
                 f.write(html_code)
             return html_code

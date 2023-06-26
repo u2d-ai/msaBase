@@ -156,8 +156,10 @@ class MSAServiceDefinition(MSAAppSettings):
         settings: MSAServiceDefinition = MSAServiceDefinition()
         if os.path.exists("config.json"):
             with open("config.json", "rb") as fp:
-                json_config: dict = json.load(fp)
-                retrieved_envs = _prioritize_envs_in_settings(settings.Config.env_prefix)
+                json_config: Dict = json.load(fp)
+                retrieved_envs = _prioritize_envs_in_settings(
+                    settings.Config.env_prefix
+                )
                 merged_config_payload = {**json_config, **retrieved_envs}
                 ret = MSAServiceDefinition.parse_obj(merged_config_payload)
             logger.info("Loaded config file")
