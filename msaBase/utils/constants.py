@@ -1,5 +1,7 @@
 SERVICE_TOPIC = "service-config"
 REGISTRY_TOPIC = "registry-config"
+PROGRESS_TOPIC = "progress"
+DATABASE_UPDATE_TOPIC = "database-update"
 PUBSUB_NAME = "redispubsub"
 
 HTTPCEPTION_EXCLUDE_STATUS_CODES = [
