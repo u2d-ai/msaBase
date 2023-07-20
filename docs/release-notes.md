@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.93
+
+- update input models for Formats and Template
+- add new pub/sub topics 
+
 # 0.0.91
 
 - update msaDocModels
