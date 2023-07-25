@@ -1,6 +1,9 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.94 
+
+- fix EntityExtractorInput, EntityExtractorDocumentInput models
 # 0.0.93
 
 - update input models for Formats and Template
