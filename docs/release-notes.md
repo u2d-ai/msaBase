@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.95 
+
+- fix model queue in TextExtractionFormatsDTO
+
 # 0.0.94 
 
 - fix EntityExtractorInput, EntityExtractorDocumentInput models
