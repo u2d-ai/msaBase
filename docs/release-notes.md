@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.96
+
+- add patterns for models TextExtractionFormatsInput
+- separate DTO model for three TextExtractionFormatsStrDTO, TextExtractionFormatsListDTO, TextExtractionFormatsDictDTO
+
 ## 0.0.95 
 
 - fix model queue in TextExtractionFormatsDTO
