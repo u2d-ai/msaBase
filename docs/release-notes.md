@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.97
+
+- add field embedding_attachments to separate attachments
+
 ## 0.0.96
 
 - add patterns for models TextExtractionFormatsInput
@@ -13,6 +17,7 @@
 # 0.0.94 
 
 - fix EntityExtractorInput, EntityExtractorDocumentInput models
+
 # 0.0.93
 
 - update input models for Formats and Template
