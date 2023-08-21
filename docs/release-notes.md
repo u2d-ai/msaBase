@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.98
+
+- updated msaDocModels
+
 # 0.0.97
 
 - add field embedding_attachments to separate attachments
@@ -10,18 +14,18 @@
 - add patterns for models TextExtractionFormatsInput
 - separate DTO model for three TextExtractionFormatsStrDTO, TextExtractionFormatsListDTO, TextExtractionFormatsDictDTO
 
-## 0.0.95 
+## 0.0.95
 
 - fix model queue in TextExtractionFormatsDTO
 
-# 0.0.94 
+# 0.0.94
 
 - fix EntityExtractorInput, EntityExtractorDocumentInput models
 
 # 0.0.93
 
 - update input models for Formats and Template
-- add new pub/sub topics 
+- add new pub/sub topics
 
 # 0.0.91
 

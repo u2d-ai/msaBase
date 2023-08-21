@@ -3,3 +3,4 @@
 .idea/
 /msaBase.egg-info/
 .lh/*
+venv/
