@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.103
+
+- pinned anyio library
+
 # 0.0.102
 
 - updated msaDocModels
