@@ -3,6 +3,7 @@ msaFileSystem==0.0.3 # Agnostic Abstract Filesystem API which allows to use S3, 
 msaDocModels==0.0.94 # MSA Document Pydantic Models and Schemas, used to store Parser, NLP, NLU and AI results for processed documents
 
 # FastAPI related Dependencies
+anyio==3.7.1 # an asynchronous networking and concurrency library that works on top of either asyncio or trio
 fastapi[all]==0.86.0 # FastAPI framework, high performance, easy to learn, fast to code, ready for production
 fastapi_utils==0.2.1 # Reusable utilities for FastAPI, Repeated Tasks, APIModel, APISettings
 pydantic[email,dotenv]==1.9.2 # Data validation and settings management using python type hints
