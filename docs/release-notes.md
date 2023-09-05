@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.104
+
+- add Enum with Keywords algorithms
+
 # 0.0.103
 
 - pinned anyio library
