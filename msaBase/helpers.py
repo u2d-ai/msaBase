@@ -40,9 +40,9 @@ def get_one_string_text(input_text: Union[str, List[str], Dict[Any, str]]):
     type_input_text = type(input_text)
     if type_input_text == str:
         input_text = input_text
-    elif type_input_text == list:
+    elif isinstance(type_input_text, list):
         input_text = convert_list_to_str(input_list=input_text)
-    elif type_input_text == dict:
+    elif isinstance(type_input_text, dict):
         input_text = convert_dict_to_str(input_dict=input_text)
     return input_text.replace("/n", " ").replace('"', "'")
 
@@ -68,7 +68,7 @@ async def get_all_sentences(text_pages: List[SDUPage]) -> Dict[int, List[str]]:
     return sentences
 
 
-def _prioritize_envs_in_settings(prefix: str) -> dict[str, Any]:
+def _prioritize_envs_in_settings(prefix: str) -> Dict[str, Any]:
     """
     Helper function to fix an issue where config.json overwrites .env variables with specified prefix
     in Config child class of Pydantic's settings
@@ -87,7 +87,7 @@ def _prioritize_envs_in_settings(prefix: str) -> dict[str, Any]:
         map of the env variables which will overwrite values provided in config.json file
     """
     load_dotenv()
-    envs: list[str] = os.environ
+    envs: List[str] = os.environ
     envs_map = {}
     for env in envs:
         if env.startswith(prefix):

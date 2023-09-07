@@ -2,6 +2,7 @@
 import logging
 import sys
 from pprint import pformat
+from typing import Dict
 
 from loguru import logger
 from loguru._defaults import LOGURU_FORMAT
@@ -32,10 +33,12 @@ class InterceptHandler(logging.Handler):
             frame = frame.f_back
             depth += 1
 
-        logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
+        logger.opt(depth=depth, exception=record.exc_info).log(
+            level, record.getMessage()
+        )
 
 
-def format_record(record: dict) -> str:
+def format_record(record: Dict) -> str:
     """
     Custom format for loguru loggers.
     Uses pformat for log any data like request/response body during debug.
@@ -54,7 +57,9 @@ def format_record(record: dict) -> str:
 
     format_string = LOGURU_FORMAT
     if record["extra"].get("payload") is not None:
-        record["extra"]["payload"] = pformat(record["extra"]["payload"], indent=4, compact=True, width=88)
+        record["extra"]["payload"] = pformat(
+            record["extra"]["payload"], indent=4, compact=True, width=88
+        )
         format_string += "\n<level>{extra[payload]}</level>"
 
     format_string += "{exception}\n"
@@ -90,7 +95,11 @@ def init_logging():
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
 
-    loggers = (logging.getLogger(name) for name in logging.root.manager.loggerDict if name.startswith("uvicorn."))
+    loggers = (
+        logging.getLogger(name)
+        for name in logging.root.manager.loggerDict
+        if name.startswith("uvicorn.")
+    )
 
     # change handler for default uvicorn logger
     intercept_handler = InterceptHandler()
@@ -98,11 +107,13 @@ def init_logging():
     for uvicorn_logger in loggers:
         try:
             uvicorn_logger.handlers = [intercept_handler]
-        except:
+        except Exception:
             pass
     # logging.getLogger().handlers = [intercept_handler]
     logging.getLogger("uvicorn").handlers = []
     logging.getLogger("rocketry").handlers = []
 
     # set logs output, level and format
-    logger.configure(handlers=[{"sink": sys.stdout, "level": logging.INFO, "format": format_record}])
+    logger.configure(
+        handlers=[{"sink": sys.stdout, "level": logging.INFO, "format": format_record}]
+    )
