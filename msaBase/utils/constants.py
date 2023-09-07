@@ -1,8 +1,10 @@
+import os
+
 SERVICE_TOPIC = "service-config"
 REGISTRY_TOPIC = "registry-config"
 PROGRESS_TOPIC = "progress"
 DATABASE_UPDATE_TOPIC = "database-update"
-PUBSUB_NAME = "redispubsub"
+PUBSUB_NAME = os.environ["DAPR_PUBSUB_COMPONENT_NAME"]
 
 HTTPCEPTION_EXCLUDE_STATUS_CODES = [
     300,
