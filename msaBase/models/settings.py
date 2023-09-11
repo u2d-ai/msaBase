@@ -1,4 +1,5 @@
 from fastapi_utils.api_settings import APISettings
+from pydantic.config import Extra
 
 
 class MSAAppSettings(APISettings):
@@ -12,3 +13,4 @@ class MSAAppSettings(APISettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         env_prefix = "msa_app_"
+        extra = Extra.ignore

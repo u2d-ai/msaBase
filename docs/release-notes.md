@@ -1,6 +1,12 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.106
+
+- add possibility to update dapr component names from env
+- add algorithm to DocClassifier Input
+- change dto model for DocClassifier
+
 # 0.0.105
 
 - updated msaDocModels
