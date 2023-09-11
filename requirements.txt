@@ -6,7 +6,7 @@ msaDocModels==0.0.96 # MSA Document Pydantic Models and Schemas, used to store P
 anyio==3.7.1 # an asynchronous networking and concurrency library that works on top of either asyncio or trio
 fastapi[all]==0.103.1 # FastAPI framework, high performance, easy to learn, fast to code, ready for production
 fastapi-restful==0.5.0 # Reusable utilities for FastAPI, Repeated Tasks, APIModel, APISettings
-pydantic[all]==2.3.0 # Data validation and settings management using python type hints
+pydantic[email,dotenv]==2.3.0 # Data validation and settings management using python type hints
 
 
 # General Dependencies
