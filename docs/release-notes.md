@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.105
+
+- updated msaDocModels
+
 # 0.0.104
 
 - add Enum with Keywords algorithms
