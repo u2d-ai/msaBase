@@ -21,6 +21,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
+from fastapi_restful.timing import add_timing_middleware
 from fs.base import FS
 from grpc._channel import _InactiveRpcError
 from loguru import logger as logger_gruru
@@ -432,7 +433,6 @@ class MSAApp(FastAPI):
 
         def try_get_json():
             try:
-
                 return jsonable_encoder(self.settings)
 
             except Exception as e:
@@ -458,7 +458,6 @@ class MSAApp(FastAPI):
 
         def try_get_json():
             try:
-
                 return jsonable_encoder(self.openapi())
 
             except Exception as e:
@@ -647,7 +646,6 @@ class MSAApp(FastAPI):
             if (current_functionality is not None and new_functionality is not None) and (
                 current_functionality != new_functionality
             ):
-
                 if reload_needed:
                     return True
 
@@ -905,7 +903,6 @@ class MSAApp(FastAPI):
     def configure_timing_middleware(self) -> None:
         """Add Middleware Timing"""
         self.logger.info("Add Middleware Timing")
-        from fastapi_utils.timing import add_timing_middleware
 
         add_timing_middleware(self, record=self.logger.info, prefix="app", exclude="untimed")
 

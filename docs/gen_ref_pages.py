@@ -105,7 +105,6 @@ def generate_sub_process_result(requirement_file) -> dict:
                         for entry in check_required:
                             entry = entry.lower()
                             if entry not in sub_process_result:
-
                                 command = ["pip", "show", entry]
                                 print("Collect Req. PIP Infos for package:", entry)
                                 result = run(
@@ -164,7 +163,6 @@ def generate_code_reference_documentation(
     nav = mkdocs_gen_files.Nav()
 
     for path in sorted(Path(source_path).rglob(source_file_type_filter)):
-
         module_path = path.relative_to(source_path).with_suffix("")
         doc_path = path.relative_to(source_path).with_suffix(md_file_type)
         full_doc_path = Path(virtual_ref_nav_path, doc_path)
@@ -209,7 +207,6 @@ def generate_code_reference_documentation(
     with open(requirement_file, "r") as req_file:
         req_txt = req_file.read()
         if req_txt and len(req_txt) > 0:
-
             with mkdocs_gen_files.open(req_md_file, "w") as fd:
                 fd.write(f"# {source_path.replace('_', ' ')} - Included Libraries\n***\n\n")
                 # Python 3.x only
