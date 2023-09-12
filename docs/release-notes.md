@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.108
+
+- added enviroments for sentry
+
 ## 0.0.107
 
 - fix algorithm to DocClassifier Input
