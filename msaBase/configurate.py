@@ -964,6 +964,7 @@ class MSAApp(FastAPI):
             sentry_sdk.init(
                 dsn=sentry_dsn,
                 traces_sample_rate=1.0,
+                environment=os.getenv("STAGE_ENV","local"),
             )
 
 

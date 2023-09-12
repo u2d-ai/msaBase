@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.107
+
+- added enviroments for sentry
+
 # 0.0.106
 
 - add possibility to update dapr component names from env
