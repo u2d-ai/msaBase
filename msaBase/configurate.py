@@ -32,7 +32,7 @@ from msaBase.models.functionality import FunctionalityTypes
 from msaBase.models.middlewares import MiddlewareTypes
 from msaBase.models.sysinfo import MSASystemGPUInfo, MSASystemInfo
 from msaBase.sysinfo import get_sysgpuinfo, get_sysinfo
-from msaBase.utils.constants import PUBSUB_NAME, REGISTRY_TOPIC, SERVICE_TOPIC
+from msaBase.utils.constants import PROGRESS_TOPIC, PUBSUB_NAME, REGISTRY_TOPIC, SERVICE_TOPIC
 from msaDocModels.health import MSAHealthDefinition
 from msaDocModels.openapi import MSAOpenAPIInfo
 from msaDocModels.scheduler import MSASchedulerStatus, MSASchedulerTaskDetail, MSASchedulerTaskStatus
@@ -946,7 +946,7 @@ class MSAApp(FastAPI):
         else:
             self.logger.info_pub(
                 message,
-                topic_name=self.settings.progress_topic,
+                topic_name=PROGRESS_TOPIC,
                 service_name=self.settings.name,
             )
 
@@ -961,6 +961,7 @@ class MSAApp(FastAPI):
             sentry_sdk.init(
                 dsn=sentry_dsn,
                 traces_sample_rate=1.0,
+                environment=os.getenv("STAGE_ENV","local"),
             )
 
 

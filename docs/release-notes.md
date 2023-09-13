@@ -1,6 +1,24 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.108
+
+- added enviroments for sentry
+
+## 0.0.107
+
+- fix algorithm to DocClassifier Input
+
+# 0.0.106
+
+- add possibility to update dapr component names from env
+- add algorithm to DocClassifier Input
+- change dto model for DocClassifier
+
+# 0.0.105
+
+- updated msaDocModels
+
 # 0.0.104
 
 - add Enum with Keywords algorithms
