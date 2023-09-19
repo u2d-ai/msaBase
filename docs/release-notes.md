@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.109
+
+- add Input and DTO models for Spellcheck
+
 # 0.0.108
 
 - added enviroments for sentry
