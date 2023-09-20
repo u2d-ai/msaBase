@@ -18,14 +18,14 @@ class MSAGPUInfo(BaseModel):
         uuid: unique GPU identifier
     """
 
-    id: Optional[int]
-    name: Optional[str]
-    load: Optional[str]
-    free_memory: Optional[str]
-    used_memory: Optional[str]
-    total_memory: Optional[str]
-    temperature: Optional[str]
-    uuid: Optional[str]
+    id: Optional[int] = None
+    name: Optional[str] = None
+    load: Optional[str] = None
+    free_memory: Optional[str] = None
+    used_memory: Optional[str] = None
+    total_memory: Optional[str] = None
+    temperature: Optional[str] = None
+    uuid: Optional[str] = None
 
 
 class MSADiskIO(BaseModel):
@@ -45,15 +45,15 @@ class MSADiskIO(BaseModel):
 
     """
 
-    read_count: Optional[int]
-    write_count: Optional[int]
-    read_bytes: Optional[int]
-    write_bytes: Optional[int]
-    read_time: Optional[int]
-    write_time: Optional[int]
-    read_merged_count: Optional[int]
-    write_merged_count: Optional[int]
-    busy_time: Optional[int]
+    read_count: Optional[int] = None
+    write_count: Optional[int] = None
+    read_bytes: Optional[int] = None
+    write_bytes: Optional[int] = None
+    read_time: Optional[int] = None
+    write_time: Optional[int] = None
+    read_merged_count: Optional[int] = None
+    write_merged_count: Optional[int] = None
+    busy_time: Optional[int] = None
 
 
 class MSANetworkIO(BaseModel):
@@ -71,14 +71,14 @@ class MSANetworkIO(BaseModel):
         dropout: total number of outgoing packets which were dropped (always 0 on macOS and BSD)
     """
 
-    bytes_sent: Optional[int]
-    bytes_recv: Optional[int]
-    packets_sent: Optional[int]
-    packets_recv: Optional[int]
-    errin: Optional[int]
-    errout: Optional[int]
-    dropin: Optional[int]
-    dropout: Optional[int]
+    bytes_sent: Optional[int] = None
+    bytes_recv: Optional[int] = None
+    packets_sent: Optional[int] = None
+    packets_recv: Optional[int] = None
+    errin: Optional[int] = None
+    errout: Optional[int] = None
+    dropin: Optional[int] = None
+    dropout: Optional[int] = None
 
 
 class MSANetworkConnection(BaseModel):
@@ -102,14 +102,14 @@ class MSANetworkConnection(BaseModel):
         (e.g. Linux) the availability of this field changes depending on process privileges (root is needed).
     """
 
-    index: Optional[int]
-    file_descriptor: Optional[int]
-    family: Optional[int]
-    type: Optional[int]
-    local_addr: Optional[str]
-    remote_addr: Optional[str]
+    index: Optional[int] = None
+    file_descriptor: Optional[int] = None
+    family: Optional[int] = None
+    type: Optional[int] = None
+    local_addr: Optional[str] = None
+    remote_addr: Optional[str] = None
     status: str = ""
-    pid: Optional[int]
+    pid: Optional[int] = None
 
 
 class MSANetworkAdapter(BaseModel):
@@ -125,11 +125,11 @@ class MSANetworkAdapter(BaseModel):
         (typically a VPN). broadcast and ptp are mutually exclusive. May be None.
     """
 
-    family: Optional[int]
-    address: Optional[str]
-    netmask: Optional[str]
-    broadcast: Optional[str]
-    ptp: Optional[int]
+    family: Optional[int] = None
+    address: Optional[str] = None
+    netmask: Optional[str] = None
+    broadcast: Optional[str] = None
+    ptp: Optional[int] = None
 
 
 class MSANetworkAdapters(BaseModel):
@@ -156,10 +156,10 @@ class MSANetworkStat(BaseModel):
         mtu: NIC’s maximum transmission unit expressed in bytes.
     """
 
-    isup: Optional[bool]
-    duplex: Optional[int]
-    speed: Optional[int]
-    mtu: Optional[int]
+    isup: Optional[bool] = None
+    duplex: Optional[int] = None
+    speed: Optional[int] = None
+    mtu: Optional[int] = None
 
 
 class MSANetworkStats(BaseModel):
@@ -186,10 +186,10 @@ class MSATemperature(BaseModel):
         critical: critical temperature
     """
 
-    label: Optional[str]
-    current: Optional[float]
-    high: Optional[float]
-    critical: Optional[float]
+    label: Optional[str] = None
+    current: Optional[float] = None
+    high: Optional[float] = None
+    critical: Optional[float] = None
 
 
 class MSATemperatures(BaseModel):
@@ -215,9 +215,9 @@ class MSACPUFrequency(BaseModel):
         max: maximal frequency
     """
 
-    current: Optional[float]
-    min: Optional[int]
-    max: Optional[int]
+    current: Optional[float] = None
+    min: Optional[int] = None
+    max: Optional[int] = None
 
 
 class MSACPUTimes(BaseModel):
@@ -240,16 +240,16 @@ class MSACPUTimes(BaseModel):
         systems under the control of the Linux kernel)
     """
 
-    user: Optional[float]
-    nice: Optional[int]
-    system: Optional[float]
-    idle: Optional[float]
-    iowait: Optional[float]
-    irq: Optional[int]
-    softirq: Optional[float]
-    steal: Optional[int]
-    guest: Optional[float]
-    guest_nice: Optional[int]
+    user: Optional[float] = None
+    nice: Optional[int] = None
+    system: Optional[float] = None
+    idle: Optional[float] = None
+    iowait: Optional[float] = None
+    irq: Optional[int] = None
+    softirq: Optional[float] = None
+    steal: Optional[int] = None
+    guest: Optional[float] = None
+    guest_nice: Optional[int] = None
 
 
 class MSACPUStats(BaseModel):
@@ -263,11 +263,10 @@ class MSACPUStats(BaseModel):
         syscalls: number of system calls since boot. Always set to 0 on Linux.
     """
 
-    ctx_switches: Optional[int]
-    interrupts: Optional[int]
-    soft_interrupts: Optional[int]
-    syscalls: Optional[int]
-    """"""
+    ctx_switches: Optional[int] = None
+    interrupts: Optional[int] = None
+    soft_interrupts: Optional[int] = None
+    syscalls: Optional[int] = None
 
 
 class MSAMemoryUsage(BaseModel):
@@ -290,15 +289,15 @@ class MSAMemoryUsage(BaseModel):
         inactive: (UNIX): memory that is marked as not used.
     """
 
-    total: Optional[float]
-    available: Optional[float]
-    used: Optional[float]
-    free: Optional[float]
-    percent: Optional[float]
-    buffers: Optional[float]
-    cached: Optional[float]
-    active: Optional[float]
-    inactive: Optional[float]
+    total: Optional[float] = None
+    available: Optional[float] = None
+    used: Optional[float] = None
+    free: Optional[float] = None
+    percent: Optional[float] = None
+    buffers: Optional[float] = None
+    cached: Optional[float] = None
+    active: Optional[float] = None
+    inactive: Optional[float] = None
     """"""
 
 
@@ -313,10 +312,10 @@ class MSASwap(BaseModel):
         percent: the percentage usage calculated as (total - available) / total * 100
     """
 
-    total: Optional[float]
-    used: Optional[float]
-    free: Optional[float]
-    percent: Optional[float]
+    total: Optional[float] = None
+    used: Optional[float] = None
+    free: Optional[float] = None
+    percent: Optional[float] = None
 
 
 class MSASystemInfo(BaseModel):
@@ -371,32 +370,32 @@ class MSASystemInfo(BaseModel):
     HW_Identifier: str = ""
     IP_Address: str = ""
     MAC_Address: str = ""
-    CPU_Physical: Optional[int]
-    CPU_Logical: Optional[int]
+    CPU_Physical: Optional[int] = None
+    CPU_Logical: Optional[int] = None
     Memory_Physical: str = ""
     Memory_Available: str = ""
     System_Boot: str = ""
     Service_Start: str = ""
     Runtime_Exe: str = ""
     Runtime_Cmd: List[str] = []
-    Disk_IO: Optional[MSADiskIO]
-    Network_IO: Optional[MSANetworkIO]
-    Network_Connections: Optional[List[MSANetworkConnection]]
-    Network_Adapters: Optional[List[MSANetworkAdapters]]
-    Network_Stats: Optional[List[MSANetworkStats]]
-    Temperatures: Optional[List[MSATemperatures]]
-    CPU_Affinity: Optional[int]
-    CPU_Frequency: Optional[MSACPUFrequency]
-    CPU_Times: Optional[MSACPUTimes]
-    CPU_Stats: Optional[MSACPUStats]
-    PID: Optional[int]
-    CPU_Current: Optional[int]
-    CPU_Usage_Total: Optional[float]
-    CPU_Usage_Process: Optional[float]
+    Disk_IO: Optional[MSADiskIO] = None
+    Network_IO: Optional[MSANetworkIO] = None
+    Network_Connections: Optional[List[MSANetworkConnection]] = None
+    Network_Adapters: Optional[List[MSANetworkAdapters]] = None
+    Network_Stats: Optional[List[MSANetworkStats]] = None
+    Temperatures: Optional[List[MSATemperatures]] = None
+    CPU_Affinity: Optional[int] = None
+    CPU_Frequency: Optional[MSACPUFrequency] = None
+    CPU_Times: Optional[MSACPUTimes] = None
+    CPU_Stats: Optional[MSACPUStats] = None
+    PID: Optional[int] = None
+    CPU_Current: Optional[int] = None
+    CPU_Usage_Total: Optional[float] = None
+    CPU_Usage_Process: Optional[float] = None
     CPU_Usage_Name: str = ""
-    CPU_LoadAvg: Optional[List[float]]
-    Memory_Usage: Optional[MSAMemoryUsage]
-    Swap: Optional[MSASwap]
+    CPU_LoadAvg: Optional[List[float]] = None
+    Memory_Usage: Optional[MSAMemoryUsage] = None
+    Swap: Optional[MSASwap] = None
     Runtime_Status: str = ""
 
 
@@ -437,14 +436,14 @@ class MSASystemGPUInfo(BaseModel):
     HW_Identifier: str = ""
     IP_Address: str = ""
     MAC_Address: str = ""
-    CPU_Physical: Optional[int]
-    CPU_Logical: Optional[int]
+    CPU_Physical: Optional[int] = None
+    CPU_Logical: Optional[int] = None
     Memory_Physical: str = ""
     Memory_Available: str = ""
     System_Boot: str = ""
     Service_Start: str = ""
     Runtime_Exe: str = ""
     Runtime_Cmd: List[str] = []
-    PID: Optional[int]
-    GPUs: Optional[List[MSAGPUInfo]]
+    PID: Optional[int] = None
+    GPUs: Optional[List[MSAGPUInfo]] = None
     Runtime_Status: str = ""

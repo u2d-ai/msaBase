@@ -1,4 +1,4 @@
-from fastapi_utils.api_settings import APISettings
+from fastapi_restful.api_settings import APISettings
 from pydantic.config import Extra
 
 

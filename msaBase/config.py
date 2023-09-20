@@ -139,9 +139,9 @@ class MSAServiceDefinition(MSAAppSettings):
         """
         Saves config to a JSON file
         """
-        sa = self.copy(deep=True)
+        sa = self.model_copy(deep=True)
         with open("config.json", "w") as fp:
-            json.dump(sa.dict(), fp, sort_keys=True, indent=4)
+            json.dump(sa.model_dump(), fp, sort_keys=True, indent=4)
 
     @staticmethod
     def load_config():

@@ -21,6 +21,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
+from fastapi_restful.timing import add_timing_middleware
 from fs.base import FS
 from grpc._channel import _InactiveRpcError
 from loguru import logger as logger_gruru
@@ -105,11 +106,11 @@ async def load_config(url: str) -> None:
                 if resp.status == 200:
                     config = MSAServiceDefinition.parse_obj(await resp.json())
                     new_config = get_msa_app_settings()
-                    if new_config.dict(exclude={"version"}) == config.dict(exclude={"version"}):
+                    if new_config.model_dump(exclude={"version"}) == config.model_dump(exclude={"version"}):
                         return
 
                     with open("config.json", "w") as json_file:
-                        json.dump(config.dict(), json_file, sort_keys=True, indent=4)
+                        json.dump(config.model_dump(), json_file, sort_keys=True, indent=4)
 
                     logger_gruru.info("New config saved to config.json")
                 else:
@@ -223,7 +224,7 @@ class MSAApp(FastAPI):
                     if reload_needed:
                         self.logger.info("New config needs reload.")
                         with open("config.json", "w") as json_file:
-                            json.dump(received_config.data.dict(), json_file)
+                            json.dump(received_config.data.model_dump(), json_file)
 
                         self.logger.info("New config saved to config.json")
 
@@ -432,7 +433,6 @@ class MSAApp(FastAPI):
 
         def try_get_json():
             try:
-
                 return jsonable_encoder(self.settings)
 
             except Exception as e:
@@ -458,7 +458,6 @@ class MSAApp(FastAPI):
 
         def try_get_json():
             try:
-
                 return jsonable_encoder(self.openapi())
 
             except Exception as e:
@@ -647,7 +646,6 @@ class MSAApp(FastAPI):
             if (current_functionality is not None and new_functionality is not None) and (
                 current_functionality != new_functionality
             ):
-
                 if reload_needed:
                     return True
 
@@ -905,7 +903,6 @@ class MSAApp(FastAPI):
     def configure_timing_middleware(self) -> None:
         """Add Middleware Timing"""
         self.logger.info("Add Middleware Timing")
-        from fastapi_utils.timing import add_timing_middleware
 
         add_timing_middleware(self, record=self.logger.info, prefix="app", exclude="untimed")
 
@@ -964,7 +961,7 @@ class MSAApp(FastAPI):
             sentry_sdk.init(
                 dsn=sentry_dsn,
                 traces_sample_rate=1.0,
-                environment=os.getenv("STAGE_ENV","local"),
+                environment=os.getenv("STAGE_ENV", "local"),
             )
 
 

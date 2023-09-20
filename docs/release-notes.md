@@ -1,6 +1,12 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.110
+
+- added supporting pydantic v2
+- update msaDocModels
+- added env for sentry
+
 # 0.0.109
 
 - add Input and DTO models for Spellcheck
