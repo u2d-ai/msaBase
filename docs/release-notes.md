@@ -15,7 +15,7 @@
 
 - added enviroments for sentry
 
-## 0.0.107
+# 0.0.107
 
 - fix algorithm to DocClassifier Input
 
