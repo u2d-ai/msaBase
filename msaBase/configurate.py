@@ -106,11 +106,11 @@ async def load_config(url: str) -> None:
                 if resp.status == 200:
                     config = MSAServiceDefinition.parse_obj(await resp.json())
                     new_config = get_msa_app_settings()
-                    if new_config.dict(exclude={"version"}) == config.dict(exclude={"version"}):
+                    if new_config.model_dump(exclude={"version"}) == config.model_dump(exclude={"version"}):
                         return
 
                     with open("config.json", "w") as json_file:
-                        json.dump(config.dict(), json_file, sort_keys=True, indent=4)
+                        json.dump(config.model_dump(), json_file, sort_keys=True, indent=4)
 
                     logger_gruru.info("New config saved to config.json")
                 else:
@@ -224,7 +224,7 @@ class MSAApp(FastAPI):
                     if reload_needed:
                         self.logger.info("New config needs reload.")
                         with open("config.json", "w") as json_file:
-                            json.dump(received_config.data.dict(), json_file)
+                            json.dump(received_config.data.model_dump(), json_file)
 
                         self.logger.info("New config saved to config.json")
 
@@ -961,7 +961,7 @@ class MSAApp(FastAPI):
             sentry_sdk.init(
                 dsn=sentry_dsn,
                 traces_sample_rate=1.0,
-                environment=os.getenv("STAGE_ENV","local"),
+                environment=os.getenv("STAGE_ENV", "local"),
             )
 
 
