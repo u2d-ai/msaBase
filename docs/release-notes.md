@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.110
+
+- add models for ConvertorSeparation and models for document Taxonomy 
+
 # 0.0.109
 
 - add Input and DTO models for Spellcheck
