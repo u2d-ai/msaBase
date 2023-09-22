@@ -1,7 +1,7 @@
 # msaBase Release Notes
 ## Possible future features:
 
-# 0.0.110
+# 0.0.111
 
 - add models for ConvertorSeparation and models for document Taxonomy 
 
