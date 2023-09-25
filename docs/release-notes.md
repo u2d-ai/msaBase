@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.112
+
+- fix Barcode model
+
 # 0.0.111
 
 - add models for ConvertorSeparation and models for document Taxonomy 
