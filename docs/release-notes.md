@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.113
+
+- change SeparationInferenceDTO
+- add patterns to ConverterEmail
+
 # 0.0.112
 
 - fix Barcode model
