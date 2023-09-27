@@ -89,7 +89,6 @@
     "profiler_output_type": "html",
     "profiler_single_calls": false,
     "profiler_url": "/profiler",
-    "progress_topic": "progress",
     "redoc_url": "/redoc",
     "servicerouter": true,
     "session": false,

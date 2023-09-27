@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.114
+
+- migrate to poetry
+
 # 0.0.113
 
 - change SeparationInferenceDTO
