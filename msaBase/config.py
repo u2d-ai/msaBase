@@ -194,9 +194,25 @@ class ConfigInput(BaseModel):
 
     Attributes:
         data: Service config.
+        id: message id.
     """
 
     data: ConfigDTO
+    id: str
+
+
+class DefaultMessageInput(BaseModel):
+    """
+    Pydantic model to receive default message from pub/sub.
+
+    Attributes:
+
+        data: message from topic.
+        id: message id.
+    """
+
+    data: str
+    id: str
 
 
 class ConfigDataDTO(BaseModel):

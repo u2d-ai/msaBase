@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+
+# 0.0.115
+
+- add working to receive default message from pub/sub
+
 # 0.0.114
 
 - migrate to poetry
