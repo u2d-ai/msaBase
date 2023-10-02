@@ -730,7 +730,12 @@ class MSAApp(FastAPI):
                 response_model=MSASchedulerStatus,
             )
         self.add_api_route("/", self.get_sduversion, tags=["service"], response_model=SDUVersion)
-        self.add_api_route("/sysinfo", self.get_system_info, tags=["service"], response_model=MSASystemInfo)
+        self.add_api_route(
+            "/sysinfo",
+            self.get_system_info,
+            tags=["service"],
+            response_model=MSASystemInfo,
+        )
         self.add_api_route(
             "/sysgpuinfo",
             self.get_system_gpu_info,
@@ -754,7 +759,10 @@ class MSAApp(FastAPI):
         if not self.settings.profiler:
             self.profiler = Profiler()
             self.add_api_route(
-                self.settings.profiler_url, self.get_profiler, tags=["service"], response_model=MSAOpenAPIInfo
+                self.settings.profiler_url,
+                self.get_profiler,
+                tags=["service"],
+                response_model=MSAOpenAPIInfo,
             )
 
     def configure_limiter_handler(self) -> None:
@@ -964,7 +972,7 @@ class MSAApp(FastAPI):
             sentry_sdk.init(
                 dsn=sentry_dsn,
                 traces_sample_rate=1.0,
-                environment=os.getenv("STAGE_ENV","local"),
+                environment=os.getenv("STAGE_ENV", "local"),
             )
 
 

@@ -1,15 +1,44 @@
 [tool.poetry]
 name = "msaBase"
-version = "0.0.115"
+version = "0.0.116"
 description = "General Package for Microservices based on FastAPI like Profiler, Scheduler, Sysinfo, Healtcheck, Error Handling etc."
 authors = ["Stefan Welcker"]
 readme = "README.md"
 packages = [{include = "msaBase"}]
 
+
+[tool.black]
+line-length = 119
+
+
+[tool.isort]
+profile = "black"
+line_length = 119
+src_paths = ["isort", "test"]
+skip = ["venv/", "dit/"]
+
+[tool.flake8]
+ignore = ['E266','W503','E203','E722']
+exclude ="""
+    __pycache__,
+    venv,
+    .env,
+    docs,
+    tests,
+    dist_docs,
+    dit,
+    """
+per-file-ignores = [
+    '__init__.py:F401',
+]
+max-line-length = 119
+count = true
+
+
 [tool.poetry.dependencies]
 python = "^3.10"
 msaFileSystem = "0.0.5"
-msaDocModels = "0.0.105"
+msaDocModels = "0.0.106"
 anyio = "3.7.1"
 fastapi = {extras = ["all"], version = "0.86.0"}
 fastapi_utils = "0.2.1"

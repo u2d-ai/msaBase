@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.116
+
+- add svcConverterSeparation models for processing documents.
+
 
 # 0.0.115
 
