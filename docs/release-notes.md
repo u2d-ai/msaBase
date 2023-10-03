@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.117
+
+- update msaDocModels
+
 # 0.0.116
 
 - add svcConverterSeparation models for processing documents.
@@ -26,7 +30,7 @@
 
 # 0.0.111
 
-- add models for ConvertorSeparation and models for document Taxonomy 
+- add models for ConvertorSeparation and models for document Taxonomy
 
 # 0.0.109
 
