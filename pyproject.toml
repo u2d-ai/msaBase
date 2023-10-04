@@ -37,8 +37,8 @@ count = true
 
 [tool.poetry.dependencies]
 python = "~3.9"
-msaFileSystem = "0.0.5"
-msaDocModels = "0.0.107"
+msaFileSystem = "0.0.7"
+msaDocModels = "0.0.108"
 anyio = "3.7.1"
 fastapi = {extras = ["all"], version = "0.86.0"}
 fastapi_utils = "0.2.1"
