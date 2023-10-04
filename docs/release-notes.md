@@ -1,7 +1,7 @@
 # msaBase Release Notes
 ## Possible future features:
 
-# 0.0.117
+# 0.0.118
 
 - update msaDocModels
 
