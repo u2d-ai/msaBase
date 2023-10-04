@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "msaBase"
-version = "0.0.117"
+version = "0.0.118"
 description = "General Package for Microservices based on FastAPI like Profiler, Scheduler, Sysinfo, Healtcheck, Error Handling etc."
 authors = ["Stefan Welcker"]
 readme = "README.md"
@@ -36,9 +36,9 @@ count = true
 
 
 [tool.poetry.dependencies]
-python = "^3.10"
-msaFileSystem = "0.0.5"
-msaDocModels = "0.0.107"
+python = "~3.9"
+msaFileSystem = "0.0.7"
+msaDocModels = "0.0.108"
 anyio = "3.7.1"
 fastapi = {extras = ["all"], version = "0.86.0"}
 fastapi_utils = "0.2.1"
