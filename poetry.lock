@@ -1081,6 +1081,7 @@ files = [
 fs = ">=2.4.13,<3"
 requests = ">=2.20"
 requests-oauthlib = ">=1.2.0"
+urllib3 = {version = ">=1.26", markers = "python_version >= \"3.10\" and python_version < \"4\""}
 
 [[package]]
 name = "fs-s3fs"
@@ -2383,13 +2384,13 @@ files = [
 
 [[package]]
 name = "msadocmodels"
-version = "0.0.108"
+version = "0.0.109"
 description = "MSA Document Pydantic Models and Schemas, used to store Parser, NLP, NLU and AI results for processed documents"
 optional = false
-python-versions = ">=3.9,<3.10"
+python-versions = ">=3.9.0,<3.11"
 files = [
-    {file = "msadocmodels-0.0.108-py3-none-any.whl", hash = "sha256:b1425edea47789ed027fa812f742ebae401bfea0fd0b400f4bf791570f68d77c"},
-    {file = "msadocmodels-0.0.108.tar.gz", hash = "sha256:322ec4ca81a1b3c9dd72d9faa1df2b0d8fbe0fba6fb739e27ff1532cd87b30d1"},
+    {file = "msadocmodels-0.0.109-py3-none-any.whl", hash = "sha256:6332494743cfad0914d472938bfad34b3f7e4055f5919e989c22c32c27079f25"},
+    {file = "msadocmodels-0.0.109.tar.gz", hash = "sha256:31110cc709b9a5538ef22a8c147be7fc99dfa89f3eb0b4bac77bf1150170e041"},
 ]
 
 [package.dependencies]
@@ -2402,13 +2403,13 @@ pydantic = "1.9.2"
 
 [[package]]
 name = "msafilesystem"
-version = "0.0.7"
+version = "0.0.8"
 description = "Agnostic Abstract Filesystem API which allows to use S3, GCS, Azure Datalake, your local FS, Youtube etc Optimized for use with FastAPI/Pydantic."
 optional = false
-python-versions = ">=3.9,<3.10"
+python-versions = ">=3.9.0,<3.11"
 files = [
-    {file = "msafilesystem-0.0.7-py3-none-any.whl", hash = "sha256:90cd9e019c615511bdfa6f1768b67d7dcf9035baa8e45f3dceebab5847a06ff2"},
-    {file = "msafilesystem-0.0.7.tar.gz", hash = "sha256:d3d947eee6f691dea6f50ac55e21502ebfe8922d63514e85cb17b55ffc5d9afe"},
+    {file = "msafilesystem-0.0.8-py3-none-any.whl", hash = "sha256:bd8eb18eeebf1118aa08189e2e6fecb33d8a8bd3a4f0780a2885ff53664913e3"},
+    {file = "msafilesystem-0.0.8.tar.gz", hash = "sha256:7d44f0556a718a537ce0d5275f859e94b9e5e2c7d121c3aaf62e248a8d138f28"},
 ]
 
 [package.dependencies]
@@ -4668,5 +4669,5 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 
 [metadata]
 lock-version = "2.0"
-python-versions = "~3.9"
-content-hash = "2867828e0ab8f2b4d599b9e5b6603d4ca555e16989cfdd2847f9b1cff5e4d8b1"
+python-versions = ">=3.9.0,<3.11"
+content-hash = "f37464e646dfc04d885fd4206c467ee9e154143e5badee8b67bdb29e198489bf"
