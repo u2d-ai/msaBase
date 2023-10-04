@@ -3,6 +3,10 @@
 
 # 0.0.118
 
+- fix dependencies
+
+# 0.0.117
+
 - update msaDocModels
 
 # 0.0.116
