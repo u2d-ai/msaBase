@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.120
+
+- update msaDocModels with svcEngineUtils models
+
 # 0.0.119
 
 - fix dependencies
