@@ -2358,13 +2358,13 @@ python-legacy = ["mkdocstrings-python-legacy (>=0.2.1)"]
 
 [[package]]
 name = "mkdocstrings-python"
-version = "1.7.1"
+version = "1.7.2"
 description = "A Python handler for mkdocstrings."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mkdocstrings_python-1.7.1-py3-none-any.whl", hash = "sha256:cb1651fba8423324b861fe38ce881cf56f30738770a2119f007a0a4ffcb00777"},
-    {file = "mkdocstrings_python-1.7.1.tar.gz", hash = "sha256:90d838dc7861674794e3ca79f64c23c5d8fa76b9aa29db834b246771964c0881"},
+    {file = "mkdocstrings_python-1.7.2-py3-none-any.whl", hash = "sha256:2d005729a90f1b86d6d71fad4953d787140996adec5b00a25fafc6ee48e1b79a"},
+    {file = "mkdocstrings_python-1.7.2.tar.gz", hash = "sha256:75b6af86f9dcdc2d864072d8fed5b1d45ad94dd2ce97843ef52ca87ad53d9b26"},
 ]
 
 [package.dependencies]
@@ -2384,13 +2384,13 @@ files = [
 
 [[package]]
 name = "msadocmodels"
-version = "0.0.110"
+version = "0.0.111"
 description = "MSA Document Pydantic Models and Schemas, used to store Parser, NLP, NLU and AI results for processed documents"
 optional = false
 python-versions = ">=3.9.0,<3.11"
 files = [
-    {file = "msadocmodels-0.0.110-py3-none-any.whl", hash = "sha256:31d9dd34ab44d54cb0768c50074f43c710c84d65904319a574261199da4eb206"},
-    {file = "msadocmodels-0.0.110.tar.gz", hash = "sha256:0f67837d03bd85025ab076aabc104640d3385e29c2c8cd4166b68598780ec23d"},
+    {file = "msadocmodels-0.0.111-py3-none-any.whl", hash = "sha256:3b968b4829be79fd56f5b520898e6e825d642d54e4a958dd5ccf57f05522aea3"},
+    {file = "msadocmodels-0.0.111.tar.gz", hash = "sha256:0aacb5d314216e96f3a264d8e76c2128068cba58ab483b325fa5f98e7923e2fa"},
 ]
 
 [package.dependencies]
@@ -4670,4 +4670,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9.0,<3.11"
-content-hash = "491a8cfc367436f6652e9afa1e73b19289f44325559c1c15df8130c11db37e0c"
+content-hash = "04b5aad85bdec5bc043e18ab2d22e28485ff8827c0f91c5c38a6cf01e778dcbf"
