@@ -21,8 +21,6 @@
     "context": false,
     "cors": true,
     "csrf": false,
-    "dapr_grpc_port": 50001,
-    "dapr_http_port": 6000,
     "debug": false,
     "description": "",
     "disable_docs": false,

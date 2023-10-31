@@ -45,8 +45,6 @@ class MSAServiceDefinition(MSAAppSettings):
         version: Version of the Service.
         host: Host/IP which the service runs on.
         port: Port which the service binds to.
-        dapr_http_port: Port http which  used dapr app.
-        dapr_grpc_port: Port grpc which used dapr app.
         tags: Optional Metadata: Use this to carry some variables through the service instance.
         allow_origins: CORSMiddleware. List of allowed origins (as strings) or all of them with the wildcard "*".
         allow_credentials: CORSMiddleware. Allow (False) Credentials (Authorization headers, Cookies, etc).
@@ -92,8 +90,6 @@ class MSAServiceDefinition(MSAAppSettings):
     version: str = "0.0.0"
     host: str = "0.0.0.0"
     port: int = 8000
-    dapr_http_port: int = 6000
-    dapr_grpc_port: int = 50001
     tags: List[str] = []
     allow_origins: List[str] = ["*"]
     allow_credentials: bool = False

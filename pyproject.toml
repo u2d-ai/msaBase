@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "msaBase"
-version = "0.0.122"
+version = "0.0.123"
 description = "General Package for Microservices based on FastAPI like Profiler, Scheduler, Sysinfo, Healtcheck, Error Handling etc."
 authors = ["Stefan Welcker"]
 readme = "README.md"
@@ -62,9 +62,6 @@ msgpack-asgi = "1.1.0"
 slowapi = "0.1.7"
 addict = "2.4.0"
 pymongo = "4.3.3"
-dapr = "1.9.0"
-dapr-ext-grpc = "1.9.0"
-dapr-ext-fastapi = "1.9.0"
 aiofiles = "23.1.0"
 fs = "2.4.16"
 starlette = "0.20.4"
@@ -82,6 +79,7 @@ apscheduler = "3.10.0"
 pytest = "7.2.0"
 pytest-asyncio = "0.20.2"
 pytest-mock = "3.10.0"
+confluent-kafka = "^2.3.0"
 
 [tool.poetry.group.docs.dependencies]
 fonttools = "~4.37.3"
