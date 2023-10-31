@@ -6,6 +6,7 @@ Initialize with a MSAServiceDefintion Instance to control the features and funct
 """
 import json
 import os
+import threading
 from datetime import datetime
 from functools import wraps
 from typing import Any, Dict, List, Optional, Type, Union
@@ -202,6 +203,12 @@ class MSAApp(FastAPI):
         self.create_kafka_endpoint()
 
     def create_kafka_endpoint(self) -> None:
+        """
+        Subscribes service to Kafka topic through which new configs will be received.
+        """
+        threading.Thread(target=self._consume_kafka_messages, daemon=True).start()
+
+    def _consume_kafka_messages(self) -> None:
         """
         Subscribes service to Kafka topic through which new configs will be received.
         """
