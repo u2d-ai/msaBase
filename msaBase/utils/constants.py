@@ -1,6 +1,6 @@
 import uuid
-from starlette.config import Config
 
+from starlette.config import Config
 
 config = Config(".env")
 

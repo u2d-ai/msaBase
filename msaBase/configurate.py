@@ -9,12 +9,12 @@ import os
 from datetime import datetime
 from functools import wraps
 from typing import Any, Dict, List, Optional, Type, Union
-from confluent_kafka import Consumer, KafkaException
 
 import aiohttp
 import sentry_sdk
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
+from confluent_kafka import KafkaException
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.exception_handlers import http_exception_handler

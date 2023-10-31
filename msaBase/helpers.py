@@ -2,11 +2,10 @@ import json
 import os
 from typing import Any, Dict, List, Union
 
-from dotenv import load_dotenv
-from msaDocModels.sdu import SDUPage
 from confluent_kafka import Consumer, Producer
-import json
-from msaBase.utils.constants import PRODUCER_CONFIG,CONSUMER_CONFIG
+from dotenv import load_dotenv
+from msaBase.utils.constants import CONSUMER_CONFIG, PRODUCER_CONFIG
+from msaDocModels.sdu import SDUPage
 
 
 def convert_list_to_str(input_list: List) -> str:
