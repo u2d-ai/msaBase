@@ -1,6 +1,20 @@
+import uuid
+
 from starlette.config import Config
 
 config = Config(".env")
+
+
+PRODUCER_CONFIG = {
+    "bootstrap.servers": config("BOOTSTRAP_SERVICE", default="localhost:9092", cast=str),
+}
+
+CONSUMER_CONFIG = {
+    "bootstrap.servers": config("BOOTSTRAP_SERVICE", default="localhost:9092", cast=str),
+    "group.id": config("CONSUMER_GROUP_ID", default=str(uuid.uuid4())),
+    "auto.offset.reset": config("AUTO_OFFSET_RESET", default="earliest", cast=str),
+}
+
 
 SERVICE_TOPIC = config(
     "SERVICE_TOPIC",
@@ -17,10 +31,6 @@ PROGRESS_TOPIC = config(
 DATABASE_UPDATE_TOPIC = config(
     "DATABASE_UPDATE_TOPIC",
     default="database-update",
-)
-PUBSUB_NAME = config(
-    "PUBSUB_NAME",
-    default="redispubsub",
 )
 HTTPCEPTION_EXCLUDE_STATUS_CODES = [
     300,

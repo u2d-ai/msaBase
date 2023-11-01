@@ -1,6 +1,12 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.123
+
+- remove dapr
+- remove redis pubsub
+- add kafka
+
 # 0.0.122
 
 - update msaDocModels

@@ -1,7 +1,10 @@
+import json
 import os
 from typing import Any, Dict, List, Union
 
+from confluent_kafka import Consumer, Producer
 from dotenv import load_dotenv
+from msaBase.utils.constants import CONSUMER_CONFIG, PRODUCER_CONFIG
 from msaDocModels.sdu import SDUPage
 
 
@@ -95,3 +98,33 @@ def _prioritize_envs_in_settings(prefix: str) -> dict[str, Any]:
             env_key = env_with_prefix_key.replace(prefix, "")
             envs_map[env_key] = os.environ.get(env)
     return envs_map
+
+
+class KafkaUtils:
+    value_deserializer_map = {
+        "utf-8": lambda v: v.decode("utf-8"),
+        "json": lambda v: json.loads(v.decode("utf-8")),
+    }
+
+    value_serializer_map = {
+        "utf-8": lambda v: v.encode("utf-8"),
+        "json": lambda v: json.dumps(v, default=str).encode("utf-8"),
+    }
+
+    @staticmethod
+    def get_consumer() -> Consumer:
+        return Consumer(CONSUMER_CONFIG)
+
+    @staticmethod
+    def get_producer() -> Producer:
+        return Producer(PRODUCER_CONFIG)
+
+    @staticmethod
+    def serialize_value(value, method: str = "json") -> Any:
+        serializer = KafkaUtils.value_serializer_map[method]
+        return serializer(value)
+
+    @staticmethod
+    def deserialize_value(value, method: str = "json") -> Any:
+        deserializer = KafkaUtils.value_deserializer_map[method]
+        return deserializer(value)

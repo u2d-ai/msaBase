@@ -6,6 +6,7 @@ Initialize with a MSAServiceDefintion Instance to control the features and funct
 """
 import json
 import os
+import threading
 from datetime import datetime
 from functools import wraps
 from typing import Any, Dict, List, Optional, Type, Union
@@ -14,24 +15,23 @@ import aiohttp
 import sentry_sdk
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
-from dapr.clients import DaprClient, DaprInternalError
-from dapr.ext.fastapi import DaprApp
+from confluent_kafka import KafkaException
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
 from fs.base import FS
-from grpc._channel import _InactiveRpcError
 from loguru import logger as logger_gruru
 from msaBase.config import ConfigDTO, ConfigInput, MSAServiceDefinition, MSAServiceStatus, get_msa_app_settings
 from msaBase.errorhandling import getMSABaseExceptionHandler
+from msaBase.helpers import KafkaUtils
 from msaBase.logger import init_logging
 from msaBase.models.functionality import FunctionalityTypes
 from msaBase.models.middlewares import MiddlewareTypes
 from msaBase.models.sysinfo import MSASystemGPUInfo, MSASystemInfo
 from msaBase.sysinfo import get_sysgpuinfo, get_sysinfo
-from msaBase.utils.constants import PROGRESS_TOPIC, PUBSUB_NAME, REGISTRY_TOPIC, SERVICE_TOPIC
+from msaBase.utils.constants import PROGRESS_TOPIC, REGISTRY_TOPIC, SERVICE_TOPIC
 from msaDocModels.health import MSAHealthDefinition
 from msaDocModels.openapi import MSAOpenAPIInfo
 from msaDocModels.scheduler import MSASchedulerStatus, MSASchedulerTaskDetail, MSASchedulerTaskStatus
@@ -172,7 +172,6 @@ class MSAApp(FastAPI):
         self.one_time_config = False
         self.logger = logger_gruru
         self.fastApi = FastAPI
-        self.daprApp = DaprApp(self)
         self.title = title if title else self.settings.title
         self.description = description if description else self.settings.description
         self.host = host if host else self.settings.host
@@ -201,34 +200,61 @@ class MSAApp(FastAPI):
         self.add_functionality()
         self.add_event_handler("shutdown", self.shutdown_event)
         self.add_event_handler("startup", self.startup_event)
-        self.create_dapr_endpoint()
+        self.create_kafka_endpoint()
 
-    def create_dapr_endpoint(self):
+    def create_kafka_endpoint(self) -> None:
         """
-        Subscribes service to pubsub topic through which new configs will be received.
+        Subscribes service to Kafka topic through which new configs will be received.
         """
+        threading.Thread(target=self._consume_kafka_messages, daemon=True).start()
 
-        @self.daprApp.subscribe(pubsub=PUBSUB_NAME, topic=SERVICE_TOPIC)
-        async def read_config(received_config: ConfigInput) -> None:
-            """
-            Receives new config and updates current settings with received data.
+    def _consume_kafka_messages(self) -> None:
+        """
+        Subscribes service to Kafka topic through which new configs will be received.
+        """
+        consumer = None
+        try:
+            consumer = KafkaUtils.get_consumer()
+            consumer.subscribe([SERVICE_TOPIC])
 
-            Parameters:
-                received_config: Data to update current config with.
-            """
-            try:
-                self.logger.info(f"Received config from svcRegistry. Data: {received_config.data}")
-                if received_config.data.config.name == self.settings.name:
-                    reload_needed = self.update_settings(received_config.data.config, received_config.data.one_time)
-                    if reload_needed:
-                        self.logger.info("New config needs reload.")
-                        with open("config.json", "w") as json_file:
-                            json.dump(received_config.data.dict(), json_file)
+            while True:
+                message = consumer.poll(1.0)
 
-                        self.logger.info("New config saved to config.json")
+                if message is None:
+                    continue
+                if message.error():
+                    raise KafkaException(message.error())
+                else:
+                    deserialized_value = KafkaUtils.deserialize_value(message.value())
+                    self.handle_config(ConfigInput(**deserialized_value))
 
-            except Exception as ex:
-                self.logger.info(ex)
+        except KafkaException as ex:
+            self.logger.info(f"Failed to consume message from Kafka: {ex}")
+
+        finally:
+            if consumer:
+                consumer.close()
+
+    def handle_config(self, received_config: ConfigInput) -> None:
+        """
+        Receives new config and updates current settings with received data.
+
+        Parameters:
+            received_config: Data to update current config with.
+        """
+        try:
+            self.logger.info(f"Received config from svcRegistry. Data: {received_config.data}")
+            if received_config.data.config.name == self.settings.name:
+                reload_needed = self.update_settings(received_config.data.config, received_config.data.one_time)
+                if reload_needed:
+                    self.logger.info("New config needs reload.")
+                    with open("config.json", "w") as json_file:
+                        json.dump(received_config.data.dict(), json_file)
+
+                    self.logger.info("New config saved to config.json")
+
+        except Exception as ex:
+            self.logger.info(ex)
 
     @staticmethod
     def uses_temporary_config(function):
@@ -280,24 +306,22 @@ class MSAApp(FastAPI):
 
     def logger_info(self, message: str, service_name: str = "", topic_name: str = "") -> None:
         """
-        Sends message to pubsub topic.
+        Sends message to Kafka topic using confluent-kafka.
 
         Parameters:
             message: JSON message to send.
-            topic_name: name of pubsub topic that needs this message.
+            topic_name: name of Kafka topic to which this message should be sent.
             service_name: the name of the service from which the call was made
         """
         if topic_name:
             try:
-                with DaprClient() as client:
-                    client.publish_event(
-                        pubsub_name=PUBSUB_NAME,
-                        topic_name=topic_name,
-                        data=f"[{service_name}]: " + message if service_name else message,
-                        data_content_type="application/json",
-                    )
-            except (_InactiveRpcError, DaprInternalError):
-                self.logger.info("Dapr is not available, switching to default logger")
+                producer = KafkaUtils.get_producer()
+                data = f"[{service_name}]: " + message if service_name else message
+                serialized_value = KafkaUtils.serialize_value(data)
+                producer.produce(topic_name, serialized_value)
+                producer.flush()
+            except Exception as e:
+                self.logger.info(f"Failed to send message to Kafka: {e}, switching to default logger.")
         self.logger.info(message)
 
     async def extend_startup_event(self) -> None:
@@ -432,7 +456,6 @@ class MSAApp(FastAPI):
 
         def try_get_json():
             try:
-
                 return jsonable_encoder(self.settings)
 
             except Exception as e:
@@ -458,7 +481,6 @@ class MSAApp(FastAPI):
 
         def try_get_json():
             try:
-
                 return jsonable_encoder(self.openapi())
 
             except Exception as e:
@@ -647,7 +669,6 @@ class MSAApp(FastAPI):
             if (current_functionality is not None and new_functionality is not None) and (
                 current_functionality != new_functionality
             ):
-
                 if reload_needed:
                     return True
 
