@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.124
+
+- update info pub logger
+
 # 0.0.123
 
 - remove dapr

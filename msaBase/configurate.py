@@ -966,19 +966,20 @@ class MSAApp(FastAPI):
         except Exception as ex:
             self.logger.error(f"An error occurred while trying to send config to svcRegistry. Exception: {ex}")
 
-    def info_pub_logger(self, message: str) -> None:
+    def info_pub_logger(self, message: str, topic_name: str = PROGRESS_TOPIC) -> None:
         """Sending progress to the topic
 
         Parameters:
 
             message: message with status
+            topic_name: name of topic
         """
         if self.settings.debug:
             self.logger.info(message)
         else:
             self.logger.info_pub(
                 message,
-                topic_name=PROGRESS_TOPIC,
+                topic_name=topic_name,
                 service_name=self.settings.name,
             )
 
