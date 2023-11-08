@@ -108,7 +108,7 @@ class KafkaUtils:
 
     value_serializer_map = {
         "utf-8": lambda v: v.encode("utf-8"),
-        "json": lambda v: json.dumps(v, default=str).encode("utf-8"),
+        "json": lambda v: json.dumps(v).encode("utf-8"),
     }
 
     @staticmethod
@@ -127,4 +127,5 @@ class KafkaUtils:
     @staticmethod
     def deserialize_value(value, method: str = "json") -> Any:
         deserializer = KafkaUtils.value_deserializer_map[method]
-        return deserializer(value)
+        intermediate = deserializer(value)
+        return json.loads(intermediate)
