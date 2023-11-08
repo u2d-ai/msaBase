@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.125
+
+- fix deserialize message from kafka
+
+
 # 0.0.124
 
 - update info pub logger
