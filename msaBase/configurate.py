@@ -15,7 +15,7 @@ import aiohttp
 import sentry_sdk
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
-from confluent_kafka import KafkaException
+from confluent_kafka import KafkaException, Producer
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.exception_handlers import http_exception_handler
@@ -31,7 +31,14 @@ from msaBase.models.functionality import FunctionalityTypes
 from msaBase.models.middlewares import MiddlewareTypes
 from msaBase.models.sysinfo import MSASystemGPUInfo, MSASystemInfo
 from msaBase.sysinfo import get_sysgpuinfo, get_sysinfo
-from msaBase.utils.constants import PROGRESS_TOPIC, REGISTRY_TOPIC, SERVICE_TOPIC
+from msaBase.utils.constants import (
+    ENABLE_MESSAGE_QUEUE,
+    KAFKA_TIMEOUT,
+    PROGRESS_TOPIC,
+    REGISTRY_TOPIC,
+    SAVE_ALL_MESSAGES_IN_QUEUE,
+    SERVICE_TOPIC,
+)
 from msaDocModels.health import MSAHealthDefinition
 from msaDocModels.openapi import MSAOpenAPIInfo
 from msaDocModels.scheduler import MSASchedulerStatus, MSASchedulerTaskDetail, MSASchedulerTaskStatus
@@ -193,6 +200,7 @@ class MSAApp(FastAPI):
         self.ROOTPATH = os.path.join(os.path.dirname(__file__))
         self.abstract_fs: Optional[MSAFilesystem] = None
         self.fs: Optional[FS] = None
+        self.producer: Optional[Producer] = KafkaUtils.get_producer() if SAVE_ALL_MESSAGES_IN_QUEUE else None
         self.logger.info_pub = self.logger_info
 
         init_logging()
@@ -307,19 +315,23 @@ class MSAApp(FastAPI):
     def logger_info(self, message: str, service_name: str = "", topic_name: str = "") -> None:
         """
         Sends message to Kafka topic using confluent-kafka.
+        SAVE_ALL_MESSAGES_IN_QUEUE parameter will save all messages in the queue
+        if kafka is not available and then will send them when connection returns.
 
         Parameters:
             message: JSON message to send.
             topic_name: name of Kafka topic to which this message should be sent.
             service_name: the name of the service from which the call was made
         """
-        if topic_name:
+        if topic_name and ENABLE_MESSAGE_QUEUE:
             try:
-                producer = KafkaUtils.get_producer()
+                producer = self.producer or KafkaUtils.get_producer()
                 data = f"[{service_name}]: " + message if service_name else message
                 serialized_value = KafkaUtils.serialize_value(data)
                 producer.produce(topic_name, serialized_value)
-                producer.flush()
+                producer.flush(timeout=KAFKA_TIMEOUT)
+                if not SAVE_ALL_MESSAGES_IN_QUEUE:
+                    producer.close()
             except Exception as e:
                 self.logger.info(f"Failed to send message to Kafka: {e}, switching to default logger.")
         self.logger.info(message)

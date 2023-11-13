@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.127
+
+- fix process hangs after sending a message
+
 # 0.0.126
 
 - fix interrapting kafka thread
