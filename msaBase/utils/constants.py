@@ -9,7 +9,8 @@ PRODUCER_CONFIG = {
     "bootstrap.servers": config("BOOTSTRAP_SERVICE", default="localhost:9092", cast=str),
     "security.protocol": "SASL_PLAINTEXT",
     "sasl.mechanism": "SCRAM-SHA-256",
-    "sasl.jaas.config": 'org.apache.kafka.common.security.scram.ScramLoginModule required username="user1" password="Wdb5Y3m5D4";'
+    "sasl.username": "user1",
+    "sasl.password": "Wdb5Y3m5D4",
 }
 
 CONSUMER_CONFIG = {
