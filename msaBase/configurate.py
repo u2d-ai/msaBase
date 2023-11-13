@@ -15,7 +15,7 @@ import aiohttp
 import sentry_sdk
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
-from confluent_kafka import KafkaException
+from confluent_kafka import KafkaException, Producer
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.exception_handlers import http_exception_handler
@@ -32,6 +32,7 @@ from msaBase.models.middlewares import MiddlewareTypes
 from msaBase.models.sysinfo import MSASystemGPUInfo, MSASystemInfo
 from msaBase.sysinfo import get_sysgpuinfo, get_sysinfo
 from msaBase.utils.constants import (
+    ENABLE_MESSAGE_QUEUE,
     KAFKA_TIMEOUT,
     PROGRESS_TOPIC,
     REGISTRY_TOPIC,
@@ -322,7 +323,7 @@ class MSAApp(FastAPI):
             topic_name: name of Kafka topic to which this message should be sent.
             service_name: the name of the service from which the call was made
         """
-        if topic_name:
+        if topic_name and ENABLE_MESSAGE_QUEUE:
             try:
                 producer = self.producer if SAVE_ALL_MESSAGES_IN_QUEUE else KafkaUtils.get_producer()
                 data = f"[{service_name}]: " + message if service_name else message
