@@ -7,12 +7,20 @@ config = Config(".env")
 
 PRODUCER_CONFIG = {
     "bootstrap.servers": config("BOOTSTRAP_SERVICE", default="localhost:9092", cast=str),
+    "security.protocol": config("KAFKA_PROTOCOL"),
+    "sasl.mechanism": config("KAFKA_SASL_MECHANISM"),
+    "sasl.username": config("SASL_USERNAME"),
+    "sasl.password": config("SASL_PASSWORD"),
 }
 
 CONSUMER_CONFIG = {
     "bootstrap.servers": config("BOOTSTRAP_SERVICE", default="localhost:9092", cast=str),
     "group.id": config("CONSUMER_GROUP_ID", default=str(uuid.uuid4())),
     "auto.offset.reset": config("AUTO_OFFSET_RESET", default="earliest", cast=str),
+    "security.protocol": config("KAFKA_PROTOCOL"),
+    "sasl.mechanism": config("KAFKA_SASL_MECHANISM"),
+    "sasl.username": config("SASL_USERNAME"),
+    "sasl.password": config("SASL_PASSWORD"),
 }
 KAFKA_TIMEOUT = config("KAFKA_TIMEOUT", default=3, cast=int)
 ENABLE_MESSAGE_QUEUE = config("ENABLE_MESSAGE_QUEUE", default=True, cast=bool)
