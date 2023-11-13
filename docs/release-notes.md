@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.128
+
+- remove close()
+
 # 0.0.127
 
 - fix process hangs after sending a message
