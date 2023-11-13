@@ -1,6 +1,14 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.130
+
+- fixed default params for kafka auth
+
+# 0.0.129
+
+- Extended configuration for producer and consumer configs with env vars
+
 # 0.0.128
 
 - remove close()
