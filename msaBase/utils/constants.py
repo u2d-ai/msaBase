@@ -14,8 +14,8 @@ CONSUMER_CONFIG = {
     "group.id": config("CONSUMER_GROUP_ID", default=str(uuid.uuid4())),
     "auto.offset.reset": config("AUTO_OFFSET_RESET", default="earliest", cast=str),
 }
-
-
+KAFKA_TIMEOUT = config("KAFKA_TIMEOUT", default=3)
+SAVE_ALL_MESSAGES_IN_QUEUE = config("SAVE_ALL_MESSAGES_IN_QUEUE", default=True)
 SERVICE_TOPIC = config(
     "SERVICE_TOPIC",
     default="service-config",
