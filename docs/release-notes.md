@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+# 0.0.126
+
+- fix interrapting kafka thread
+
 # 0.0.125
 
 - fix deserialize message from kafka
