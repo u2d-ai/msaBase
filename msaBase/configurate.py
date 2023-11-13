@@ -223,7 +223,7 @@ class MSAApp(FastAPI):
                 if message is None:
                     continue
                 if message.error():
-                    raise KafkaException(message.error())
+                    self.logger.info(message.error())
                 else:
                     deserialized_value = KafkaUtils.deserialize_value(message.value())
                     self.handle_config(ConfigInput(**deserialized_value))
