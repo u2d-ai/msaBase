@@ -323,7 +323,7 @@ class MSAApp(FastAPI):
             topic_name: name of Kafka topic to which this message should be sent.
             service_name: the name of the service from which the call was made
         """
-        if topic_name and ENABLE_MESSAGE_QUEUE:
+        if topic_name or ENABLE_MESSAGE_QUEUE:
             try:
                 producer = self.producer if SAVE_ALL_MESSAGES_IN_QUEUE else KafkaUtils.get_producer()
                 data = f"[{service_name}]: " + message if service_name else message
