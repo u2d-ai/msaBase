@@ -7,8 +7,8 @@ config = Config(".env")
 
 PRODUCER_CONFIG = {
     "bootstrap.servers": config("BOOTSTRAP_SERVICE", default="localhost:9092", cast=str),
-    "security.protocol": "SASL_PLAINTEXT",
-    "sasl.mechanism": "SCRAM-SHA-256",
+    "security.protocol": "SASL_SSL",
+    "sasl.mechanism": "PLAIN",
     "sasl.username": "user1",
     "sasl.password": "Wdb5Y3m5D4",
 }
@@ -17,8 +17,8 @@ CONSUMER_CONFIG = {
     "bootstrap.servers": config("BOOTSTRAP_SERVICE", default="localhost:9092", cast=str),
     "group.id": config("CONSUMER_GROUP_ID", default=str(uuid.uuid4())),
     "auto.offset.reset": config("AUTO_OFFSET_RESET", default="earliest", cast=str),
-    "security.protocol": "SASL_PLAINTEXT",
-    "sasl.mechanism": "SCRAM-SHA-256",
+    "security.protocol": "SASL_SSL",
+    "sasl.mechanism": "PLAIN",
     "sasl.username": "user1",
     "sasl.password": "Wdb5Y3m5D4",
 }
