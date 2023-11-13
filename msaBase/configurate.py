@@ -330,8 +330,6 @@ class MSAApp(FastAPI):
                 serialized_value = KafkaUtils.serialize_value(data)
                 producer.produce(topic_name, serialized_value)
                 producer.flush(timeout=KAFKA_TIMEOUT)
-                if not SAVE_ALL_MESSAGES_IN_QUEUE:
-                    producer.close()
             except Exception as e:
                 self.logger.info(f"Failed to send message to Kafka: {e}, switching to default logger.")
         self.logger.info(message)
