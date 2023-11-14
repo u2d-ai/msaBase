@@ -1,7 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
-# 0.0.130
+## 0.0.131
+
+- fix interrapting 
+
+## 0.0.130
 
 - fixed default params for kafka auth
 
