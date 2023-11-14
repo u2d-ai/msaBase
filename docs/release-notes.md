@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.132
+
+- update msaDocModels
+
 ## 0.0.131
 
 - fix interrapting 
