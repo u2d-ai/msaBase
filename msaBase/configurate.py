@@ -226,19 +226,24 @@ class MSAApp(FastAPI):
             consumer.subscribe([SERVICE_TOPIC])
 
             while True:
-                message = consumer.poll(1.0)
+                try:
+                    message = consumer.poll(1.0)
 
-                if message is None:
-                    continue
-                if message.error():
-                    self.logger.info(message.error())
-                else:
-                    deserialized_value = KafkaUtils.deserialize_value(message.value())
-                    self.handle_config(ConfigInput(**deserialized_value))
+                    if message is None:
+                        continue
+                    if message.error():
+                        self.logger.info(message.error())
+                    else:
+                        deserialized_value = KafkaUtils.deserialize_value(message.value())
+                        self.handle_config(ConfigInput(**deserialized_value))
 
-        except KafkaException as ex:
-            self.logger.info(f"Failed to consume message from Kafka: {ex}")
+                except KeyboardInterrupt:
+                    raise
+                except Exception as ex:
+                    self.logger.info(f"An error occurred in Kafka: {str(ex)}")
 
+        except KeyboardInterrupt:
+            self.logger.info("Interrupt received, shutting down consumer...")
         finally:
             if consumer:
                 consumer.close()
