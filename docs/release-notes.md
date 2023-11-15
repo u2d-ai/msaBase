@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.133
+
+- Add not create consumers if the service works without Kafka.
+
 ## 0.0.132
 
 - update msaDocModels

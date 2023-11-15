@@ -15,7 +15,7 @@ import aiohttp
 import sentry_sdk
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
-from confluent_kafka import KafkaException, Producer
+from confluent_kafka import Producer
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.exception_handlers import http_exception_handler
@@ -214,7 +214,10 @@ class MSAApp(FastAPI):
         """
         Subscribes service to Kafka topic through which new configs will be received.
         """
-        threading.Thread(target=self._consume_kafka_messages, daemon=True).start()
+        if not ENABLE_MESSAGE_QUEUE:
+            self.logger_info(f"Kafka is not enabled. Skipping Kafka consumer creation for topic {SERVICE_TOPIC}.")
+        else:
+            threading.Thread(target=self._consume_kafka_messages, daemon=True).start()
 
     def _consume_kafka_messages(self) -> None:
         """
