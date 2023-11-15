@@ -214,7 +214,10 @@ class MSAApp(FastAPI):
         """
         Subscribes service to Kafka topic through which new configs will be received.
         """
-        threading.Thread(target=self._consume_kafka_messages, daemon=True).start()
+        if not ENABLE_MESSAGE_QUEUE:
+            self.logger_info("Kafka is not enabled. Skipping Kafka consumer creation.")
+        else:
+            threading.Thread(target=self._consume_kafka_messages, daemon=True).start()
 
     def _consume_kafka_messages(self) -> None:
         """
