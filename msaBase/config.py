@@ -217,8 +217,8 @@ class MessageInput(BaseModel):
 
     Attributes:
         service_name: Service name to distinguish.
-        data: message to topic.
+        message: message to topic.
     """
 
     service_name: str
-    data: str
+    message: str
