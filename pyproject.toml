@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "msaBase"
-version = "0.0.133"
+version = "0.0.134"
 description = "General Package for Microservices based on FastAPI like Profiler, Scheduler, Sysinfo, Healtcheck, Error Handling etc."
 authors = ["Stefan Welcker"]
 readme = "README.md"
