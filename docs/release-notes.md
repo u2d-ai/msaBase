@@ -1,6 +1,11 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.135
+
+- fix logging and create message for Kafka
+- update msaDocModels version
+
 ## 0.0.134
 
 - Updated sending messages to Kafka
