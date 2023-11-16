@@ -23,7 +23,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
 from fs.base import FS
 from loguru import logger as logger_gruru
-from msaBase.config import ConfigDTO, ConfigInput, MSAServiceDefinition, MSAServiceStatus, get_msa_app_settings
+from msaBase.config import ConfigDTO, MessageInput, MSAServiceDefinition, MSAServiceStatus, get_msa_app_settings
 from msaBase.errorhandling import getMSABaseExceptionHandler
 from msaBase.helpers import KafkaUtils
 from msaBase.logger import init_logging
@@ -38,6 +38,7 @@ from msaBase.utils.constants import (
     REGISTRY_TOPIC,
     SAVE_ALL_MESSAGES_IN_QUEUE,
     SERVICE_TOPIC,
+    STAGE_ENV,
 )
 from msaDocModels.health import MSAHealthDefinition
 from msaDocModels.openapi import MSAOpenAPIInfo
@@ -238,7 +239,7 @@ class MSAApp(FastAPI):
                         self.logger.info(message.error())
                     else:
                         deserialized_value = KafkaUtils.deserialize_value(message.value())
-                        self.handle_config(ConfigInput(**deserialized_value))
+                        self.handle_config(ConfigDTO(**deserialized_value))
 
                 except KeyboardInterrupt:
                     raise
@@ -251,7 +252,7 @@ class MSAApp(FastAPI):
             if consumer:
                 consumer.close()
 
-    def handle_config(self, received_config: ConfigInput) -> None:
+    def handle_config(self, received_config: ConfigDTO) -> None:
         """
         Receives new config and updates current settings with received data.
 
@@ -259,13 +260,13 @@ class MSAApp(FastAPI):
             received_config: Data to update current config with.
         """
         try:
-            self.logger.info(f"Received config from svcRegistry. Data: {received_config.data}")
-            if received_config.data.config.name == self.settings.name:
-                reload_needed = self.update_settings(received_config.data.config, received_config.data.one_time)
+            self.logger.info(f"Received config from svcRegistry. Data: {received_config}")
+            if received_config.config.name == self.settings.name:
+                reload_needed = self.update_settings(received_config.config, received_config.one_time)
                 if reload_needed:
                     self.logger.info("New config needs reload.")
                     with open("config.json", "w") as json_file:
-                        json.dump(received_config.data.dict(), json_file)
+                        json.dump(received_config.config.dict(), json_file)
 
                     self.logger.info("New config saved to config.json")
 
@@ -320,7 +321,7 @@ class MSAApp(FastAPI):
 
         return decorator
 
-    def logger_info(self, message: str, service_name: str = "", topic_name: str = "") -> None:
+    def logger_info(self, message: str, service_name: str, topic_name: str = "") -> None:
         """
         Sends message to Kafka topic using confluent-kafka.
         SAVE_ALL_MESSAGES_IN_QUEUE parameter will save all messages in the queue
@@ -334,8 +335,8 @@ class MSAApp(FastAPI):
         if topic_name and ENABLE_MESSAGE_QUEUE:
             try:
                 producer = self.producer or KafkaUtils.get_producer()
-                data = f"[{service_name}]: " + message if service_name else message
-                serialized_value = KafkaUtils.serialize_value(data)
+                model = MessageInput(service_name=service_name, data=message).json()
+                serialized_value = KafkaUtils.serialize_value(model)
                 producer.produce(topic_name, serialized_value)
                 producer.flush(timeout=KAFKA_TIMEOUT)
             except Exception as e:
@@ -1012,7 +1013,7 @@ class MSAApp(FastAPI):
             sentry_sdk.init(
                 dsn=sentry_dsn,
                 traces_sample_rate=1.0,
-                environment=os.getenv("STAGE_ENV", "local"),
+                environment=STAGE_ENV,
             )
 
 

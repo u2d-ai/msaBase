@@ -184,19 +184,6 @@ class ConfigDTO(BaseModel):
     config: MSAServiceDefinition
 
 
-class ConfigInput(BaseModel):
-    """
-    Pydantic model to receive service configs from pub/sub.
-
-    Attributes:
-        data: Service config.
-        id: message id.
-    """
-
-    data: ConfigDTO
-    id: str
-
-
 class DefaultMessageInput(BaseModel):
     """
     Pydantic model to receive default message from pub/sub.
@@ -222,3 +209,16 @@ class ConfigDataDTO(BaseModel):
 
     service_name: str
     config_dto: ConfigDTO
+
+
+class MessageInput(BaseModel):
+    """
+    Pydantic model for sending message to Kafka.
+
+    Attributes:
+        service_name: Service name to distinguish.
+        data: message to topic.
+    """
+
+    service_name: str
+    data: str

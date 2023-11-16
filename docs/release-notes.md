@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.134
+
+- Updated sending messages to Kafka
+
 ## 0.0.133
 
 - Add not create consumers if the service works without Kafka.
