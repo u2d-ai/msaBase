@@ -2279,13 +2279,13 @@ files = [
 
 [[package]]
 name = "msadocmodels"
-version = "0.0.113"
+version = "0.0.114"
 description = "MSA Document Pydantic Models and Schemas, used to store Parser, NLP, NLU and AI results for processed documents"
 optional = false
 python-versions = ">=3.9.0,<3.11"
 files = [
-    {file = "msadocmodels-0.0.113-py3-none-any.whl", hash = "sha256:887cfee75ca17645a344b4926277396dc00382a0f450f151c319bb23c543f580"},
-    {file = "msadocmodels-0.0.113.tar.gz", hash = "sha256:f706ecec73ee18b136bab6cc0994d71f494f932c51261b3718aa25ecd5ab48f2"},
+    {file = "msadocmodels-0.0.114-py3-none-any.whl", hash = "sha256:84c0d894d319c3a16c6121ad1704ba1a14a0fa9daa7cec91a065016103f66ccf"},
+    {file = "msadocmodels-0.0.114.tar.gz", hash = "sha256:636a1f4bae6c3803217652910850b401d6776ef5534bfebe43e31f95128206bc"},
 ]
 
 [package.dependencies]
@@ -4602,4 +4602,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9.0,<3.11"
-content-hash = "90f9402948a0a7b13cdf6537d392d0b95359cf2e3b35a5f1b403356b743e0c74"
+content-hash = "ca1bdaae17120f56a8da0abce6eb036606323e43ae1e9bfe2cfdc260d756f96a"
