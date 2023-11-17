@@ -12,7 +12,7 @@ PRODUCER_CONFIG = {
 CONSUMER_CONFIG = {
     "bootstrap.servers": config("BOOTSTRAP_SERVICE", default="localhost:9092", cast=str),
     "group.id": config("CONSUMER_GROUP_ID", default=str(uuid.uuid4())),
-    "auto.offset.reset": config("AUTO_OFFSET_RESET", default="earliest", cast=str),
+    "auto.offset.reset": config("AUTO_OFFSET_RESET", default="latest", cast=str),
 }
 
 if STAGE_ENV != "local":
