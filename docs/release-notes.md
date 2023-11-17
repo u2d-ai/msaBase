@@ -1,6 +1,10 @@
 # msaBase Release Notes
 ## Possible future features:
 
+## 0.0.136
+
+- change auto offset reset to latest
+
 ## 0.0.135
 
 - fix logging and create message for Kafka
