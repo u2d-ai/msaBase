@@ -16,7 +16,7 @@ import sentry_sdk
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
 from confluent_kafka import Producer
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.encoders import jsonable_encoder
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.exceptions import RequestValidationError
@@ -209,6 +209,7 @@ class MSAApp(FastAPI):
         self.add_functionality()
         self.add_event_handler("shutdown", self.shutdown_event)
         self.add_event_handler("startup", self.startup_event)
+        self.background_tasks = BackgroundTasks()
         self.create_kafka_endpoint()
 
     def create_kafka_endpoint(self) -> None:
@@ -219,6 +220,16 @@ class MSAApp(FastAPI):
             self.logger.info(f"Kafka is not enabled. Skipping Kafka consumer creation for topic {SERVICE_TOPIC}.")
         else:
             threading.Thread(target=self._consume_kafka_messages, daemon=True).start()
+
+    def _process_kafka_producer(self, message: str, service_name: str, topic_name: str = "") -> None:
+        try:
+            producer = self.producer or KafkaUtils.get_producer()
+            model = MessageInput(service_name=service_name, message=message).json()
+            serialized_value = KafkaUtils.serialize_value(model)
+            producer.produce(topic_name, serialized_value)
+            producer.flush(timeout=KAFKA_TIMEOUT)
+        except Exception as e:
+            self.logger.info(f"Failed to send message to Kafka: {e}, switching to default logger.")
 
     def _consume_kafka_messages(self) -> None:
         """
@@ -335,11 +346,7 @@ class MSAApp(FastAPI):
         """
         if topic_name and ENABLE_MESSAGE_QUEUE:
             try:
-                producer = self.producer or KafkaUtils.get_producer()
-                model = MessageInput(service_name=service_name, message=message).json()
-                serialized_value = KafkaUtils.serialize_value(model)
-                producer.produce(topic_name, serialized_value)
-                producer.flush(timeout=KAFKA_TIMEOUT)
+                self.background_tasks.add_task(self._process_kafka_producer, message, service_name, topic_name)
             except Exception as e:
                 self.logger.info(f"Failed to send message to Kafka: {e}, switching to default logger.")
         self.logger.info(message)
